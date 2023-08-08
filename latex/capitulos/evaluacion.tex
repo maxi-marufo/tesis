@@ -1,0 +1,280 @@
+\chapter{Métodos de Evaluación}
+
+La evaluación de métodos de cuantificación es más compleja que en otros
+problemas. En aprendizaje supervisado, típicamente se mide el rendimiento
+estimando la probabilidad de predecir correctamente ejemplos individuales no
+observados (sin condicionar -para la exactitud o {\it accuracy\/}- o
+condicionando las probabilidades a las clases de pertenencia -para la
+exhaustividad o {\it recall\/}- o predichas -para la precisión o {\it
+precision\/}-). Sin embargo, en cuantificación, el rendimiento se evalúa para
+conjuntos de datos. Esto implica que necesitamos una colección de muestras para
+evaluar el rendimiento de un modelo. Dado un modelo $\overline{h}$, una función
+de pérdida $L(\cdot, \cdot)$, y un conjunto de muestras de evaluación ${T_1,
+\dots, T_s}$, el rendimiento de $\overline{h}$ es:
+
+\begin{equation}
+    Rendimiento(\overline{h}, L, {T_1, \dots , T_s}) = \frac{1}{s}
+    \sum_{j=1}^{s}L(\overline{h}, T_j)
+    \label{ecuacion_rendimiento}
+\end{equation}
+
+Calcular la pérdida de un modelo sobre una muestra de prueba, $L(\overline{h},
+T_j)$ no requiere de promediar sobre ejemplos individuales. Por ejemplo, en la
+cuantificación binaria, sólo la prevalencia real $p$ y la prevalencia predicha
+$\hat{p}$ se comparan por cada muestra.
+
+En cuantificación, el problema de evaluación se relaciona con el cambio en la
+distribución de datos entre la fase de entrenamiento y la de implementación del
+modelo. Se requiere una colección de muestras de prueba variada y que represente
+diversas distribuciones para evaluar correctamente el rendimiento del modelo y
+evitar sesgos. Por esta razón, la mayoría de los experimentos reportados en la
+literatura emplean conjuntos de datos tomados de otros problemas y se crean
+conjuntos de prueba con cambios en las distribuciones creados artificialmente.
+Este enfoque tiene la ventaja de que la cantidad del {\it dataset shift\/} se
+puede controlar para estudiar el rendimiento de los modelos en diferentes
+situaciones.
+
+Las funciones de pérdida $L(\cdot, \cdot)$ serán elegidas de acuerdo al tipo de
+problema y al objetivo particular de la aplicación. Como ya se mencionó, el
+rendimiento de $\overline{h}$ será el promedio del resultado de la función de
+pérdida por cada muestra de evaluación, de acuerdo a la
+ecuación~\ref{ecuacion_rendimiento}. Se han propuesto en la literatura distintas
+métricas de evaluación para problemas de {\it SLQ}. Estas también se pueden usar
+para {\it BQ}, ya que es un caso espacial de {\it SLQ}, y para {\it MLQ}, ya que
+se pueden usar para cada $y \in Y$. Esencialmente todas las medidas de
+evaluación que se han propuesto son divergencias, es decir, medidas de cómo una
+distribución difiere de otra. No se desarrollarán en esta tésis métricas para
+{\it OQ}, ya que no son útiles para nuestro objeto de estudio.
+
+\section{Propiedades}
+
+~\citet{sebastiani2020evaluation} define una serie de propiedades interesantes
+para medidas de evaluación en {\it SLQ}. Un importante resultado de este
+artículo es que ninguna medida de evaluación existente para {\it SLQ\/}
+satisface todas las propiedades identificadas como deseables; aún así, se ha
+demostrado que algunas medidas de evaluación son “menos inadecuadas” que otras.
+Aquí mencionamos brevemente las cuatro propiedades principales que habría que
+considerar en cada métrica $M$ a emplear (el resto son propiedas que suelen ser
+satisfechas por todas las métricas).
+
+\begin{itemize}
+    \item {\bf Máximo (MAX)}: si $\exists \beta >0, \beta \in  \mathbb{R}$ tal
+    que por cada $p(y), y \in Y$, (i) existe $\hat p(y)$ tal que $M(p, \hat p) =
+    \beta$, y (ii) para ninguna $\hat p(y)$ se cumple que $M(p, \hat p) >
+    \beta$. Si se cumple {\bf MAX}, la imagen de $M$ es independiente del
+    problema, y esto permite juzgar si un valor dado significa un error de
+    cuantificación alto o bajo. Si $M$ no cumple cumple {\bf MAX}, cada muestra
+    de evaluación tendrá un peso distinto en el resultado final.
+    \item {\bf Imparcial (IMP)}: si $M$ penaliza igualmente la subestimación de
+    $p(y)$ por una cantidad $a$ (es decir, con $\hat p(y) = p(y) - a$) o su
+    sobreestimación por la misma cantidad $a$ (es decir, con $\hat p(y) = p(y) +
+    a$). Si se cumple {\bf IMP}, la subestimación y la sobreestimación se
+    consideran igualmente indeseables. Esto es generalmente lo deseable, a menos
+    que exista una razón específica para no hacerlo.
+    \item {\bf Relativo (REL)}: si $M$ penaliza más gravemente un error de
+    magnitud absoluta $a$ (es decir, cuando $\hat p(y) = p(y) \pm a)$ si $p(y)$
+    es menor. Por ejemplo, predecir $\hat p(y) = 0.0101$ cuando $p(y) = 0.0001$
+    es un error mucho más serio que predecir $\hat p(y) = 0.1100$ cuando $p(y) =
+    0.1000$.
+    \item {\bf Absoluto (ABS)}: si $M$ penaliza un error de magnitud
+    independientemente del valor de $p(y)$. Mientras algunas aplicaciones
+    requieren {\bf REL}, otras requieren {\bf ABS}. Si bien {\bf REL} y {\bf
+    ABS} son mutuamente excluyentes, ninguna cubre el caso cuando $M$ considera
+    un error de magnitud absoluta $a$ menos grave cuando $p(y)$ es menor (como
+    en el caso de la {\it distancia coseno\/}).
+\end{itemize}
+
+\section{Métricas}
+
+\subsection{Sesgo}
+
+El sesgo o {\it bias\/} técnicamente no es una medida de evaluación para la
+cuantificación, ya que no se aplica a toda una distribución $p$ sino solo a una
+etiqueta específica $y$, y se define como:
+
+\begin{equation}
+    {\text{B}(y)} = \hat p(y) - p(y)
+\end{equation}
+
+Si se usa como un medida de evaluación para la cuantificación, un problema obvio
+con B es que promediar los puntajes de diferentes clases produce resultados poco
+intuitivos, ya que el sesgo positivo de una clase y el sesgo negativo de otra
+clase se anulan entre sí. El mismo problema ocurre cuando se trata de la misma
+clase pero se promedia entre diferentes muestras. Como resultado, esta medida se
+puede utilizar como mucho para determinar si un método tiene una tendencia a
+subestimar o sobrestimar la prevalencia de una clase específica (típicamente la
+clase minoritaria) en $BQ$, y no como una medida de evaluación para general
+usar.
+
+\subsection{Error Absoluto}
+
+El error absoluto o {\it absolute error\/} es una de las medidas más empleadas
+ya que, al ser simplemente la diferencia entre ambas magnitudes, es simple y
+fácilmente interpretable.
+
+\begin{equation}
+    {\text{AE}(p, \hat p)} = \frac{1}{|y|}\sum _{y\in {\mathcal {Y}}}{|\hat p(y) - p(y)|}
+\end{equation}
+
+Como en este caso las diferencias positivas y negativas son igualmente
+indeseables, promediar el AE entre varias clases, o varias muestras, no es
+problemático. Como se muestra en~\cite{sebastiani2020evaluation}, AE cumple {\bf
+IMP} y {\bf ABS} pero no cumple {\bf MAX} (ni tampoco {\bf REL}).
+
+\subsection{Error Absoluto Normalizado}
+
+El error absoluto normalizado {\it normalised absolute error}, definido como:
+
+\begin{equation}
+    {\text{NAE}(p, \hat p)} = \frac{\text{AE}(p, \hat p)}{z_{\text{AE}}} = \frac{\sum _{y\in {\mathcal {Y}}}{|\hat p(y) - p(y)|}}{2(1-\displaystyle \min_{y\in {\mathcal {Y}}}p(y))}
+\end{equation}
+
+es una versión de AE que oscila entre 0 (mejor) y 1 (peor), por lo que cumple
+{\bf MAX}. A pesar de su nombre, NAE no disfruta de {\bf ABS} (ni tampoco {\bf
+REL}).
+
+\subsection{Error Cuadrático}
+
+El error cuadrático o {\it squared error}, definido como:
+
+\begin{equation}
+    {\text{SE}(p, \hat p)} = \frac{1}{|y|}\sum _{y\in {\mathcal {Y}}}{{(\hat p(y) - p(y))}^2}
+\end{equation}
+
+comparte los mismos pros y contras de AE, pero penalizando más cuanto mayor es
+la diferencia entre el valor real y el predicho, por lo que se usa cuando se
+quiere castigar los valores atípicos u {\it outliers}.
+
+\subsection{Error Absoluto Relativo}
+
+El error absoluto relativo o {\it relative absolute error\/} es una adaptación
+del AE que impone {\bf REL} al hacer que AE sea relativo a $p$.
+
+\begin{equation}
+    {\text{RAE}(p, \hat p)} = \frac{1}{|y|}\sum _{y\in {\mathcal {Y}}}{\frac{|\hat p(y) - p(y)|}{p(y)}}
+\end{equation}
+
+RAE cumple {\bf IMP} y {\bf REL} pero no cumple {\bf MAX} (ni {\bf ABS}, a pesar
+de su nombre).
+
+\subsection{Error Absoluto Relativo Normalizado}
+
+El error absoluto relativo normalizado {\it normalised relative absolute error},
+definido como:
+
+\begin{equation}
+    {\text{NRAE}(p, \hat p)} = \frac{\text{RAE}(p, \hat p)}{z_{\text{RAE}}} = \frac{\sum \limits_{y\in {\mathcal {Y}}}{\frac{|\hat p(y) - p(y)|}{p(y)}}}{|y| - 1 + \frac {1 - \displaystyle \min_{y\in {\mathcal {Y}}}p(y)}{\displaystyle \min_{y\in {\mathcal {Y}}}p(y)}}
+\end{equation}
+
+es una versión de RAE que oscila entre 0 (mejor) y 1 (peor), por lo que cumple
+{\bf MAX}. A pesar de su nombre, NRAE no disfruta de {\bf REL} (ni tampoco {\bf
+ABS}).
+
+Tanto RAE como NRAE no están definidas cuando sus denominadores sean nulos. Para
+resolver este problema, se puede suavizar tanto $p(y)$ como $\ hat p(y)$
+mediante suavizado aditivo:
+
+\begin{equation}
+    \underline p(y) = \frac{\epsilon + p(y)}{\epsilon  |y| + \sum \limits_{y\in {\mathcal {Y}}}{p(y)}}
+\end{equation}
+
+donde $\underline p(y)$ es la versión suavizada de $p(y)$ y el denominador es
+solo un un factor de normalización (lo mismo para los $\underline {\hat p}(y)$).
+
+\subsection{Divergencia de Kullback-Leibler}
+
+Para distribuciones de probabilidad discretas $P$ y $Q$ definidas en el mismo
+espacio muestral ${\mathcal {X}}$ su divergencia KL se define como:
+
+\begin{equation}
+    {\text{DKL}}(P\parallel Q)=\sum _{x\in {\mathcal {X}}}P(x)\log \left({\frac {P(x)}{Q(x)}}\right)
+\end{equation}
+
+En cuantificación, se quiere comparar la prevalencia real $p$ y la prevalencia
+predicha $\hat{p}$, y el espacio muestral corresponde a las posibles clases, con
+lo cuál será:
+
+\begin{equation}
+    {\text{DKL}}(p\parallel \hat{p}) = \sum _{y\in {\mathcal {Y}}}p(y)\log \left({\frac {p(y)}{\hat p(y)}}\right)
+\end{equation}
+
+que va de {0} (mejor) a {+$\infty$} (peor) -por lo tanto, no cumple con {\bf
+MAX}-. Si bien esta medida es una distancia, no es una métrica verdadera, ya que
+no obedece a la desigualdad del triángulo y no es simétrica. Además, es menos
+interpretable que otras métricas de rendimiento y no está definido cuando
+$\hat{p}$ es 0 o 1.
+
+\subsection{Divergencia de Kullback-Leibler Normalizada}
+
+Para suplir los problemas de DKL, se puede utilizar la función logística,
+quedando:
+
+\begin{equation}
+    {\text{NDKL}}(p\parallel \hat{p}) = 2 \cdot \frac{e^{{\text{DKL}}(p\parallel \hat{p})}}{1+e^{{\text{DKL}}(p\parallel \hat{p})}}-1
+\end{equation}
+
+que también va de {0} (mejor) a {+$\infty$} (peor) -por lo tanto, si cumple con
+{\bf MAX}-. Sin embargo, como se muestra en~\cite{sebastiani2020evaluation}, ni
+DKL ni NDKL cumplen con {\bf IMP}, {\bf REL} y {\bf ABS}, lo que hace que su uso
+como medidas de evaluación para cuantificación sea cuestionable, además de ser
+dificiles de interpretar.
+
+\section{Elección de la Métrica}
+
+Es evidente que ninguna de las medidas propuestas hasta ahora es completamente
+satisfactoria. DKL y NDKL son los menos satisfactorios y parecen fuera de
+discusión. Respecto a los demás, el problema es que {\bf MAX} parece ser
+incompatible con {\bf REL}/{\bf ABS}, y viceversa.
+
+~\citet{sebastiani2020evaluation} sostiene que cumplir con {\bf REL} o {\bf ABS}
+parece más importantes que cumplir con {\bf MAX}, ya que reflejan las
+necesidades de la aplicación; si no se satisfacen estas propiedades, se puede
+argumentar que el error de cuantificación que se está midiendo está vagamente
+relacionada a lo que el usuario realmente quiere. Si {\bf MAX} no está
+satisfecho, los resultados obtenidos en muestras caracterizadas por diferentes
+distribuciones no serán comparables. A pesar de esto, los resultados obtenidos
+por diferentes sistemas en el mismo conjunto de muestras siguen siendo
+comparables.
+
+Esto sugiere que AE, RAE y SE son las mejores medidas a elegir. Se debe preferir
+AE cuando un error de estimación de una magnitud absoluta dada debe considerarse
+más grave cuando la verdadera prevalencia de la clase afectada es menor. RAE
+debe ser elegido cuando un error de estimación de una magnitud absoluta dada
+tiene el mismo impacto independientemente de la verdadera prevalencia de la
+clase afectada. Si se quiere penalizar mayormente errores atípicos, considerando
+mucho más graves a los errores cuanto mayor es la diferencia entre el valor real
+y el predicho, entonces SE es la métrica más conveniente.
+
+\section{Protocolos}
+
+Mientras que en la clasificación, un conjunto de datos de tamaño $k$ proporciona
+$k$ puntos de evaluación, para la cuantificación, el mismo conjunto solo
+proporciona $1$ punto. Evaluar algoritmos de cuantificación es por lo tanto un
+reto, debido a que la disponibilidad de datos etiquetados con fines de prueba es
+más restringido. Hay dos protocolos experimentales principales que se han tomado
+para tratar con este problema; el Protocolo de Prevalencia Natural ({\it NPP\/})
+() y el Protocolo de Prevalencia Artificial ({\it APP\/}).
+
+\begin{itemize}
+    \item {\it NPP\/}: Consiste en tomar un conjunto de prueba lo
+    suficientemente grande, dividirlo en un número de muestras de manera
+    uniformemente aleatoria, y llevar a cabo la evaluación individualmente en
+    cada muestra.
+    \item {\it APP\/}: Consiste en tomar un conjunto de datos, dividido en un
+    conjunto de entrenamiento $L$ y en un conjunto $U$ de elementos sin
+    etiquetar de manera uniformemente aleatoria, y realizar experimentos
+    repetidos en los que la prevalencia del conjunto de entrenamiento o la
+    prevalencia del conjunto de prueba de una clase se varía artificialmente a
+    través del submuestreo.
+\end{itemize}
+
+Ambos protocolos tienen diferentes pros y contras. Una ventaja de {\it APP\/} es
+que permite crear muchas puntos de prueba de la misma muestra. Además, {\it
+APP\/} permite simluar distintos {\it Prior probability shift}, mientras que con
+{\it NPP\/} se estaría evaluando sólo con las distribuciones originales de los
+datos de entrenamiento y prueba. Sin embargo, una desventaja de {\it APP\/} es
+que puede no saberse cuán realistas son estas diferentes situaciones en la
+aplicación real, por lo que se podría estar destinando recursos a una evaluación
+errónea o pobre. Una solución intermedia podría ser utilizar un protocolo que
+utilice conocimientos previos sobre la distribución de prevalencias “probables”
+que se podría esperar encontrar en el dominio específico en cuestión.

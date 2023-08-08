@@ -1,0 +1,188 @@
+\chapter{Introducción}
+
+\section{Marco teórico}
+
+La tarea de cuantificación (conocida en inglés como {\it quantification\/})
+consiste en proporcionar predicciones agregadas o resumen para conjuntos de
+datos en vez predicciones particulares sobre los datos individuales (por
+ejemplo, para el caso de clasificación, predecir la proporción de clases de un
+conjunto en vez de la clase de cada individuo), aplicando un modelo que se
+ajuste usando datos de entrenamiento cuya distribución puede ser distinta a la
+de los datos de prueba~\cite{forman2005counting}.
+
+Si bien en principio no es necesario realizar predicciones por cada individuo,
+muchos de los métodos se basan en obtener la cuantificación de esa manera, ya
+que hacer predicciones individuales suele ser un requisito de por sí de las
+aplicaciones prácticas, o porque ya existen en ellas sistemas que las generen.
+Además, cabe aclarar que si bien la aplicación más popular es con respecto a
+tareas de clasificación (sobre las cuales basaremos este trabajo, y en
+particular, sobre clasificación binaria), también se puede aplicar
+cuantificación a problemas de regresión, ordinalidad, etc.
+
+Un ejemplo práctico puede ser predecir la proporción de comentarios a favor o en
+contra sobre un producto, servicio o candidato en una red social. En este caso,
+se puede utilizar un clasificador para predecir por cada comentario si la
+opinión es positiva (o negativa), y luego obtener la proporción de comentarios a
+favor contándolos y dividiéndolos por el total (este método es el más simple y
+es conocido como {\it Classify \& Count\/} o {\it CC\/}).
+
+Si hablamos entonces de cuantificación binaria, se tiene que por cada muestra $i
+\in \{1,\dots,n\}$, $(\mathbf{X}_i,Y_i,S_i)$ es un vector de variables
+aleatorias tal que $\mathbf{X}_i \in \mathbb{R}^d$ son las características de la
+muestra, $Y_i \in \{1,0\}$ indica la clase a la que pertenece y $S_i \in
+\{1,0\}$ indica si fue etiquetada (y pertenece entonces al conjunto de
+entrenamiento) o no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable.
+En la cuantificación binaria, se desea estimar $\theta:= \mathbb{P}(Y=1|S=0)$,
+es decir, la prevalencia de etiquetas positivas entre muestras no etiquetadas.
+Esta prevalencia no se asume de ser la misma que en las muestras etiquetadas,
+$\mathbb{P}(Y=1|S=1)$. Además, el estimador de $\theta$ debe depender sólo de
+los datos disponibles, es decir, de las características de todas las muestras y
+de las etiquetas que fueron obtenidas. Los supuestos que se asumen
+son~\cite{vaz2019quantification}:
+
+\begin{itemize}
+  \item $(\mathbf{X}_1,Y_1,S_1) \dots (\mathbf{X}_n,Y_n,S_n)$ son independientes
+  \item Por cada $s \in \{0,1\}$,
+  $(\mathbf{X}_1,Y_1)|S_1=s,\dots,(\mathbf{X}_n,Y_n)|S_n=s$ son idénticamente
+  distribuidas.
+  \item Por cada $(y_1,\dots,y_n)\in{\{0,1\}}^n$,
+  $(\mathbf{X}_1,\dots,\mathbf{X}_n)$ es independiente de $(S_1,\dots,S_n)$
+  condicionado a $(Y_1,\dots,Y_n)=(y_1,\dots,y_n)$ 
+\end{itemize}
+
+Si bien existen varios métodos propuestos para el aprendizaje de
+cuantificación~\cite{esuli2023learning, gonzalez2017review}, el mismo es todavía
+relativamente desconocido incluso para expertos en aprendizaje automático. La
+razón principal es la creencia errónea de que es una tarea trivial que se puede
+resolver usando un método directo, como {\it CC}. La cuantificación requiere
+métodos más sofisticados si el objetivo es obtener modelos óptimos, y su
+principal dificultad radica en la definición del problema, ya que las
+distribuciones de los datos de entrenamiento y de prueba pueden ser distintas.
+Por ejemplo, si la diferencia entre $\mathbb{P}(Y=1|S=0)$ y
+$\mathbb{P}(Y=1|S=1)$ es grande, los métodos simples como {\it CC\/} suelen
+tener bajo rendimiento.
+
+Un método de cuantificación muy popular en la literatura y que sí se adapta a
+los cambios entre $\mathbb{P}(Y=1|S=0)$ y $\mathbb{P}(Y=1|S=1)$ es el propuesto
+por~\citet{saerens2002adjusting}, conocido como {\it Expectation Maximization
+for Quantification\/} -{\it EMQ\/}- o {\it SLD\/} por las siglas de sus autores.
+El mismo es un método iterativo que corrige, mediante el Teorema de Bayes, las
+predicciones de probabilidad de pertenencia a las clases dadas por el modelo de
+clasificación ya ajustado (sin necesidad de reajuste), y como consecuencia
+estima también la proporción de clases en la muestra de prueba. Este método es
+una aplicación directa del algoritmo de Esperanza-Maximización {\it -EM-}, y se
+puede probar que maximiza la verosimilitud en los datos de prueba. Se ha
+estudiado también que el método {\it EMQ\/} mejora aún más las predicciones de
+cuantificación si el clasificador utilizado está
+calibrado~\cite{esuli2020critical, alexandari2020maximum}, es decir, si sus
+predicciones de probabilidad asociadas a las clases predichas representan la
+probabilidad real de pertenencia a las clases~\cite{guo2017calibration}.
+
+Por otro lado, muy pocos son los trabajos sobre la construcción de intervalos de
+confianza y predicción en cuantificación~\cite{tasche2019confidence}. La mayoría
+de ellos se basan en emplear los métodos de predicción puntual junto con la
+técnica de {\it bootstrapping\/}~\cite{hopkins2010method,
+daughton2020constructing, daughton2021bootstrapping}, que puede ser
+computacionalmente costosa en este tipo de tareas, o en métodos
+asintóticos~\cite{vaz2019quantification}, que no funcionan bien con tamaños de
+muestra pequeños y además requieren estimar la varianza. Dentro de los trabajos
+sobre intervalos de confianza o predicción en cuantificación aplicada a la
+clasificación (no se encontraron de hecho trabajos sobre intervalos en otro tipo
+de problemas), Keith y O'Connor~\cite{keith2018uncertainty} proponen dos
+métodos:
+
+\begin{itemize}
+    \item El {\it baseline}, al que llaman {\it PB-PCC}, es un método asintótico
+    basado en la distribución Poisson-Binomial~\cite{le1960approximation,
+    wang1993number}, donde proponen utilizar la media y varianza conocida para
+    esta distribución para calcular el intervalo mediante la distribución
+    normal. Existen tres problemas en el método propuesto en el trabajo:
+        \begin{enumerate}
+            \item Se basa en el método de cuantificación de predicción puntual
+            conocido como {\it Probabilistic Classify \& Count -PCC-}, que no
+            suele tener muy buenos resultados ya que no se ajusta a las
+            diferencias entre $\mathbb{P}(Y=1|S=0)$ y
+            $\mathbb{P}(Y=1|S=1)$.\label{keith_item_uno}
+            \item En el trabajo no se verifica que el clasificador esté
+            calibrado, lo que podría degradar los resultados del
+            cuantificador.\label{keith_item_dos}
+            \item Los métodos asintóticos no son buenos con muestras pequeñas.
+        \end{enumerate}
+    \item Su propuesta de mejora se basa en computar la verosimilitud marginal
+    sobre $\theta$, la proporción de clases en la población de prueba, para
+    obtener la distribución {\it a posteriori\/} de $\theta$. Luego, para
+    obtener la predicción puntual se obtiene el máximo de la distribución. Es
+    decir, que al igual que el método {\it EMQ}, se busca maximizar la
+    verosimilitud, pero en este caso sin utilizar el algoritmo {\it EM\/} sino
+    de forma directa. Para obtener en cambio los intervalos, se proponen dos
+    opciones, la primera es usar la aproximación asintótica y la segunda es
+    construir una grilla para la distribución {\it a posteriori\/} de $\theta$.
+    Este método es bastante efectivo. Sin embargo, hay que tener en cuenta que
+    aquí se estima la proporción de clases en la población de prueba, y no en la
+    muestra de prueba.
+\end{itemize}
+
+~\citet{denham2021gain} propone un método que asume condiciones más generales de
+cambio en las distribuciones entre los datos de entrenamiento y de prueba, ya
+que no asume la tercera suposición mencionada anteriormente. El método que
+proponen tiene, sin embargo, peor desempeño cuando esa condición sí se cumple.
+No obstante, es interesante resaltar los dos métodos {\it baseline\/} que
+utilizan para comparar con su propuesta de mejora:
+
+\begin{itemize}
+    \item El primer {\it baseline\/} es también basado en {\it PB-PCC\/} y
+    similar al propuesto en Keith y O'Connor. La diferencia en este trabajo es
+    que en vez de usar la aproximación asintótica, computan la función de
+    distribución exacta mediante el método propuesto
+    por~\citet{hong2013computing}, que utiliza la transformada rápida de Fourier
+    ({\it FFT\/}) para hacerlo de forma eficiente. Este método sigue teniendo
+    los primeros dos problemas mencionados en~\ref{keith_item_uno}
+    y~\ref{keith_item_dos}.
+    \item El segundo {\it baseline\/} es muy similar a la propuesta de mejora de
+    Keith y O'Connor. La única diferencia es que usa el algoritmo de {\it EM\/}
+    en vez de hacer el cálculo directo para obtener el máximo de la distribución
+    {\it a posteriori}.
+\end{itemize}
+
+\section{Propuesta}
+
+Se propone un método para la elaboración de intervalos de predicción de la
+proporción de clases en muestras de prueba sin etiquetar, a partir de un
+conjunto de datos con etiquetas conocidas (conjunto de entrenamiento). Los pasos
+son:
+
+\begin{enumerate}
+    \item Ajustar un modelo de clasificación con los datos de entrenamiento
+    \item Aplicar un método de calibración al clasificador para crear buenos
+    estimadores de probabilidad para cada individuo.
+        \begin{itemize}
+            \item Se compararon todos los métodos de calibración mencionados en
+            la bibliografía, evaluados bajo el problema de cuantificación,
+            obteniendo los mejores resultados con los métodos propuestos
+            en~\citet{alexandari2020maximum}.
+        \end{itemize}
+    \item Aplicar el método de cuantificación de estimación puntual de
+    preferencia.\label{propuesta_item_tres}
+        \begin{itemize}
+            \item Se compararon los principales métodos mencionados en la
+            bibliografía, obteniendo los mejores resultados con los métodos de
+            {\it EMQ\/} y {\it PACC}.
+        \end{itemize}
+    \item Aplicar el paso de maximización de la esperanza propuesto
+    en~\citet{saerens2002adjusting} para ajustar las predicciones de
+    probabilidad de cada individuo en base a la predicción puntual de la
+    proporción de clases obtenidas con el método elegido
+    en~\ref{propuesta_item_tres}.
+    \item Aplicar el método propuesto por~\citet{hong2013computing} para obtener
+    la distribución exacta de la proporción de clases en la muestra de
+    prueba.\label{propuesta_item_cinco}
+    \item Utilizar la distribución obtenida en~\ref{propuesta_item_cinco} para
+    elaborar un intervalo de predicción exacto de la proporción de clases en la
+    muestra con el nivel que corresponda.
+\end{enumerate}
+
+Se presenta el método tanto de forma teórica como su evaluación empírica. Se
+elaboraron simulaciones para su evaluación y comparación con los métodos
+propuestos en Keith y O'Connor~\cite{keith2018uncertainty},
+en~\citet{denham2021gain} y con los intervalos obtenidos mediante {\it
+bootstrapping}.

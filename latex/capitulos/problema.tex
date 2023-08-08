@@ -1,0 +1,258 @@
+\chapter{Problema}
+
+\section{Introducción}
+
+En algunas aplicaciones vinculadas a la clasificación, el objetivo final no es
+determinar a qué clase (o clases) pertenecen las instancias individuales no
+etiquetadas, sino estimar la prevalencia (tambíen llamada ``frecuencia relativa'
+o ``probabilidad prior') de cada clase en los datos sin etiquetar. En los
+últimos años se ha señalado que, en estos casos, tiene sentido optimizar
+directamente algoritmos de aprendizaje automático para este objetivo, en lugar
+de simplemente optimizar clasificadores para etiquetar instancias individuales.
+
+La tarea de ajustar estimadores de prevalencia de clases a través del
+aprendizaje supervisado se conoce como ``aprender a cuantificar' o, más
+simplemente, cuantificar (término acuñado por~\citet{forman2005counting}, quien
+planteó el problema por primera vez). Se sabe que cuantificar mediante la
+clasificación cada instancia sin etiquetar a través de un clasificador estándar
+y luego contando las instancias que han sido asignadas a cada clase (el método
+{\it Classify \& Count\/}) generalmente conduce a estimadores de prevalencia de
+clases sesgados, es decir, obtienen poca precisión en la cuantificación. Como
+resultado, se han desarrollado métodos que abordan la cuantificación como una
+tarea en sí.
+
+Para ver la importancia de diferenciar el problema de cuantificación del de
+clasificación, veamos dos ejemplos. En el primero, una empresa que ofrece un
+servicio a sus clientes realiza una encuesta con varias preguntas para
+determinar el grado de satisfacción de cada persona. El objetivo de le empresa
+es determinar aquellos clientes que podrían no estar conformes con el servicio y
+ofrecerles una mejora en las condiciones para retenerlos. En el segundo ejemplo,
+una consultora analiza tweets para estimar el grado de aprobación de candidatos
+políticos. Aquí, la consultora no está interesado en predecir si un individuo
+específico está a favor o en contra, sino en cuántos encuestados, del número
+total de encuestados, aprueban al candidato, es decir, en conocer la prevalencia
+de la clase positiva.
+
+Mientras en el primer escenario el interés es a nivel individual, en el último,
+el nivel agregado es lo que importa; en otras palabras, en el primer escenario
+la clasificación es el objetivo, mientras que en el segundo el verdadero
+objetivo es la cuantificación. De hecho, en la mayoría de las aplicaciones las
+predicciones que interesan no son a nivel individual sino a nivel colectivo;
+ejemplos de tales campos son la investigación de mercado, la ciencia política,
+las ciencias sociales, modelado ecológico y epidemiología.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[t]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{../plots_teoria/intro_scatterplot.png}
+        \caption{Clasificación}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{../plots_teoria/intro_barplot.png}
+        \caption{Cuantificación}
+    \end{subfigure}
+    \caption{En la clasificación, la predicción es a nivel individual, mientras
+    que en la cuantificación es a nivel agregado.}\label{fig:intro}
+\end{figure}
+
+La literatura sobre métodos relacionados con cuantificación está un tanto
+desconectada. Algunos de los métodos que pueden usarse como cuantificadores han
+sido ideados para otros fines, principalmente para mejorar la precisión en
+clasificación cuando cambia el dominio. El desempeño de este último grupo ha
+sido normalmente estudiado solo en términos de mejora en las tareas de
+clasificación pero no como cuantificadores. Dado este escenario, y debido a la
+variedad de campos en los que ha surgido como una necesidad de aplicación, los
+algoritmos que se pueden aplicar para tareas de cuantificación aparecen en
+artículos que usan diferentes palabras clave y nombres, como {\it
+counting\/}~\cite{lewis1995evaluating}, {\it prior probability
+shift\/}~\cite{moreno2012unifying, storkey2009training}, {\it posterior
+probability estimation\/}~\cite{alaiz2011class}, {\it class prior
+estimation\/}~\cite{du2014class, chan2006estimating, zhang2010transfer}, {\it
+class prior change\/}~\cite{du2014semi}, {\it prevalence
+estimation\/}~\cite{barranquero2013study}, {\it class ratio
+estimation\/}~\cite{asoh2012fast} o {\it class distribution
+estimation\/}~\cite{gonzalez2013class, limsetto2011handling,
+xue2009quantification}, por citar solo algunos de ellos.
+
+\section{Tipos de Cuantificación}
+
+Aunque el estudio de la cuantificación se ha centrado principalmente en el
+dominio de clasificación, la cuantificación también aparece en otros tipos de
+problemas de aprendizaje automático, como la regresión, la clasificación
+ordinal, el aprendizaje sensible al costo y la cuantificación en redes.
+
+De manera similar a la regresión, aprender a cuantificar admite diferentes
+problemas de interés aplicativo, basados en cuántas clases contiene $Y$ y
+cuántas de las clases en $Y$ se pueden atribuir al mismo tiempo al mismo
+individuo. Así, los problemas de cuantificación se dividen de esta manera:
+
+\begin{enumerate}
+    \item Etiquetado simple {\it (Single-Label Quantification -SLQ-)\/}: cuando
+    cada individuo pertenece exactamente a una de las clases en
+    $Y=\{y_1,\dots,y_{|y|}\}$.
+    \item Etiquetado múltiple {\it (Multi-Label Quantification -MLQ-)\/}: cuando
+    cada individuo puede pertenecer a cualquier número de clases (cero, una o
+    varias) en $Y=\{y_1,\dots,y_{|y|}\}$.
+    \item Cuantificación Binaria {\it (Binary Quantification -BQ-)\/}:
+    \begin{enumerate}
+        \item en {\it SQL\/} con $|y|=2$, (en este caso $y=\{y_1,y_2\}$, y cada
+        individuo pertenece a $y_1$ o $y_2$)
+        \item en {\it MLQ\/} con $|y|=1$, (en este caso $y=\{y\}$, y cada
+        individuo pertenece o no a $y$)
+    \end{enumerate}
+    \item Cuantificación Ordinal {\it (Ordinal Quantification -OQ-)\/}: cuando
+    existe un orden $y_1 \prec \dots \prec y|y|$ en $Y=\{y_1,\dots,y_{|y|}\}$.
+    \item Cuantificación de Regresión {\it (Regression Quantification -RQ-)\/}:
+    cuando no hay un conjunto de clases involucradas, sino que cada individuo
+    está etiquetado con una puntuación de valor real y la cuantificación
+    equivale a estimar la fracción de ítems cuya puntuación está en un intervalo
+    dado $[a, b]$ con ${a, b \in \mathbb{R}^d}$.
+\end{enumerate}
+
+\section{Cambios en las distribuciones de los datos}
+
+En lo últimos años ha habido un interés creciente en las aplicaciones que
+presentan cambios en las distribuciones de datos (conocido en la blibliografía
+por su término en inglés {\it dataset shift\/}). Estos problemas comparten el
+hecho de que la distribución de los datos utilizados para entrenar es diferente
+a la de los datos que se usan para predecir. Al igual que para el área de la
+cuantificación, aquí también la literatura sobre el tema está dispersa y
+diferentes autores usan diferentes nombres para referirse a los mismos
+conceptos, o usan el mismo nombre para diferentes conceptos.
+
+Teniendo en cuenta que en los problemas de clasificación tenemos:
+
+\begin{itemize}
+    \item Un conjunto de características o covariables $\mathbf{X}$.
+    \item Una variable de respuesta $Y$.
+    \item Una distribución conjunta $P(Y,\mathbf{X})$.
+\end{itemize}
+
+La probabilidad conjunta $P(Y,\mathbf{X})$ puede luego se puede escribir como
+$P(Y|\mathbf{X})P(\mathbf{X})$ o como $P(\mathbf{X}|Y)P(Y)$. Por otro lado,
+cuando usamos los términos de entrenamiento ({\it train\/}) y prueba ({\it
+test\/}), nos referimos a las datos disponibles para entrenar al clasificador y
+los datos presentes en el entorno en el que se implementará el clasificador,
+respectivamente. Las distribuciones de datos en entrenamiento y prueba se
+indican como $P_{tr}$ y $P_{tst}$.
+
+El {\it dataset shift\/} aparece cuando las distribuciones conjuntas de
+entrenamiento y de prueba son diferentes, es decir, cuando $P_{tr}(Y,\mathbf{X})
+\neq P_{tst}(Y,\mathbf{X})$.~\citet{moreno2012unifying} distingue las distintas
+variantes del dataset shift según qué elementos mencionados anteriormente
+cambian:
+
+\begin{itemize}
+    \item {\it Covariate shift}, cuando $P_{tr}(Y|\mathbf{X}) =
+    P_{tst}(Y|\mathbf{X})$ y $P_{tr}(\mathbf{X}) \neq P_{tst}(\mathbf{X})$
+    \item {\it Prior probability shift}, cuando $P_{tr}(\mathbf{X}|Y) =
+    P_{tst}(\mathbf{X}|Y)$ y $P_{tr}(Y) \neq P_{tst}(Y)$
+    \item {\it Concept shift}, cuando $P_{tr}(Y|\mathbf{X}) \neq
+    P_{tst}(Y|\mathbf{X})$ y $P_{tr}(\mathbf{X}) = P_{tst}(\mathbf{X})$ o
+    $P_{tr}(\mathbf{X}|Y) \neq P_{tst}(\mathbf{X}|Y)$ y $P_{tr}(Y) = P_{tst}(Y)$
+\end{itemize}
+
+Otros tipos de dataset shift surgen cuando $P_{tr}(Y|\mathbf{X}) \neq
+P_{tst}(Y|\mathbf{X})$ y $P_{tr}(\mathbf{X}) \neq P_{tst}(\mathbf{X})$ y cuando
+$P_{tr}(\mathbf{X}|Y) \neq P_{tst}(\mathbf{X}|Y)$ y $P_{tr}(Y) \neq P_{tst}(Y)$.
+Sin embargo, estos tipos de cambios no se consideran generalmente en la
+literatura ya que aparecen mucho más raramente, o incluso porque son dificiles o
+imposibles de resolver.
+
+Está claro que el problema de cuantificación se trata de un caso donde
+$P_{tr}(Y) \neq P_{tst}(Y)$, o donde $P_{tr}(Y)$ es desconocido, ya que sino el
+problema sería trivial. Además, la mayoría de los métodos de cuantificación
+propuestos asumen que $P_{tr}(\mathbf{X}|Y) = P_{tst}(\mathbf{X}|Y)$, por lo que
+estarían dentro de los casos de {\it prior probability shift}.
+
+Por otro lado, en la mayoría de los casos el objetivo final de la implementación
+es estimar algún parámetro de $P_{tst}(Y)$. Por ejemplo, como ya mencionamos
+anteriormente, en la cuantificación binaria, se desea estimar $\theta:=
+\mathbb{P}(Y=1|S=0)$. Es decir, en la cuantificación la tarea indirectamente
+suele ser aprender a aproximar una distribución desconocida (observando sólo
+características de una muestra) mediante una distribución conocida. En
+consecuencia, prácticamente todas las medidas de evaluación para la
+cuantificación son divergencias, es decir, medidas de cómo una distribución
+pronosticada {\it diverge\/} de la distribución real.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../plots_teoria/cambios_train_scatterplot.png}
+        \caption{Muestra de entrenamiento}\label{cambios:datos_tr}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../plots_teoria/cambios_train_barplot.png}
+        \caption{Prevalencia de clases en muestra de
+        entrenamiento}\label{cambios:prevalencia_tr}
+    \end{subfigure}
+    \medskip
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../plots_teoria/cambios_test_scatterplot.png}
+        \caption{Clasificación en muestra de
+        evaluación}\label{cambios:clasificacion_tst}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../plots_teoria/cambios_test_barplot.png}
+        \caption{Prevalencia de clases y cuantificación en muestra de
+        evaluación}\label{cambios:cuantificacion_tst}
+    \end{subfigure}
+    \caption{El {\it prior probability shift\/} propio de los problemas de
+    cuantificación puede hacer que los métodos simples de cuantificación, como
+    {\it CC}, tengan grandes errores.}
+\end{figure}
+
+\section{El problema de clasificar y contar}
+
+En ausencia de métodos para estimar los valores de prevalencia de clase de forma
+directa, el primer método que suele pensarse para hacerlo es {\it Classify \&
+Count}, es decir, clasificar cada individuo sin etiquetar y estimar los valores
+de prevalencia de clase contando los individuos que fueron asignados a cada
+clase. Sin embargo, esta estrategia es subóptima: mientras que un clasificador
+perfecto es también es un cuantificador perfecto, un buen clasificador puede ser
+un mal cuantificador. Para ver esto, se puede ver la definición de F1, una
+función de evaluación estándar para la clasificación binaria, que se define
+como:
+
+\begin{equation}
+    \text{F1} = \frac{2\text{TP}}{2\text{TP}+\text{FP}+\text{FN}}
+\end{equation}
+
+donde TP, FP, FN indican el número de verdaderos positivos, falsos positivos y
+falsos negativos, respectivamente. Un buen clasificador puede ser un mal
+cuantificador ya que F1 considera buenos aquellos clasificadores que mantienen
+la suma $\text{FP}+\text{FN}$ al mínimo; sin embargo, el objetivo de un
+algoritmo de cuantificación debe ser mantener al mínimo $|\text{FP}-\text{FN}|$.
+
+Incluso un buen clasificador puede estar sesgado, es decir, puede mantener sus
+falsos positivos al mínimo sólo a expensas de una cantidad sustancialmente mayor
+de falsos negativos (o viceversa); si este es el caso, el clasificador es un mal
+cuantificador. Este fenómeno no es infrecuente, especialmente en presencia de
+datos desbalanceados. En tales casos, los algoritmos que minimizan las funciones
+de pérdida de clasificacion ({\it Hamming}, {\it hinge}, etc) suelen generar
+clasificadores con tendencia a elegir la clase mayoritaria, lo que implica un
+número mucho mayor de falsos positivos que de falsos negativos para la clase
+mayoritaria, lo que significa a su vez que tal algoritmo tenderá a subestimar
+las clases minoritarias.
+
+Los argumentos anteriores indican que no se debe considerar la cuantificación
+como un mero subproducto de la clasificación, y debe estudiarse y resolverse
+como una tarea en sí misma. Hay al menos otros dos argumentos que apoyan esta
+idea. Uno es que las funciones que se utilizan para evaluar la clasificación no
+se pueden utilizar para evaluar la cuantificación, ya que estas funciones miden,
+en general, cuántos individuos han sido mal clasificados, y no cuánto difiere la
+prevalencia de clase estimada del valor real. Esto significa que los algoritmos
+que minimizan estas funciones están optimizados para la clasificación, y no para
+la cuantificación. Un segundo argumento presentado por
+~\citet{forman2008quantifying} es que los métodos diseñados específicamente para
+cuantificar requieren menos datos de entrenamiento para alcanzar la misma
+precisión de cuantificación que los métodos estándar basados en {\it CC}. Si
+bien esta observación es de naturaleza empírica, también existen argumentos
+teóricos que sustentan este hecho~\cite{vapnik1999overview}.

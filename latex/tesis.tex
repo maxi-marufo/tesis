@@ -1,0 +1,62 @@
+\documentclass[a4paper, twoside, 11pt, spanish]{book}
+
+%% Paquetes
+\usepackage[es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{color, graphicx, rotating, subcaption}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{hyperref, url}
+\usepackage[font=small, labelfont=bf]{caption}
+\usepackage{enumerate, enumitem}
+\usepackage{tabularx}
+\usepackage{ctable}
+\usepackage{multicol}
+
+\usepackage[square,numbers]{natbib}
+
+\renewcommand{\baselinestretch}{1.2} % interlineado
+\decimalpoint{} % cambia coma por punto
+
+%% Bibliografia
+\bibliographystyle{unsrtnat}
+\addto{\captionsspanish}{\renewcommand{\bibname}{Referencias}}
+
+%% Tablas
+\renewcommand{\tablename}{Tabla}
+\renewcommand{\contentsname}{Índice}
+
+% Encabezados y pies de pagina solo con numero de pagina
+\pagestyle{plain}
+
+\begin{document}
+ 
+\frontmatter
+
+% Caratula
+\newgeometry{top=5cm,bottom=2cm,left=3cm,right=3cm}
+\include{caratula}
+
+\cleardoublepage{}
+
+% INDICE
+\tableofcontents 
+
+% Restauro los margenes originales
+\restoregeometry{}
+
+% CUERPO PRINCIPAL
+\mainmatter{}
+
+\renewcommand{\baselinestretch}{1.5} % interlineado
+
+\include{capitulos/introduccion}
+\include{capitulos/problema}
+\include{capitulos/evaluacion}
+\include{capitulos/puntual}
+\include{capitulos/intervalos}
+\include{capitulos/propuesta}
+\include{capitulos/resultados}
+
+\bibliography{references}
+
+\end{document}
