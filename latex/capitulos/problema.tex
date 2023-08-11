@@ -256,3 +256,42 @@ cuantificar requieren menos datos de entrenamiento para alcanzar la misma
 precisión de cuantificación que los métodos estándar basados en {\it CC}. Si
 bien esta observación es de naturaleza empírica, también existen argumentos
 teóricos que sustentan este hecho~\cite{vapnik1999overview}.
+
+\section{Cuantificadores como suplementos en clasificación}
+
+Debido a los problemas mencionados anteriormente de los clasificadores frente a
+cambios en las distribuciones de los datos y frente a datos desbalanceados, los
+algoritmos de cuantificación están cada vez más frecuentemente también siendo
+usados en tareas que requieren predicciones individuales. Los mismos se emplean
+como suplemento de clasificadores para suplir sus defectos frente a estos
+problemas, ya que en algunos casos no sólo predicen los valores agregados, sino
+que también mejoran las predicciones a nivel individual.
+
+Por ejemplo, el {\it prior probability shift\/} puede hacer que los
+clasificadores performen de manera subóptima. En el caso del clasificador óptimo
+de Bayes, dado por:
+
+\begin{equation}
+    h(\textbf{x}) = \argmax_{y} p(y|\textbf{x}) = \argmax_{y} \frac{p(\textbf{x}|y)p(y)}{p(\textbf{x})}
+\end{equation}\label{bayes}
+
+la decisión del clasificador depende de $p(y)$, que es estimado con el dataset
+de entrenamiento, es decir, con $p(y) = p_{tr}(y)$. Es decir, que en caso de
+$P_{tr}(Y) \neq P_{tst}(Y)$, la decisión final del clasificador puede verse
+afectada negativamente. Para mejorar el rendimiento del clasificador frente a
+estos casos, en~\ref{bayes} se debería usar $p_{tst}(y)$ en vez de $p_{tr}(y)$.
+Pero como $p_{tst}(y)$ es generalmente desconocido, se puede usar un método de
+cuantificación para estimarlo~\cite{saerens2002adjusting, alaiz2011class,
+zhang2010transfer, xue2009quantification}.
+
+Los métodos de cuantificación pueden usarse no sólo para mejorar el rendimiento
+general de un clasificador, sino también para mejorar su equidad o {\it
+fairness}~\cite{biswas2021ensuring}, es decir, su posibilidad de predecir
+resultados independientes de un cierto conjunto de variables que consideramos
+sensibles y no relacionadas con él (e.j.:~género, etnia, orientación sexual,
+etc.). Por ejemplo, suponiendo que una variable $S$ debe considerarse sensible,
+se puede estimar $P_{tr}(Y|S)$. Luego, si los datos de entrenamiento están
+sesgados, por ejemplo, con $P_{tr}(Y=1|S=1) \gg P_{tr}(Y=1|S=0)$, pero se sabe
+que en las muestras a inferir esto no es así, se puede optimizar el modelo de
+clasificación imponiento alguna penalidad basada en la estimación de
+$P_{tst}(Y|S)$, siendo esta última obtenido por un cuantificador.
