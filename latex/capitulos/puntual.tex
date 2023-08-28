@@ -16,12 +16,18 @@ de cuantificación “holísticamente”, es decir, sin clasificar a los individ
 La idea de esta tésis no es la de mostrar todos los métodos propuestos hasta la
 actualidad, sino la de mencionar a continuación los métodos más populares.
 
-\section{Métodos Agregativos}
+\section{Métodos Agregativos}\label{puntual:agregativos}
+
+\subsection{Con clasificadores generales}
 
 Dentro de los métodos agregativos, algunos de ellos requieren como entrada las
 etiquetas de clases predichas (es decir, clasificacores duros), mientras que
 otros requieren como entrada las probabilidades {\it a posteriori\/} de
-pertenencia a cada clase (es decir, clasificacores blandos).
+pertenencia a cada clase (es decir, clasificacores blandos)\footnote{Los
+clasificadores blandos se pueden convertir en duros usando umbrales de
+clasificación}. En estos últimos, además, las probabilidades {\it a
+posteriori\/} deben estar calibradas (para mayor información sobre calibración
+consultar el Apéndice~\ref{appendix:calibracion}).
 
 \subsection{Con clasificadores generales}
 
