@@ -135,7 +135,9 @@ cuando usamos los términos de entrenamiento ({\it train\/}) y prueba ({\it
 test\/}), nos referimos a las datos disponibles para entrenar al clasificador y
 los datos presentes en el entorno en el que se implementará el clasificador,
 respectivamente. Las distribuciones de datos en entrenamiento y prueba se
-indican como $P_{tr}$ y $P_{tst}$.
+indican como $P_{tr}$ y $P_{tst}$ (es decir, separamos los datos en dos
+distribuciones distintas, condicionando a la vaiable $S$ definida
+en~\ref{introduccion:marco_teorico}).
 
 El {\it dataset shift\/} aparece cuando las distribuciones conjuntas de
 entrenamiento y de prueba son diferentes, es decir, cuando $P_{tr}(Y,\mathbf{X})
