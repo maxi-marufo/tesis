@@ -96,7 +96,7 @@ individuo. Así, los problemas de cuantificación se dividen de esta manera:
     varias) en $Y=\{y_1,\dots,y_{|y|}\}$.
     \item Cuantificación Binaria {\it (Binary Quantification -BQ-)\/}:
     \begin{enumerate}
-        \item en {\it SQL\/} con $|y|=2$, (en este caso $y=\{y_1,y_2\}$, y cada
+        \item en {\it SLQ\/} con $|y|=2$, (en este caso $y=\{y_1,y_2\}$, y cada
         individuo pertenece a $y_1$ o $y_2$)
         \item en {\it MLQ\/} con $|y|=1$, (en este caso $y=\{y\}$, y cada
         individuo pertenece o no a $y$)
@@ -174,7 +174,7 @@ suele ser aprender a aproximar una distribución desconocida (observando sólo
 características de una muestra) mediante una distribución conocida. En
 consecuencia, prácticamente todas las medidas de evaluación para la
 cuantificación son divergencias, es decir, medidas de cómo una distribución
-pronosticada {\it diverge\/} de la distribución real.
+pronosticada difiere de la distribución real.
 
 \begin{figure}[h]
     \centering
@@ -217,23 +217,79 @@ Count}, es decir, clasificar cada individuo sin etiquetar y estimar los valores
 de prevalencia de clase contando los individuos que fueron asignados a cada
 clase. Sin embargo, esta estrategia es subóptima: mientras que un clasificador
 perfecto es también es un cuantificador perfecto, un buen clasificador puede ser
-un mal cuantificador. Para ver esto, se puede ver la definición de F1, una
+un mal cuantificador. Para ver esto, se puede ver la definición de $F_1$, una
 función de evaluación estándar para la clasificación binaria, que se define
 como:
 
 \begin{equation}
-    \text{F1} = \frac{2\text{TP}}{2\text{TP}+\text{FP}+\text{FN}}
+    F_1 = \frac{2 \cdot tp}{2 \cdot tp + fp + fn}
 \end{equation}
 
-donde TP, FP, FN indican el número de verdaderos positivos, falsos positivos y
-falsos negativos, respectivamente. Un buen clasificador puede ser un mal
-cuantificador ya que F1 considera buenos aquellos clasificadores que mantienen
-la suma $\text{FP}+\text{FN}$ al mínimo; sin embargo, el objetivo de un
-algoritmo de cuantificación debe ser mantener al mínimo $|\text{FP}-\text{FN}|$.
+donde $tp$, $fp$, $fn$ indican el número de verdaderos positivos, falsos
+positivos y falsos negativos, respectivamente. Un buen clasificador puede ser un
+mal cuantificador ya que $F_1$ considera buenos aquellos clasificadores que
+mantienen la suma $fp + fn$ al mínimo; sin embargo, el objetivo de un algoritmo
+de cuantificación debe ser mantener al mínimo $|fp-fn|$.
 
-Incluso un buen clasificador puede estar sesgado, es decir, puede mantener sus
-falsos positivos al mínimo sólo a expensas de una cantidad sustancialmente mayor
-de falsos negativos (o viceversa); si este es el caso, el clasificador es un mal
+El análisis teórico de esta cuestión se basa en el supuesto de {\it prior
+probability shift\/}~\ref{problema:cambios}. Bajo tal supuesto, la estimación
+$\hat p$ obtenida por el enfoque {\it CC\/} depende sólo de las características
+del clasificador, definido (para el caso binario) por su tasa de verdaderos
+positivos ($tpr$), su tasa de falsos positivos ($fpr$) y de la prevalencia real
+($p$):
+
+\begin{equation}\label{ecuacion:cc}
+    \hat p(p) = p \cdot {tpr} + (1-p) \cdot {fpr}
+\end{equation}
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{../plots_teoria/cc_tpr_fpr.png}
+    \caption{La línea negra representa el cuantificador y clasificador perfecto,
+    respectivamente. Las otras líneas muestran las estimaciones teóricas de
+    $\hat p$ resultantes de aplicar la ecuación~\ref{ecuacion:cc}, y el {\it
+    accuracy\/} correspondiente al clasificador, según se varían los valores de
+    $tpr$ y $fpr$}\label{fig:cc_tpr_fpr}
+\end{figure}
+
+El mal desempeño de {\it CC\/} fue demostrado mediante el siguiente teorema
+por~\citeauthor{forman2008quantifying}:
+
+\begin{theorem}[Toerema de Forman]
+    \citep[p.169]{forman2008quantifying}\label{teorema:forman} Para un
+    clasificador imperfecto, el método {\it CC\/} subestimará la porporción
+    verdadera de ejemplos positivos $p$ en un conjunto de evaluación para
+    $p>p^*$, y sobreestimará para $p<p^*$, donde $p^*$ es la proporción
+    particular en la cual el método {\it CC\/} estima de forma correcta. Es
+    decir, el método {\it CC\/} estima exactamente $p^*$ para un conjunto de
+    evaluación con $p^*$ muestras positivas.
+\end{theorem}
+
+La demostración (ver todos los detalles en~\citep[p.170]{forman2008quantifying})
+supone que el cuantificador {\it CC\/} produce una predicción perfecta para una
+prevalencia concreta, llamada $p^*$, y estudia su comportamiento cuando la
+prevalencia cambia ligeramente. Suponiendo que $\hat p(p^*) = p^*$, cuando la
+prevalencia cambia en una cantidad $\Delta \neq 0, p^* + \Delta$, la estimación
+del método CC en tal caso será:
+
+\begin{align}
+\begin{split}
+    \hat p(p^* + \Delta) &= (p^* + \Delta) \cdot {tpr} + (1-(p^* + \Delta)) \cdot {fpr} \\
+    &= \hat p(p^*) + ({tpr} - {fpr}) \cdot \Delta \\
+    &= p^* + ({tpr} - {fpr}) \cdot \Delta
+\end{split}
+\end{align}
+
+La predicción del método {\it CC\/} será perfecta, $\hat p(p^* + \Delta) = (p^*
++ \Delta)$, sólo cuando el clasificador también es perfecto (${tpr} = 1$, ${fpr}
+= 0$ y por tanto ${tpr} - {fpr} = 1$). Pero en el caso habitual, en el cual el
+clasificador es imperfecto ($0 \leq {tpr} - \text {fpr} < 1$), cuando la
+prevalencia aumenta ($\Delta > 0$), {\it CC\/} la subestima ($\hat p < p^* +
+\Delta $), y cuando la prevalencia disminuye ($\Delta < 0$), {\it CC\/} la
+sobreestima ($\hat p > p^* + \Delta $).
+
+Un buen clasificador puede estar sesgado, es decir, puede mantener sus falsos
+positivos al mínimo sólo a expensas de una cantidad sustancialmente mayor de
+falsos negativos (o viceversa); si este es el caso, el clasificador es un mal
 cuantificador. Este fenómeno no es infrecuente, especialmente en presencia de
 datos desbalanceados. En tales casos, los algoritmos que minimizan las funciones
 de pérdida de clasificacion ({\it Hamming}, {\it hinge}, etc) suelen generar
