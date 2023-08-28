@@ -134,6 +134,59 @@ comportamiento de {\it PCC\/} será similar al de {\it CC}, en cuanto a que ambo
 subestiman o sobreestiman la prevalencia verdadera cuando la distribución de
 clases cambia entre los datos de entrenamiento y de prueba.
 
+\subsubsection{Clasificar, Contar y Ajustar Probabilístico (PACC)}
+
+Presentado como {\it Probabilistic Adjusted Classify and Coun\/} o también como
+{\it Probabilistic Adjusted Count}, este método combina las ideas de {\it ACC\/}
+y de {\it PCC}. En este método también se usa un clasificador blando, y
+reemplzando entonces ambos lados de~\ref{ecuacion:acc_multiclase} con sus
+valores esperados:
+
+\begin{align}
+\begin{split}
+    \mathbb{E}[p_{U}^{s}(\hat y_j)] &= \mathbb{E}[\sum _{y_i\in {\mathcal {Y}}}{p^{s}_{U}(\hat y_j|y_i)p^{PACC}_U(y_i)}] \\
+    &= \sum _{y_i\in {\mathcal {Y}}}{\mathbb{E}[p^{s}_{U}(\hat y_j|y_i)p^{PACC}_U(y_i)]} \\
+    &= \sum _{y_i\in {\mathcal {Y}}}{\mathbb{E}[p^{s}_{U}(\hat y_j|y_i)]p^{PACC}_U(y_i)}
+\end{split}
+\end{align}
+
+Siendo nuestra incógnita $p^{PACC}_U(y_i)$ una constante, y donde:
+
+\begin{align}
+\begin{split}
+    \mathbb{E}[p_{U}^{s}(\hat y_j)] &= \frac{1}{|U|}\sum_{\mathbf{x} \in U}{p(y_j|\mathbf{x})} \\
+    &= \hat p^{PCC}_{U}(y_j) \\
+    \mathbb{E}[p^{s}_{U}(\hat y_j|y_i)] &= \frac{1}{|U_i|}\sum_{\mathbf{x} \in U_i}{p(y_j|\mathbf{x})}
+\end{split}
+\end{align}
+
+Como en {\it ACC}, una vez que el clasificador se ajustó con los datos de $U$,
+$\mathbb{E}[p_{U}^{s}(\hat y_j)]$ es observable, y $\mathbb{E}[p^{s}_{U}(\hat
+y_j|y_i)]$ puede ser estimado mediante validación cruzada, quedando nuevamente
+un sistema de ecuaciones lineales con $|Y|$ ecuaciones e $|Y|$ incógnitas.
+
+Para el caso particular binario, y relacionando con~\ref{ecuacion:acc_binaria},
+tenemos:
+
+\begin{equation}
+    \hat p^{PACC}_{U} = \frac{\hat p_0-fppa}{tppa-fppa}
+\end{equation}
+
+donde $tppa$ y $fppa$ ($pa$: {\it probability average\/}) son los dos parámetros
+propios del cuantificador a estimar usando los datos de $U$, y se calculan como:
+
+\begin{equation}
+    tppa = \frac{\sum _{i \in U_+}{P(y=1|x_i)}}{|U_+|}
+\end{equation}
+
+\begin{equation}
+    fppa = \frac{\sum _{i \in U_-}{P(y=1|x_i)}}{|U_-|}
+\end{equation}
+
+En este método hay que tener en cuenta ambas consideraciones sobre las
+estimaciones de $\hat p$ dentro del rango $[0, 1]$ y sobre la calibración
+mencionados en {\it ACC\/} y {\it PCC\/} respectivamente.
+
 \subsection{Con clasificadores específicos}
 
 \section{Métodos No Agregativos}
