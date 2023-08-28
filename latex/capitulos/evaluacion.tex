@@ -1,4 +1,4 @@
-\chapter{Métodos de Evaluación}
+\chapter{Métodos de Evaluación}\label{evaluacion}
 
 La evaluación de métodos de cuantificación es más compleja que en otros
 problemas. En aprendizaje supervisado, típicamente se mide el rendimiento
@@ -46,7 +46,7 @@ evaluación que se han propuesto son divergencias, es decir, medidas de cómo un
 distribución difiere de otra. No se desarrollarán en esta tésis métricas para
 {\it OQ}, ya que no son útiles para nuestro objeto de estudio.
 
-\section{Propiedades}
+\section{Propiedades}\label{evaluacion:propiedades}
 
 ~\citet{sebastiani2020evaluation} define una serie de propiedades interesantes
 para medidas de evaluación en {\it SLQ}. Un importante resultado de este
@@ -84,7 +84,7 @@ satisfechas por todas las métricas).
     en el caso de la {\it distancia coseno\/}).
 \end{itemize}
 
-\section{Métricas}
+\section{Métricas}\label{evaluacion:metricas}
 
 \subsection{Sesgo}
 
@@ -219,7 +219,7 @@ DKL ni NDKL cumplen con {\bf IMP}, {\bf REL} y {\bf ABS}, lo que hace que su uso
 como medidas de evaluación para cuantificación sea cuestionable, además de ser
 dificiles de interpretar.
 
-\section{Elección de la Métrica}
+\section{Elección de la Métrica}\label{evaluacion:eleccion}
 
 Es evidente que ninguna de las medidas propuestas hasta ahora es completamente
 satisfactoria. DKL y NDKL son los menos satisfactorios y parecen fuera de
@@ -245,7 +245,7 @@ clase afectada. Si se quiere penalizar mayormente errores atípicos, considerand
 mucho más graves a los errores cuanto mayor es la diferencia entre el valor real
 y el predicho, entonces SE es la métrica más conveniente.
 
-\section{Protocolos}
+\section{Protocolos}\label{evaluacion:protocolos}
 
 Mientras que en la clasificación, un conjunto de datos de tamaño $k$ proporciona
 $k$ puntos de evaluación, para la cuantificación, el mismo conjunto solo
