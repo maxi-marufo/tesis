@@ -1,0 +1,56 @@
+\chapter{Calibración}\label{appendix:calibracion} 
+
+En problemas de clasificación, el subproblema de la predicción de estimaciones
+de probabilidad representativas de las probabilidades verdaderas es conocido
+como calibración. En los sistemas del mundo real, los clasificadores no sólo
+deben ser precisos, sino que también deben indicar cuando es probable que sean
+incorrectos. Es decir, deben estimar su nivel de incertidumbre o confiabilidad.
+En otras palabras, las probabilidades asociadas con la etiquetas de clase
+predichas deben reflejar su verosimilitud real.
+
+Uno de los casos en donde se debe contemplar este problema es en la toma de
+decisiones (es decir, en casi toda aplicación real). Por ejemplo, en sistemas
+utilizados para la salud, un diagóstico con un bajo nivel de confianza puede
+significar realizar otro tipo de chequeo. A su vez, las estimaciones de
+probabilidad, pueden ser utilizadas para ser incorporadas en otro modelo
+probabilístico. Por ejemplo, se podrían combinar distintas salidas de distintos
+modelos de forma ponderada para obtener una predicción más robusta frente los
+casos en donde cada modelo individual falla.
+
+La mayoría de los métodos de aprendizaje supervisado producen clasificadores que
+generan puntuaciones $s(x)$ que se pueden utilizar para ranquear los ejemplos en
+el conjunto de pruebas de la etiqueta más probable a la menos probable de una
+clase $c$. Es decir, para dos ejemplos $x_1$ y $x_2$, si $s(x_1) < s(x_2)$
+entonces $P(c|x) < P(c|y)$. Sin embargo, la clasificación según el rango de la
+probabilidad de pertenencia a una clase no es suficiente. Lo que se necesita es
+una estimación precisa de la probabilidad de que cada ejemplo de prueba sea un
+miembro de la clase de interés.
+
+El modelo de regresión logística es un caso especial ya que está bien calibrado
+por diseño dado que su función objetivo minimiza la función de pérdida
+logarítmica o {\it log-loss\/}~\cite{morrison2013tutorial}. Sin  embargo, si no
+se cuenta con un conjunto de entrenamiento lo suficientemente grande, es posible
+que el modelo no tenga suficiente información para calibrar las probabilidades.
+
+Otros modelos, en cambio, no presentan esta propiedad (por ejemplo, los
+clasificadores de Naive Bayes, Random Forest o redes
+neuronales~\cite{zadrozny2002transforming, niculescu2005predicting,
+guo2017calibration}). Incluso, hay modelos que no devuelven probabilidades {\it
+a posteriori}, sino genéricas puntuaciones de confianza, como es el caso de
+SVM~\cite{platt1999probabilistic}. En estos dos últimos casos es posible mapear
+las salidas de los clasificadores a probabilidades {\it a posteriori\/}
+calibradas a través de algunos método de
+calibración~\cite{platt1999probabilistic, zadrozny2002transforming,
+niculescu2005predicting, guo2017calibration}.
+
+\section{Definición}
+
+\section{Diagramas de confiabilidad}
+
+\section{Métodos de Evaluación}
+
+\section{Métodos de Calibración}
+
+\subsection{Modelos Binarios}
+
+\subsection{Modelos Multiclase}
