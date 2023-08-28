@@ -110,6 +110,30 @@ Luego, $p^{ACC}_U(y_i)$, nuestras incógnitas (una por cada $y_i \in Y$), pueden
 calcularse mediante un sistema de ecuaciones lineales con $|Y|$ ecuaciones e
 $|Y|$ incógnitas.
 
+\subsubsection{Clasificar y Contar Probabilístico (PCC)}
+
+Este método, conocido en inglés como {\it Probabilistic Classify and
+Count\/}~\cite{bella2010quantification, tang2010network}, es una variante de
+{\it CC\/} que utiliza un clasificador blando en vez de uno duro. Es decir, que
+la salida del clasificador será una probabilidad {\it a posteriori\/} (asumiendo
+que esté calibrado -ver~\ref{appendix:calibracion}-) $p(y|\mathbf{x})$ por cada
+invididuo $\mathbf{x} \in U$ y por cada $y \in \mathcal{Y}$. El método consiste
+en estimar $\hat p_{U}(y)$ como el valor esperado de la proporción de items que
+se predijeron como pertenecisntes a $y$:
+
+\begin{equation}
+    \hat p^{PCC}_{U}(y) = \mathbb{E}[p_{U}^{s}(\hat y)] = \frac{1}{|U|}\sum_{\mathbf{x} \in U}{p(y|\mathbf{x})}
+\end{equation}
+
+Donde se uso $s$ para denotar y función de separación del clasificador blando.
+La intuición detrás de {\it PCC\/} es que las probabilidades {\it a
+posteriori\/} contienen mayor información que las decisiones de un clasificador
+duro y, por lo tanto, deberían ser usadas en su lugar. Sin
+embargo,~\citet[Corolario 6, p. 157 y p.163]{tasche2014exact} demuestra que el
+comportamiento de {\it PCC\/} será similar al de {\it CC}, en cuanto a que ambos
+subestiman o sobreestiman la prevalencia verdadera cuando la distribución de
+clases cambia entre los datos de entrenamiento y de prueba.
+
 \subsection{Con clasificadores específicos}
 
 \section{Métodos No Agregativos}
