@@ -58,6 +58,58 @@ perspectiva teórica como práctica, como lo
 hizo~\citeauthor{forman2008quantifying}, y como también ya lo hemos mencionado
 en~\ref{problema:clasificar_y_contar}.
 
+\subsubsection{Clasificar, Contar y Ajustar (ACC)}
+
+Conocido en inglés como {\it Adjusted Classify \& Count}, {\it Adjusted
+Count\/}~\cite{forman2008quantifying} o también como {\it Confusion Matrix
+Method\/}~\cite{saerens2002adjusting}, este método se basa en corregir las
+estimaciones de {\it CC\/} teniendo en cuenta la tendencia del clasificador a
+cometer errores de cierto tipo. Un modelo {\it ACC\/} está compuesto por dos
+elementos: un clasificador duro (como en {\it CC\/}) y de las estimaciones de
+$tpr$ y $fpr$. Dichas estimaciones pueden obtenerse usando validación cruzada o
+{\it cross-validation\/} o un conjunto de validación aparte. Luego, en la fase
+de predicción, el modelo obtiene una primera estimación $\hat p_0$ de la misma
+forma que en {\it CC}, que, para el caso binario, luego es ajustado aplicando la
+siguiente fórmula\footnote{A veces, esta expresión conduce a un valor inválido
+de $\hat p$ que debe recortarse en el rango $[0, 1]$ en un último paso.}:
+
+\begin{equation}
+    \hat p^{ACC}_{U} = \frac{\hat p_0-fpr}{tpr-fpr}\label{ecuacion:acc_binaria}
+\end{equation}
+
+Esta expresión se obtiene despejando la verdadera prevalencia $p$ de la
+ecuación~\ref{ecuacion:cc}. La prevalencia ajustada $\hat p$ depende entonces de
+la estimación $\hat p_0$ dada por {\it CC\/} y de $tpr$ y $fpr$. Pero como $tpr$
+y $fpr$ son desconocidas generalmente, se utilizan estimaciones.
+
+El método {\it ACC\/} es teóricamente perfecto, independientemente de la métrica
+de {\it accuracy\/} obtenida con el clasificador, cuando se cumple el supuesto
+de {\it prior probability shift\/}~\ref{problema:cambios} y cuando las
+estimaciones de $tpr$ y $fpr$ son perfectas. Desafortunadamente, es raro que se
+cumplan ambas condiciones en aplicaciones del mundo real: $P(\mathbf{X}|Y)$
+puede tener variaciones entre los datos de entrenamiento y los de predicción, y
+es difícil obtener estimaciones perfectas para $tpr$ y $fpr$ en algunos dominios
+ya que suelen haber pequeñas muestras disponibles y/o están muy desequilibradas.
+Pero incluso en estos casos, el rendimiento del método {\it ACC\/} suele ser
+mejor que el de {\it CC}.
+
+Extendiendo~\ref{ecuacion:acc_binaria} para el caso multiclase, y utilizando el
+teorema de probabilidad total, se cumple que:
+
+\begin{equation}
+    p_{U}^{h}(\hat y_j) = \sum _{y_i\in {\mathcal {Y}}}{p^{h}_{U}(\hat y_j|y_i)p^{ACC}_U(y_i)}\label{ecuacion:acc_multiclase}
+\end{equation}
+
+En donde $p^{h}_{U}(\hat y_j|y_i)$ representa la proporción de datos en $U$ cuya
+clase verdadera es $y_i$ y fueron asignados por el clasificador $h$ a la clase
+$y_j$. La fracción de datos de $U$ que se asignaron a $y_j$, $p_{U}^{h}(\hat
+y_j)$, es observable, mientras que $p^{h}_{U}(\hat y_j|y_i)$ debe estimarse con
+$L$ mediante validación cruzada o con un conjunto de validación
+aparte~\cite{barranquero2013study, forman2005counting, forman2008quantifying}.
+Luego, $p^{ACC}_U(y_i)$, nuestras incógnitas (una por cada $y_i \in Y$), pueden
+calcularse mediante un sistema de ecuaciones lineales con $|Y|$ ecuaciones e
+$|Y|$ incógnitas.
+
 \subsection{Con clasificadores específicos}
 
 \section{Métodos No Agregativos}
