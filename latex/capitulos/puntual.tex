@@ -29,7 +29,34 @@ clasificación}. En estos últimos, además, las probabilidades {\it a
 posteriori\/} deben estar calibradas (para mayor información sobre calibración
 consultar el Apéndice~\ref{appendix:calibracion}).
 
-\subsection{Con clasificadores generales}
+\subsubsection{Clasificar y Contar (CC)}
+
+El método más sencillo y directo para construir un cuantificador para
+clasificación (tanto binaria como multiclase) es aplicar el enfoque {\it
+Classify \& Count\/}~\cite{forman2005counting}. {\it CC\/} juega un papel
+importante en la investigación de cuantificación ya que siempre se utiliza como
+el {\it baseline\/} que cualquier método de cuantificación razonable debe
+mejorar. Este método consiste simplemente en: (i) ajustar un clasificador duro,
+y luego (ii), utilizando dicho clasificador, clasificar las instancias de la
+muestra de prueba, contando la proporción de cada clase. Generalizando el
+estimador de {\it CC\/} para el caso multiclase, el mismo queda entonces
+definido por:
+
+\begin{equation}
+    \hat p^{CC}_{U}(y) = \frac{|\{\mathbf{x} \in U|h(\mathbf{x})=y\}|}{|U|}
+\end{equation}
+
+Donde se uso $U$ para denotar el conjunto de datos de evaluación (no
+etiquetados, o {\it unlabeled\/}) y $h$ para la función de decisión del
+clasificador duro.
+
+Es evidente que podemos obtener un cuantificador perfecto si el clasificador es
+también perfecto. El problema es que obtener un clasificador perfecto es casi
+imposible en aplicaciones reales, y luego el cuantificador hereda el sesgo del
+clasificador. Este aspecto se analiza en varios artículos tanto desde una
+perspectiva teórica como práctica, como lo
+hizo~\citeauthor{forman2008quantifying}, y como también ya lo hemos mencionado
+en~\ref{problema:clasificar_y_contar}.
 
 \subsection{Con clasificadores específicos}
 
