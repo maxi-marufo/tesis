@@ -256,16 +256,15 @@ tomado para tratar con este problema: el Protocolo de Prevalencia Natural ({\it
 NPP\/}) y el Protocolo de Prevalencia Artificial ({\it APP\/}).
 
 \begin{itemize}
-    \item {\it NPP\/}: Consiste en tomar un conjunto de prueba lo
-    suficientemente grande, dividirlo en un número de muestras de manera
-    uniformemente aleatoria, y llevar a cabo la evaluación individualmente en
-    cada muestra.
-    \item {\it APP\/}: Consiste en tomar un conjunto de datos, dividido en un
-    conjunto de entrenamiento $L$ y en un conjunto $U$ de elementos sin
-    etiquetar de manera uniformemente aleatoria, y realizar experimentos
-    repetidos en los que la prevalencia del conjunto de entrenamiento o la
-    prevalencia del conjunto de prueba de una clase se varía artificialmente a
-    través del submuestreo.
+    \item {\it NPP\/}: Consiste en, una vez entrenado un cuantificador, tomar un
+    conjunto de prueba (no observado en el entrenamiento) lo suficientemente
+    grande, dividirlo en un número de muestras de manera uniformemente
+    aleatoria, y llevar a cabo la evaluación individualmente en cada muestra.
+    \item {\it APP\/}: Consiste en, previo al entrenamiento, tomar un conjunto
+    de datos, dividirlo en un conjunto de entrenamiento y en un conjunto de
+    evaluación de manera aleatoria, y realizar experimentos repetidos en los que
+    la prevalencia del conjunto de entrenamiento o la prevalencia del conjunto
+    de prueba de una clase se varía artificialmente a través del submuestreo.
 \end{itemize}
 
 Ambos protocolos tienen diferentes pros y contras. Una ventaja de {\it APP\/} es
