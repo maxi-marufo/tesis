@@ -4,7 +4,7 @@
 
 La tarea de cuantificación (conocida en inglés como {\it quantification\/})
 consiste en proporcionar predicciones agregadas o resumen para conjuntos de
-datos en vez predicciones particulares sobre los datos individuales (por
+datos en vez de predicciones particulares sobre los datos individuales (por
 ejemplo, para el caso de clasificación, predecir la proporción de clases de un
 conjunto en vez de la clase de cada individuo), aplicando un modelo que se
 ajuste usando datos de entrenamiento cuya distribución puede ser distinta a la
@@ -27,29 +27,43 @@ favor contándolos y dividiéndolos por el total (este método es el más simple
 es conocido como {\it Classify \& Count\/} o {\it CC\/}).
 
 Si hablamos entonces de cuantificación binaria, se tiene que por cada muestra $i
-\in \{1,\dots,n\}$, $(\mathbf{X}_i,Y_i,S_i)$ es un vector de variables
-aleatorias tal que $\mathbf{X}_i \in \mathbb{R}^d$ son las características de la
-muestra, $Y_i \in \{1,0\}$ indica la clase a la que pertenece y $S_i \in
-\{1,0\}$ indica si fue etiquetada (y pertenece entonces al conjunto de
+\in \{1,\dots,n\}$, $(\boldsymbol{X}_i,Y_i,S_i)$ es un vector de variables
+aleatorias tal que $\boldsymbol{X}_i \in \mathbb{R}^d$ son las características
+de la muestra, $Y_i \in C$ con $C=\{1,0\}$ indica la clase a la que pertenece y
+$S_i \in \{1,0\}$ indica si fue etiquetada (y pertenece entonces al conjunto de
 entrenamiento) o no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable.
-En la cuantificación binaria, se desea estimar $\theta:= \mathbb{P}(Y=1|S=0)$,
-es decir, la prevalencia de etiquetas positivas entre muestras no etiquetadas.
-Esta prevalencia no se asume de ser la misma que en las muestras etiquetadas,
+En la cuantificación binaria, se desea estimar $\theta:=
+\mathbb{P}(Y=1|S=0)$\footnote{En cuantificación, se lo nombra generalmente como
+$p$ (o $p_1,\dots,p_{\#C}$ o $p(c)$ para el caso multiclase) en vez de $\theta$,
+por lo que en este trabajo también se usará esta nomenclatura.}, es decir, la
+prevalencia de etiquetas positivas entre muestras no etiquetadas. Esta
+prevalencia no se asume de ser la misma que en las muestras etiquetadas,
 $\mathbb{P}(Y=1|S=1)$. Además, el estimador de $\theta$ debe depender sólo de
 los datos disponibles, es decir, de las características de todas las muestras y
-de las etiquetas que fueron obtenidas. Los supuestos que se asumen
-son~\cite{vaz2019quantification}:
+de las etiquetas que fueron obtenidas. Los supuestos que se
+asumen~\cite{vaz2019quantification} son:
 
 \begin{itemize}
-  \item $(\mathbf{X}_1,Y_1,S_1) \dots (\mathbf{X}_n,Y_n,S_n)$ son independientes
+  \item $(\boldsymbol{X}_1,Y_1,S_1) \dots (\boldsymbol{X}_n,Y_n,S_n)$ son
+  independientes
   \item Por cada $s \in \{0,1\}$,
-  $(\mathbf{X}_1,Y_1)|S_1=s,\dots,(\mathbf{X}_n,Y_n)|S_n=s$ son idénticamente
-  distribuidas.
+  $(\boldsymbol{X}_1,Y_1)|S_1=s,\dots,(\boldsymbol{X}_n,Y_n)|S_n=s$ son
+  idénticamente distribuidas.
   \item Por cada $(y_1,\dots,y_n)\in{\{0,1\}}^n$,
-  $(\mathbf{X}_1,\dots,\mathbf{X}_n)$ es independiente de $(S_1,\dots,S_n)$
-  condicionado a $(Y_1,\dots,Y_n)=(y_1,\dots,y_n)$ 
+  $(\boldsymbol{X}_1,\dots,\boldsymbol{X}_n)$ es independiente de
+  $(S_1,\dots,S_n)$ condicionado a $(Y_1,\dots,Y_n)=(y_1,\dots,y_n)$
 \end{itemize}
 
+Usando la distribución de probabilidad conjunta, podemos factorizar usando las
+distribuciones condicionales:
+\begin{equation}
+    \mathbb{P}(\boldsymbol{X},Y,S)=\mathbb{P}(\boldsymbol{X}|Y,S)\mathbb{P}(Y|S)\mathbb{P}(S)
+\end{equation}
+Luego, usando el tercer supuesto mencionado, podemos
+hacer~\cite{moreno2012unifying}:
+\begin{equation}
+    \mathbb{P}(\boldsymbol{X},Y,S)=\mathbb{P}(\boldsymbol{X}|Y)\mathbb{P}(Y|S)\mathbb{P}(S)
+\end{equation}
 Si bien existen varios métodos propuestos para el aprendizaje de
 cuantificación~\cite{esuli2023learning, gonzalez2017review}, el mismo es todavía
 relativamente desconocido incluso para expertos en aprendizaje automático. La

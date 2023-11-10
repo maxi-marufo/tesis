@@ -41,14 +41,10 @@ y luego (ii), utilizando dicho clasificador, clasificar las instancias de la
 muestra de prueba, contando la proporción de cada clase. Generalizando el
 estimador de {\it CC\/} para el caso multiclase, el mismo queda entonces
 definido por:
-
 \begin{equation}
-    \hat p^{CC}_{U}(y) = \frac{|\{\mathbf{x} \in U|h(\mathbf{x})=y\}|}{|U|}
+    \hat p^{CC}_{tst}(c) = \frac{\#\{\boldsymbol{x} \in \boldsymbol{X}_{tst}|h(\boldsymbol{x})=c\}}{\#\boldsymbol{X}_{tst}}\label{ecuacion:cc}
 \end{equation}
-
-Donde se uso $U$ para denotar el conjunto de datos de evaluación (no
-etiquetados, o {\it unlabeled\/}) y $h$ para la función de decisión del
-clasificador duro.
+donde se uso $h$ para la función de decisión del clasificador duro.
 
 Es evidente que podemos obtener un cuantificador perfecto si el clasificador es
 también perfecto. El problema es que obtener un clasificador perfecto es casi
@@ -68,124 +64,106 @@ cometer errores de cierto tipo. Un modelo {\it ACC\/} está compuesto por dos
 elementos: un clasificador duro (como en {\it CC\/}) y de las estimaciones de
 $tpr$ y $fpr$. Dichas estimaciones pueden obtenerse usando validación cruzada o
 {\it cross-validation\/} o un conjunto de validación aparte. Luego, en la fase
-de predicción, el modelo obtiene una primera estimación $\hat p_0$ de la misma
+de predicción, el modelo obtiene una primera estimación $\hat p$ de la misma
 forma que en {\it CC}, que, para el caso binario, luego es ajustado aplicando la
 siguiente fórmula\footnote{A veces, esta expresión conduce a un valor inválido
-de $\hat p$ que debe recortarse en el rango $[0, 1]$ en un último paso.}:
-
+de $\hat p^{ACC}_{tst}$ que debe recortarse en el rango $[0, 1]$ en un último
+paso.}:
 \begin{equation}
-    \hat p^{ACC}_{U} = \frac{\hat p_0-fpr}{tpr-fpr}\label{ecuacion:acc_binaria}
+    \hat p^{ACC}_{tst}(c=1) = \frac{\hat p^{CC}_{tst}(c=1)-fpr}{tpr-fpr}\label{ecuacion:acc_binaria}
 \end{equation}
-
 Esta expresión se obtiene despejando la verdadera prevalencia $p$ de la
-ecuación~\ref{ecuacion:cc}. La prevalencia ajustada $\hat p$ depende entonces de
-la estimación $\hat p_0$ dada por {\it CC\/} y de $tpr$ y $fpr$. Pero como $tpr$
-y $fpr$ son desconocidas generalmente, se utilizan estimaciones.
+ecuación~\ref{ecuacion:cc}. La prevalencia ajustada $\hat p^{ACC}_{tst}(c)$
+depende entonces de la estimación $\hat p^{CC}_{tst}(c)$ dada por {\it CC\/} y
+de $tpr$ y $fpr$. Pero como $tpr$ y $fpr$ son desconocidas generalmente, se
+utilizan estimaciones.
 
 El método {\it ACC\/} es teóricamente perfecto, independientemente de la métrica
 de {\it accuracy\/} obtenida con el clasificador, cuando se cumple el supuesto
 de {\it prior probability shift\/}~\ref{problema:cambios} y cuando las
 estimaciones de $tpr$ y $fpr$ son perfectas. Desafortunadamente, es raro que se
-cumplan ambas condiciones en aplicaciones del mundo real: $P(\mathbf{X}|Y)$
-puede tener variaciones entre los datos de entrenamiento y los de predicción, y
-es difícil obtener estimaciones perfectas para $tpr$ y $fpr$ en algunos dominios
-ya que suelen haber pequeñas muestras disponibles y/o están muy desequilibradas.
-Pero incluso en estos casos, el rendimiento del método {\it ACC\/} suele ser
-mejor que el de {\it CC}.
+cumplan ambas condiciones en aplicaciones del mundo real:
+$\mathbb{P}(\boldsymbol{X}|Y)$ puede tener variaciones entre los datos de
+entrenamiento y los de predicción, y es difícil obtener estimaciones perfectas
+para $tpr$ y $fpr$ en algunos dominios ya que suelen haber pequeñas muestras
+disponibles y/o están muy desequilibradas. Pero incluso en estos casos, el
+rendimiento del método {\it ACC\/} suele ser mejor que el de {\it CC}.
 
-Extendiendo~\ref{ecuacion:acc_binaria} para el caso multiclase, y utilizando el
-teorema de probabilidad total, se cumple que:
-
-\begin{equation}
-    p_{U}^{h}(\hat y_j) = \sum _{y_i\in {\mathcal {Y}}}{p^{h}_{U}(\hat y_j|y_i)p^{ACC}_U(y_i)}\label{ecuacion:acc_multiclase}
-\end{equation}
-
-En donde $p^{h}_{U}(\hat y_j|y_i)$ representa la proporción de datos en $U$ cuya
-clase verdadera es $y_i$ y fueron asignados por el clasificador $h$ a la clase
-$y_j$. La fracción de datos de $U$ que se asignaron a $y_j$, $p_{U}^{h}(\hat
-y_j)$, es observable, mientras que $p^{h}_{U}(\hat y_j|y_i)$ debe estimarse con
-$L$ mediante validación cruzada o con un conjunto de validación
-aparte~\cite{barranquero2013study, forman2005counting, forman2008quantifying}.
-Luego, $p^{ACC}_U(y_i)$, nuestras incógnitas (una por cada $y_i \in Y$), pueden
-calcularse mediante un sistema de ecuaciones lineales con $|Y|$ ecuaciones e
-$|Y|$ incógnitas.
+Partiendo de~\ref{ecuacion:cc} y utilizando el teorema de probabilidad total,
+podemos extender~\ref{ecuacion:acc_binaria} para el caso multiclase:
+\begin{align}
+\begin{split}
+    \hat p^{CC}_{tst}(c=c_k) &= \mathbb{\hat P}_{tst}(h(\boldsymbol{x})=c_k) \\
+    &= \sum \limits_{j=1}^{\#C}{\mathbb{\hat P}(h(\boldsymbol{x})=c_k|y=c_j) \hat p^{ACC}_{tst}(c=c_j)}\label{ecuacion:acc_multiclase}
+\end{split}
+\end{align}
+donde $\hat p^{CC}_{tst}(c=c_k)$ es la fracción de datos de $tst$ que el
+clasificador $h$ asigna a $c_k$ (y por ende, es conocido), y $\mathbb{\hat
+P}(h(\boldsymbol{x})=c_k|y=c_j)$ es la estimación de probabilidad de que el
+clasificador $h$ asigne la clase $c_k$ a $\boldsymbol{x}$ cuando este pertenece
+a la clase $c_j$. Estas probabilidades, al igual que $tpr$ y $fpr$ en el caso
+binario, deben estimarse mediante validación cruzada o con un conjunto de
+validación aparte~\cite{barranquero2013study, forman2005counting,
+forman2008quantifying}. Luego, $\hat p^{ACC}_{tst}(c=c_j)$, nuestras incógnitas
+(una por cada $c_j$), pueden calcularse mediante un sistema de ecuaciones
+lineales con $\#C$ ecuaciones y $\#C$ incógnitas.
 
 \subsubsection{Clasificar y Contar Probabilístico (PCC)}
 
 Este método, conocido en inglés como {\it Probabilistic Classify and
 Count\/}~\cite{bella2010quantification, tang2010network}, es una variante de
 {\it CC\/} que utiliza un clasificador blando en vez de uno duro. Es decir, que
-la salida del clasificador será una probabilidad {\it a posteriori\/} (asumiendo
-que esté calibrado -ver~\ref{appendix:calibracion}-) $p(y|\mathbf{x})$ por cada
-invididuo $\mathbf{x} \in U$ y por cada $y \in \mathcal{Y}$. El método consiste
-en estimar $\hat p_{U}(y)$ como el valor esperado de la proporción de items que
-se predijeron como pertenecisntes a $y$:
-
-\begin{equation}
-    \hat p^{PCC}_{U}(y) = \mathbb{E}[p_{U}^{s}(\hat y)] = \frac{1}{|U|}\sum_{\mathbf{x} \in U}{p(y|\mathbf{x})}
-\end{equation}
-
-Donde se uso $s$ para denotar y función de separación del clasificador blando.
-La intuición detrás de {\it PCC\/} es que las probabilidades {\it a
-posteriori\/} contienen mayor información que las decisiones de un clasificador
-duro y, por lo tanto, deberían ser usadas en su lugar. Sin
-embargo,~\citet[Corolario 6, p. 157 y p.163]{tasche2014exact} demuestra que el
-comportamiento de {\it PCC\/} será similar al de {\it CC}, en cuanto a que ambos
-subestiman o sobreestiman la prevalencia verdadera cuando la distribución de
-clases cambia entre los datos de entrenamiento y de prueba.
+la salida del clasificador será una estimación de la probabilidad {\it a
+posteriori\/} $s(\boldsymbol{x}, y) = \hat
+p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)$ por cada invididuo $\boldsymbol{x} \in
+\mathbb{R}^d$ y cada $y \in C$. El método consiste en estimar las $\hat
+p_{tst}(c=c_j)$ mediante el valor esperado de la proporción de items que se
+predijeron como pertenecientes a cada clase $c_j$:
+\begin{align}
+\begin{split}
+    \hat p^{PCC}_{tst}(c=c_j) &= \mathbb{\hat E}[p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y=c_j)] \\
+    &= \frac{1}{m} \sum \limits_{i=1}^{m}{\hat p_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_j)} \\
+    &= \frac{1}{m} \sum \limits_{i=1}^{m}{s(\boldsymbol{x}_i, y=c_j)}
+\end{split}
+\end{align}
+con $m=\#\boldsymbol{X}_{tst}$. La intuición detrás de {\it PCC\/} es que las
+probabilidades {\it a posteriori\/} contienen mayor información que las
+decisiones de un clasificador duro y, por lo tanto, deberían ser usadas en su
+lugar. Sin embargo,~\citet[Corolario 6, p. 157 y p.163]{tasche2014exact}
+demuestra que el comportamiento de {\it PCC\/} será similar al de {\it CC}, en
+cuanto a que ambos subestiman o sobreestiman la prevalencia verdadera cuando la
+distribución de clases cambia entre los datos de entrenamiento y de prueba.
 
 \subsubsection{Clasificar, Contar y Ajustar Probabilístico (PACC)}
 
-Presentado como {\it Probabilistic Adjusted Classify and Coun\/} o también como
+Presentado como {\it Probabilistic Adjusted Classify and Count\/} o también como
 {\it Probabilistic Adjusted Count}, este método combina las ideas de {\it ACC\/}
-y de {\it PCC}. En este método también se usa un clasificador blando, y
-reemplzando entonces ambos lados de~\ref{ecuacion:acc_multiclase} con sus
-valores esperados:
-
+y de {\it PCC}.
 \begin{align}
 \begin{split}
-    \mathbb{E}[p_{U}^{s}(\hat y_j)] &= \mathbb{E}[\sum _{y_i\in {\mathcal {Y}}}{p^{s}_{U}(\hat y_j|y_i)p^{PACC}_U(y_i)}] \\
-    &= \sum _{y_i\in {\mathcal {Y}}}{\mathbb{E}[p^{s}_{U}(\hat y_j|y_i)p^{PACC}_U(y_i)]} \\
-    &= \sum _{y_i\in {\mathcal {Y}}}{\mathbb{E}[p^{s}_{U}(\hat y_j|y_i)]p^{PACC}_U(y_i)}
+    \hat p^{PCC}_{tst}(c=c_k) &= \mathbb{\hat E}[\mathbb{P}_{tst}(h(\boldsymbol{x})=c_k)] \\
+    &= \mathbb{\hat E}[\sum \limits_{j=1}^{\#C}{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j) p^{PACC}_{tst}(c=c_j)}] \\
+    &= \sum \limits_{j=1}^{\#C}\mathbb{\hat E}[{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j) p^{PACC}_{tst}(c=c_j)}] \\
+    &= \sum \limits_{j=1}^{\#C}\mathbb{\hat E}[{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j)}] \hat p^{PACC}_{tst}(c=c_j) \\
+    &= \sum \limits_{j=1}^{\#C} [\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j} \mathbb{\hat P}(h(\boldsymbol{x})=c_k)] \hat p^{PACC}_{tst}(c=c_j)
 \end{split}
 \end{align}
-
-Siendo nuestra incógnita $p^{PACC}_U(y_i)$ una constante, y donde:
-
-\begin{align}
-\begin{split}
-    \mathbb{E}[p_{U}^{s}(\hat y_j)] &= \frac{1}{|U|}\sum_{\mathbf{x} \in U}{p(y_j|\mathbf{x})} \\
-    &= \hat p^{PCC}_{U}(y_j) \\
-    \mathbb{E}[p^{s}_{U}(\hat y_j|y_i)] &= \frac{1}{|U_i|}\sum_{\mathbf{x} \in U_i}{p(y_j|\mathbf{x})}
-\end{split}
-\end{align}
-
-Como en {\it ACC}, una vez que el clasificador se ajustó con los datos de $U$,
-$\mathbb{E}[p_{U}^{s}(\hat y_j)]$ es observable, y $\mathbb{E}[p^{s}_{U}(\hat
-y_j|y_i)]$ puede ser estimado mediante validación cruzada, quedando nuevamente
-un sistema de ecuaciones lineales con $|Y|$ ecuaciones e $|Y|$ incógnitas.
+donde $U_j=\{(\boldsymbol{x}, y) \in (\boldsymbol{X}_{tst}, Y_{tst}) | y=c_j\}$.
+Luego, $\hat p^{PCC}_{tst}(c=c_k)$ se calcula mediante {\it PCC} y, como en {\it
+ACC}, las $[\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j} \mathbb{\hat
+P}(h(\boldsymbol{x})=c_k)]$ deben estimarse mediante validación cruzada o con un
+conjunto de validación aparte, quedando nuevamente un sistema de ecuaciones
+lineales de $\#C$ ecuaciones y $\#C$ incógnitas.
 
 Para el caso particular binario, y relacionando con~\ref{ecuacion:acc_binaria},
 tenemos:
-
 \begin{equation}
-    \hat p^{PACC}_{U} = \frac{\hat p_0-fppa}{tppa-fppa}
-\end{equation}
-
-donde $tppa$ y $fppa$ ($pa$: {\it probability average\/}) son los dos parámetros
-propios del cuantificador a estimar usando los datos de $U$, y se calculan como:
-
-\begin{equation}
-    tppa = \frac{\sum _{i \in U_+}{P(y=1|x_i)}}{|U_+|}
-\end{equation}
-
-\begin{equation}
-    fppa = \frac{\sum _{i \in U_-}{P(y=1|x_i)}}{|U_-|}
+    \hat p^{PACC}_{tst}(c=1) = \frac{\hat p^{PCC}_{tst}(c=1)-fppa}{tppa-fppa}
 \end{equation}
 
 En este método hay que tener en cuenta ambas consideraciones sobre las
 estimaciones de $\hat p$ dentro del rango $[0, 1]$ y sobre la calibración
-mencionados en {\it ACC\/} y {\it PCC\/} respectivamente.
+-ver~\ref{appendix:calibracion}-.
 
 \subsection{Con clasificadores específicos}
 
