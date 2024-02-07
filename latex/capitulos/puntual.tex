@@ -149,8 +149,8 @@ y de {\it PCC}.
 \end{split}
 \end{align}
 donde $U_j=\{(\boldsymbol{x}, y) \in (\boldsymbol{X}_{tst}, Y_{tst}) | y=c_j\}$.
-Luego, $\hat p^{PCC}_{tst}(c=c_k)$ se calcula mediante {\it PCC} y, como en {\it
-ACC}, las $[\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j} \mathbb{\hat
+Luego, $\hat p^{PCC}_{tst}(c=c_k)$ se calcula mediante {\it PCC\/} y, como en
+{\it ACC}, las $[\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j} \mathbb{\hat
 P}(h(\boldsymbol{x})=c_k)]$ deben estimarse mediante validación cruzada o con un
 conjunto de validación aparte, quedando nuevamente un sistema de ecuaciones
 lineales de $\#C$ ecuaciones y $\#C$ incógnitas.
@@ -164,6 +164,10 @@ tenemos:
 En este método hay que tener en cuenta ambas consideraciones sobre las
 estimaciones de $\hat p$ dentro del rango $[0, 1]$ y sobre la calibración
 -ver~\ref{appendix:calibracion}-.
+
+\subsubsection{Selección de Umbrales}
+
+
 
 \subsection{Con clasificadores específicos}
 

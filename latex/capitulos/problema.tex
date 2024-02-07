@@ -4,14 +4,14 @@
 
 En algunas aplicaciones vinculadas a la clasificación, el objetivo final no es
 determinar a qué clase (o clases) pertenecen las instancias individuales no
-etiquetadas, sino estimar la prevalencia (tambíen llamada ``frecuencia relativa'
-o ``probabilidad prior') de cada clase en los datos sin etiquetar. En los
-últimos años se ha señalado que, en estos casos, tiene sentido optimizar
-directamente algoritmos de aprendizaje automático para este objetivo, en lugar
-de simplemente optimizar clasificadores para etiquetar instancias individuales.
+etiquetadas, sino estimar la prevalencia (tambíen llamada `frecuencia relativa'
+o `probabilidad prior') de cada clase en los datos sin etiquetar. En los últimos
+años se ha señalado que, en estos casos, tiene sentido optimizar directamente
+algoritmos de aprendizaje automático para este objetivo, en lugar de simplemente
+optimizar clasificadores para etiquetar instancias individuales.
 
 La tarea de ajustar estimadores de prevalencia de clases a través del
-aprendizaje supervisado se conoce como ``aprender a cuantificar' o, más
+aprendizaje supervisado se conoce como `aprender a cuantificar' o, más
 simplemente, cuantificar (término acuñado por~\citet{forman2005counting}, quien
 planteó el problema por primera vez). Se sabe que cuantificar mediante la
 clasificación de cada instancia sin etiquetar a través de un clasificador
@@ -227,7 +227,7 @@ En ausencia de métodos para estimar los valores de prevalencia de clase de form
 directa, el primer método que suele pensarse para hacerlo es {\it Classify \&
 Count}, es decir, clasificar cada individuo sin etiquetar y estimar los valores
 de prevalencia de clase contando los individuos que fueron asignados a cada
-clase. Sin embargo, esta estrategia es subóptima: mientras que un clasificador
+clase. Sin embargo, esta estrategia es subóptima: si bien un clasificador
 perfecto es también es un cuantificador perfecto, un buen clasificador puede ser
 un mal cuantificador. Para ver esto, se puede ver la definición de $F_1$, una
 función de evaluación estándar para la clasificación binaria, que se define
@@ -247,16 +247,16 @@ $\hat p$ obtenida por el enfoque {\it CC\/} depende sólo de las característica
 del clasificador, definido (para el caso binario) por su tasa de verdaderos
 positivos ($tpr$), su tasa de falsos positivos ($fpr$) y de la prevalencia real
 ($p$):
-\begin{equation}\label{ecuacion:cc}
+\begin{equation}\label{ecuacion:tpr_fpr}
     \hat p(p) = p \cdot {tpr} + (1-p) \cdot {fpr}
 \end{equation}
 \begin{figure}[h]
     \includegraphics[width=\textwidth]{../plots_teoria/cc_tpr_fpr.png}
     \caption{La línea negra representa el cuantificador y clasificador perfecto,
     respectivamente. Las otras líneas muestran las estimaciones teóricas de
-    $\hat p$ resultantes de aplicar la ecuación~\ref{ecuacion:cc}, y el {\it
-    accuracy\/} correspondiente al clasificador, según se varían los valores de
-    $tpr$ y $fpr$}\label{fig:cc_tpr_fpr}
+    $\hat p$ resultantes de aplicar la ecuación~\ref{ecuacion:tpr_fpr}, y el
+    {\it accuracy\/} correspondiente al clasificador, según se varían los
+    valores de $tpr$ y $fpr$}\label{fig:cc_tpr_fpr}
 \end{figure}
 
 El mal desempeño de {\it CC\/} fue demostrado mediante el siguiente teorema

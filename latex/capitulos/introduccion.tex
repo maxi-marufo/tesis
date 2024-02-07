@@ -3,17 +3,18 @@
 \section{Marco teórico}\label{introduccion:marco_teorico}
 
 La tarea de cuantificación (conocida en inglés como {\it quantification\/})
-consiste en proporcionar predicciones agregadas o resumen para conjuntos de
-datos en vez de predicciones particulares sobre los datos individuales (por
-ejemplo, para el caso de clasificación, predecir la proporción de clases de un
-conjunto en vez de la clase de cada individuo), aplicando un modelo que se
-ajuste usando datos de entrenamiento cuya distribución puede ser distinta a la
-de los datos de prueba~\cite{forman2005counting}.
+consiste en proporcionar predicciones agregadas para conjuntos de datos, en vez
+de predicciones particulares sobre los datos individuales. Por ejemplo, para el
+caso de la cuantificación aplicada a la clasificación, se busca predecir la
+proporción de clases de un conjunto de individuos, en vez de la clase particular
+de cada individuo. Para ello, se aplican modelos que se ajustan usando datos de
+entrenamiento cuya distribución puede ser distinta a la de los datos de
+prueba~\cite{forman2005counting}.
 
 Si bien en principio no es necesario realizar predicciones por cada individuo,
 muchos de los métodos se basan en obtener la cuantificación de esa manera, ya
 que hacer predicciones individuales suele ser un requisito de por sí de las
-aplicaciones prácticas, o porque ya existen en ellas sistemas que las generen.
+aplicaciones prácticas, o porque ya existen en ellas modelos que las generen.
 Además, cabe aclarar que si bien la aplicación más popular es con respecto a
 tareas de clasificación (sobre las cuales basaremos este trabajo, y en
 particular, sobre clasificación binaria), también se puede aplicar
@@ -32,16 +33,15 @@ aleatorias tal que $\boldsymbol{X}_i \in \mathbb{R}^d$ son las características
 de la muestra, $Y_i \in C$ con $C=\{1,0\}$ indica la clase a la que pertenece y
 $S_i \in \{1,0\}$ indica si fue etiquetada (y pertenece entonces al conjunto de
 entrenamiento) o no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable.
-En la cuantificación binaria, se desea estimar $\theta:=
-\mathbb{P}(Y=1|S=0)$\footnote{En cuantificación, se lo nombra generalmente como
-$p$ (o $p_1,\dots,p_{\#C}$ o $p(c)$ para el caso multiclase) en vez de $\theta$,
-por lo que en este trabajo también se usará esta nomenclatura.}, es decir, la
-prevalencia de etiquetas positivas entre muestras no etiquetadas. Esta
-prevalencia no se asume de ser la misma que en las muestras etiquetadas,
-$\mathbb{P}(Y=1|S=1)$. Además, el estimador de $\theta$ debe depender sólo de
-los datos disponibles, es decir, de las características de todas las muestras y
-de las etiquetas que fueron obtenidas. Los supuestos que se
-asumen~\cite{vaz2019quantification} son:
+El objectivo es estimar $\theta:= \mathbb{P}(Y=1|S=0)$\footnote{En
+cuantificación, se lo nombra generalmente como $p$ (o $p_1,\dots,p_{\#C}$ o
+$p(c)$ para el caso multiclase) en vez de $\theta$, por lo que en este trabajo
+también se usará esta nomenclatura.}, es decir, la prevalencia de etiquetas
+positivas entre muestras no etiquetadas. Esta prevalencia no se asume de ser la
+misma que en las muestras etiquetadas, $\mathbb{P}(Y=1|S=1)$. Además, el
+estimador de $\theta$ debe depender sólo de los datos disponibles, es decir, de
+las características de todas las muestras y de las etiquetas que fueron
+obtenidas. Los supuestos que se asumen~\cite{vaz2019quantification} son:
 
 \begin{itemize}
   \item $(\boldsymbol{X}_1,Y_1,S_1) \dots (\boldsymbol{X}_n,Y_n,S_n)$ son
