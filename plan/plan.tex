@@ -1,0 +1,137 @@
+\documentclass[a4paper, twoside, 11pt, spanish]{article}
+
+%% Paquetes
+\usepackage[es-tabla]{babel}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{color, graphicx, rotating, subcaption}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{hyperref, url}
+\usepackage[font=small, labelfont=bf]{caption}
+\usepackage{enumerate, enumitem}
+\usepackage{tabularx}
+\usepackage{ctable}
+\usepackage{multicol}
+
+\usepackage[square,numbers,sort&compress]{natbib}
+
+\renewcommand{\baselinestretch}{1.2} % interlineado
+\decimalpoint{} % cambia coma por punto
+
+%% Bibliografia
+\bibliographystyle{unsrtnat}
+\addto{\captionsspanish}{\renewcommand{\bibname}{Referencias}}
+
+\begin{document}
+
+\begin{titlepage}
+
+\title{ \textbf{Proyecto de tesis para optar al título de \\ Magister en
+    Estadística Matemática}\\[2.5ex]
+    \textit{Estimación de proporción de clases en muestras no etiquetadas \\ 
+    mediante modelos de cuantificación} }
+
+\author{ \textbf{Director:} Dr. Andrés Farall \\[2.5ex]
+    \textbf{Alumno:} Ing. Maximiliano Marufo da Silva \\[2.5ex]
+    \normalsize{Facultad de Ciencias Exactas y Naturales} \\
+    \normalsize{Universidad de Buenos Aires} \\
+}
+\date{}
+
+\end{titlepage}
+
+\maketitle
+
+\section*{Tema de investigación}
+
+La tarea de cuantificación consiste en proporcionar predicciones agregadas para
+conjuntos de datos, en vez de predicciones particulares sobre los datos
+individuales. Por ejemplo, para el caso de la cuantificación aplicada a la
+clasificación, se busca predecir la proporción de clases de un conjunto de
+individuos, en vez de la clase particular de cada individuo. Un ejemplo práctico
+puede ser predecir la proporción de comentarios a favor o en contra sobre un
+producto, servicio o candidato en una red social. En este caso, se puede
+utilizar un clasificador para predecir por cada comentario si la opinión es
+positiva (o negativa), y luego obtener la proporción de comentarios a favor
+contándolos y dividiéndolos por el total. Sin embargo, esta estrategia es
+subóptima: si bien un clasificador perfecto es también es un cuantificador
+perfecto, un buen clasificador puede ser un mal cuantificador.
+
+En cuantificación se aplican modelos que se ajustan usando datos de
+entrenamiento cuya distribución puede ser distinta a la de los datos de
+prueba~\cite{forman2005counting}. Si hablamos entonces de cuantificación
+binaria, se tiene que por cada muestra $i \in \{1,\dots,n\}$,
+$(\boldsymbol{X}_i,Y_i,S_i)$ es un vector de variables aleatorias tal que
+$\boldsymbol{X}_i \in \mathbb{R}^d$ son las características de la muestra, $Y_i
+\in C$ con $C=\{1,0\}$ indica la clase a la que pertenece y $S_i \in \{1,0\}$
+indica si fue etiquetada (y pertenece entonces al conjunto de entrenamiento) o
+no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable. El objectivo es
+estimar $\theta:= \mathbb{P}(Y=1|S=0)$, es decir, la prevalencia de etiquetas
+positivas entre muestras no etiquetadas. Esta prevalencia no se asume de ser la
+misma que en las muestras etiquetadas, $\mathbb{P}(Y=1|S=1)$. Además, el
+estimador de $\theta$ debe depender sólo de los datos disponibles, es decir, de
+las características de todas las muestras y de las etiquetas que fueron
+obtenidas. Los supuestos que se asumen~\cite{vaz2019quantification} son:
+
+\begin{itemize}
+  \item $(\boldsymbol{X}_1,Y_1,S_1) \dots (\boldsymbol{X}_n,Y_n,S_n)$ son
+  independientes
+  \item Por cada $s \in \{0,1\}$,
+  $(\boldsymbol{X}_1,Y_1)|S_1=s,\dots,(\boldsymbol{X}_n,Y_n)|S_n=s$ son
+  idénticamente distribuidas.
+  \item Por cada $(y_1,\dots,y_n)\in{\{0,1\}}^n$,
+  $(\boldsymbol{X}_1,\dots,\boldsymbol{X}_n)$ es independiente de
+  $(S_1,\dots,S_n)$ condicionado a $(Y_1,\dots,Y_n)=(y_1,\dots,y_n)$
+\end{itemize}
+
+\section*{Antecedentes sobre el tema}
+
+Si bien existen varios métodos propuestos para el aprendizaje de
+cuantificación~\cite{esuli2023learning, gonzalez2017review}, el mismo es todavía
+relativamente desconocido incluso para expertos en aprendizaje automático. La
+razón principal es la creencia errónea de que es una tarea trivial que se puede
+resolver usando un método directo como el de clasificar y contar. La
+cuantificación requiere métodos más sofisticados si el objetivo es obtener
+modelos óptimos, y su principal dificultad radica en la definición del problema,
+ya que las distribuciones de los datos de entrenamiento y de prueba pueden ser
+distintas.
+
+Aunque en principio no es necesario realizar predicciones por cada individuo,
+muchos de los métodos se basan en obtener la cuantificación de esa manera, ya
+que hacer predicciones individuales suele ser un requisito de por sí de las
+aplicaciones prácticas, o porque ya existen en ellas modelos que las generen.
+Además, cabe aclarar que si bien la aplicación más popular es con respecto a
+tareas de clasificación (sobre las cuales basaremos principalmente este trabajo,
+y en particular, sobre clasificación binaria), también se puede aplicar
+cuantificación a problemas de regresión, ordinalidad, etc.
+
+La literatura sobre métodos relacionados con cuantificación está un tanto
+desconectada. Algunos de los métodos que pueden usarse como cuantificadores han
+sido ideados para otros fines, principalmente para mejorar la precisión en
+clasificación cuando cambia el dominio. El desempeño de este último grupo ha
+sido normalmente estudiado solo en términos de mejora en las tareas de
+clasificación pero no como cuantificadores. Dado este escenario, y debido a la
+variedad de campos en los que ha surgido como una necesidad de aplicación, los
+algoritmos que se pueden aplicar para tareas de cuantificación aparecen en
+artículos que usan diferentes palabras clave y nombres, como {\it
+counting\/}~\cite{lewis1995evaluating}, {\it prior probability
+shift\/}~\cite{moreno2012unifying, storkey2009training}, {\it posterior
+probability estimation\/}~\cite{alaiz2011class}, {\it class prior
+estimation\/}~\cite{du2014class, chan2006estimating, zhang2010transfer}, {\it
+class prior change\/}~\cite{du2014semi}, {\it prevalence
+estimation\/}~\cite{barranquero2013study}, {\it class ratio
+estimation\/}~\cite{asoh2012fast} o {\it class distribution
+estimation\/}~\cite{gonzalez2013class, limsetto2011handling,
+xue2009quantification}, por citar solo algunos de ellos.
+
+\section*{Naturaleza del aporte original sobre el tema y objetivos}
+
+El objetivo de este trabajo es describir el problema en el que se enmarca la
+cuantificación, justificando laz razones de por qué es necesario utilizar
+modelos optimizados para estos casos, y resumir el estado del arte en el área,
+evaluando mediante simulaciones los principales modelos propuestos.
+
+\bigskip
+
+\bibliography{references}
+
+\end{document}
