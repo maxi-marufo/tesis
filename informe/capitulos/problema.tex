@@ -3,23 +3,24 @@
 \section{Introducción}\label{problema:introduccion}
 
 En algunas aplicaciones vinculadas a la clasificación, el objetivo final no es
-determinar a qué clase (o clases) pertenecen las instancias individuales no
-etiquetadas, sino estimar la prevalencia (tambíen llamada `frecuencia relativa'
-o `probabilidad prior') de cada clase en los datos sin etiquetar. En los últimos
-años se ha señalado que, en estos casos, tiene sentido optimizar directamente
-algoritmos de aprendizaje automático para este objetivo, en lugar de simplemente
-optimizar clasificadores para etiquetar instancias individuales.
+determinar a qué clase (o clases) pertenece cada una de las instancias
+individuales de un conjunto de datos no etiquetado, sino estimar la proporción
+(tambíen llamada `prevalencia', `frecuencia relativa' o `probabilidad prior') de
+cada clase en los datos sin etiquetar. En los últimos años se ha señalado que,
+en estos casos, tiene sentido optimizar directamente algoritmos de aprendizaje
+automático para este objetivo, en lugar de simplemente optimizar clasificadores
+para etiquetar instancias individuales.
 
 La tarea de ajustar estimadores de prevalencia de clases a través del
 aprendizaje supervisado se conoce como `aprender a cuantificar' o, más
-simplemente, cuantificar (término acuñado por~\citet{forman2005counting}, quien
-planteó el problema por primera vez). Se sabe que cuantificar mediante la
-clasificación de cada instancia sin etiquetar a través de un clasificador
-estándar y luego contando las instancias que han sido asignadas a cada clase (el
-método {\it Classify \& Count\/}) generalmente conduce a estimadores de
-prevalencia de clases sesgados, es decir, obtienen poca exactitud en la
-cuantificación. Como resultado, se han desarrollado métodos que abordan la
-cuantificación como una tarea en sí.
+simplemente, cuantificar o {\it quantification\/} (término acuñado
+por~\citet{forman2005counting}, quien planteó el problema por primera vez). Se
+sabe que cuantificar mediante la clasificación de cada instancia sin etiquetar a
+través de un clasificador estándar y luego contando las instancias que han sido
+asignadas a cada clase (el método {\it Classify \& Count\/}) generalmente
+conduce a estimadores de prevalencia de clases sesgados, es decir, obtienen poca
+exactitud en la cuantificación. Como resultado, se han desarrollado métodos que
+abordan la cuantificación como una tarea en sí.
 
 Para ver la importancia de diferenciar el problema de cuantificación del de
 clasificación, veamos dos ejemplos. En el primero, una empresa que ofrece un
