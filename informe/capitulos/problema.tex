@@ -57,6 +57,15 @@ las ciencias sociales, modelado ecológico y epidemiología.
     que en la cuantificación es a nivel agregado.}\label{fig:intro}
 \end{figure}
 
+En resumen, y generalizando no sólo para clasificación sino también a otros
+problemas (regresión, ordinalidad, etc), la tarea de cuantificación consiste en
+proporcionar predicciones agregadas para conjuntos de datos, en vez de
+predicciones particulares sobre los datos individuales. Si bien en principio no
+es necesario realizar predicciones por cada individuo, muchos de los métodos se
+basan en obtener la cuantificación de esa manera, ya que hacer predicciones
+individuales suele ser un requisito de por sí de las aplicaciones prácticas, o
+porque ya existen en ellas modelos que las generen.
+
 La literatura sobre métodos relacionados con cuantificación está un tanto
 desconectada. Algunos de los métodos que pueden usarse como cuantificadores han
 sido ideados para otros fines, principalmente para mejorar la precisión en
@@ -111,6 +120,58 @@ mismo individuo. Así, los problemas de cuantificación se dividen de esta maner
     equivale a estimar la fracción de ítems cuya puntuación está en un intervalo
     dado $[a, b]$ con ${a, b \in \mathbb{R}^d}$.
 \end{enumerate}
+
+\section{Marco teórico}\label{problema:marco_teorico}
+
+Si hablamos entonces de cuantificación binaria, se tiene que por cada muestra $i
+\in \{1,\dots,n\}$, $(\boldsymbol{X}_i,Y_i,S_i)$ es un vector de variables
+aleatorias tal que $\boldsymbol{X}_i \in \mathbb{R}^d$ son las características
+de la muestra, $Y_i \in C$ con $C=\{1,0\}$ indica la clase a la que pertenece y
+$S_i \in \{1,0\}$ indica si fue etiquetada (y pertenece entonces al conjunto de
+entrenamiento) o no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable.
+El objectivo es estimar $\theta:= \mathbb{P}(Y=1|S=0)$\footnote{En
+cuantificación, se lo nombra generalmente como $p$ (o $p_1,\dots,p_{\#C}$ o
+$p(c)$ para el caso multiclase) en vez de $\theta$, por lo que en este trabajo
+también se usará esta nomenclatura.}, es decir, la prevalencia de etiquetas
+positivas entre muestras no etiquetadas. Esta prevalencia no se asume de ser la
+misma que en las muestras etiquetadas, $\mathbb{P}(Y=1|S=1)$. Además, el
+estimador de $\theta$ debe depender sólo de los datos disponibles, es decir, de
+las características de todas las muestras y de las etiquetas que fueron
+obtenidas. Los supuestos que se asumen~\cite{vaz2019quantification} son:
+
+\begin{itemize}
+  \item $(\boldsymbol{X}_1,Y_1,S_1) \dots (\boldsymbol{X}_n,Y_n,S_n)$ son
+  independientes
+  \item Por cada $s \in \{0,1\}$,
+  $(\boldsymbol{X}_1,Y_1)|S_1=s,\dots,(\boldsymbol{X}_n,Y_n)|S_n=s$ son
+  idénticamente distribuidas.
+  \item Por cada $(y_1,\dots,y_n)\in{\{0,1\}}^n$,
+  $(\boldsymbol{X}_1,\dots,\boldsymbol{X}_n)$ es independiente de
+  $(S_1,\dots,S_n)$ condicionado a $(Y_1,\dots,Y_n)=(y_1,\dots,y_n)$
+\end{itemize}
+
+Usando la distribución de probabilidad conjunta, podemos factorizar usando las
+distribuciones condicionales:
+\begin{equation}
+    \mathbb{P}(\boldsymbol{X},Y,S)=\mathbb{P}(\boldsymbol{X}|Y,S)\mathbb{P}(Y|S)\mathbb{P}(S)
+\end{equation}
+Luego, usando el tercer supuesto mencionado, podemos
+hacer~\cite{moreno2012unifying}:
+\begin{equation}
+    \mathbb{P}(\boldsymbol{X},Y,S)=\mathbb{P}(\boldsymbol{X}|Y)\mathbb{P}(Y|S)\mathbb{P}(S)
+\end{equation}
+Si bien existen varios métodos propuestos para el aprendizaje de
+cuantificación~\cite{esuli2023learning, gonzalez2017review}, el mismo es todavía
+relativamente desconocido incluso para expertos en aprendizaje automático. La
+razón principal es la creencia errónea de que es una tarea trivial que se puede
+resolver usando un método directo, como {\it CC}. La cuantificación requiere
+métodos más sofisticados si el objetivo es obtener modelos óptimos, y su
+principal dificultad radica en la definición del problema, ya que las
+distribuciones de los datos de entrenamiento y de prueba pueden ser distintas.
+Por ejemplo, si la diferencia entre $\mathbb{P}(Y=1|S=0)$ y
+$\mathbb{P}(Y=1|S=1)$ es grande, los métodos simples como {\it CC\/} suelen
+tener bajo rendimiento.
+
 
 \section{Cambios en las distribuciones de los datos}\label{problema:cambios}
 
