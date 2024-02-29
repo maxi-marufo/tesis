@@ -98,15 +98,23 @@ podemos extender~\ref{ecuacion:acc_binaria} para el caso multiclase:
 \end{split}
 \end{align}
 donde $\hat p^{CC}_{tst}(c=c_k)$ es la fracción de datos de $tst$ que el
-clasificador $h$ asigna a $c_k$ (y por ende, es conocido), y $\mathbb{\hat
-P}(h(\boldsymbol{x})=c_k|y=c_j)$ es la estimación de probabilidad de que el
-clasificador $h$ asigne la clase $c_k$ a $\boldsymbol{x}$ cuando este pertenece
-a la clase $c_j$. Estas probabilidades, al igual que $tpr$ y $fpr$ en el caso
-binario, deben estimarse mediante validación cruzada o con un conjunto de
-validación aparte~\cite{barranquero2013study, forman2005counting,
+clasificador $h$ asigna a $c_k$ (y por ende, es conocido), y
+$\mathbb{\hat{P}}(h(\boldsymbol{x})=c_k|y=c_j)$ es la estimación de probabilidad
+de que el clasificador $h$ asigne la clase $c_k$ a $\boldsymbol{x}$ cuando este
+pertenece a la clase $c_j$. Estas probabilidades, al igual que $tpr$ y $fpr$ en
+el caso binario, deben estimarse mediante validación cruzada o con un conjunto
+de validación aparte~\cite{barranquero2013study, forman2005counting,
 forman2008quantifying}. Luego, $\hat p^{ACC}_{tst}(c=c_j)$, nuestras incógnitas
 (una por cada $c_j$), pueden calcularse mediante un sistema de ecuaciones
 lineales con $\#C$ ecuaciones y $\#C$ incógnitas.
+
+\paragraph{\it Ejemplo:\/} Aquí debemos estimar el $tpr$ y $fpr$. Para ello,
+deberíamos contar con una muestra de validación (distinta a la de prueba y la de
+entrenamiento) con etiquetas conocidas. Sin embargo, a modo de simplificación
+para este ejemplo, usaremos la misma muestra de prueba, siendo en este caso
+$tn=1$, $fp=1$, $fn=7$ y $tp=12$, entonces $tpr=0.5$ y $fpr \approx 0.63$, y por
+lo tanto, $\hat p^{ACC}_{tst}(c=1) \approx \frac{0.62-0.5}{0.63-0.5} \approx
+0.9$
 
 \subsubsection{Clasificar y Contar Probabilístico (PCC)}
 
@@ -114,11 +122,11 @@ Este método, conocido en inglés como {\it Probabilistic Classify and
 Count\/}~\cite{bella2010quantification, tang2010network}, es una variante de
 {\it CC\/} que utiliza un clasificador blando en vez de uno duro. Es decir, que
 la salida del clasificador será una estimación de la probabilidad {\it a
-posteriori\/} $s(\boldsymbol{x}, y) = \hat
-p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)$ por cada invididuo $\boldsymbol{x} \in
-\mathbb{R}^d$ y cada $y \in C$. El método consiste en estimar las $\hat
-p_{tst}(c=c_j)$ mediante el valor esperado de la proporción de items que se
-predijeron como pertenecientes a cada clase $c_j$:
+posteriori\/} $s(\boldsymbol{x}, y) =
+\hat{p}_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)$ por cada invididuo $\boldsymbol{x}
+\in \mathbb{R}^d$ y cada $y \in C$. El método consiste en estimar las
+$\hat{p}_{tst}(c=c_j)$ mediante el valor esperado de la proporción de items que
+se predijeron como pertenecientes a cada clase $c_j$:
 \begin{align}
 \begin{split}
     \hat p^{PCC}_{tst}(c=c_j) &= \mathbb{\hat E}[p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y=c_j)] \\
@@ -150,10 +158,10 @@ y de {\it PCC}.
 \end{align}
 donde $U_j=\{(\boldsymbol{x}, y) \in (\boldsymbol{X}_{tst}, Y_{tst}) | y=c_j\}$.
 Luego, $\hat p^{PCC}_{tst}(c=c_k)$ se calcula mediante {\it PCC\/} y, como en
-{\it ACC}, las $[\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j} \mathbb{\hat
-P}(h(\boldsymbol{x})=c_k)]$ deben estimarse mediante validación cruzada o con un
-conjunto de validación aparte, quedando nuevamente un sistema de ecuaciones
-lineales de $\#C$ ecuaciones y $\#C$ incógnitas.
+{\it ACC}, las $[\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j}
+\mathbb{\hat{P}}(h(\boldsymbol{x})=c_k)]$ deben estimarse mediante validación
+cruzada o con un conjunto de validación aparte, quedando nuevamente un sistema
+de ecuaciones lineales de $\#C$ ecuaciones y $\#C$ incógnitas.
 
 Para el caso particular binario, y relacionando con~\ref{ecuacion:acc_binaria},
 tenemos:
