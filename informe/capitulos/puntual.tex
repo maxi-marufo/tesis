@@ -13,8 +13,11 @@ se compone, en cambio, de métodos que para clasificar los individuos, se basan
 en métodos de aprendizaje diseñados con la cuantificación en mente. La segunda
 clase es la de métodos no agregativos, es decir, métodos que resuelven la tarea
 de cuantificación “holísticamente”, es decir, sin clasificar a los individuos.
+
 La idea de esta tésis no es la de mostrar todos los métodos propuestos hasta la
-actualidad, sino la de mencionar a continuación los métodos más populares.
+actualidad, sino la de mencionar a continuación los métodos más populares. Como
+ejemplo de muestra se usará el mismo que en las figuras~\ref{fig:intro}
+y~\ref{fig:cambios}, en donde $p_{tr}=0.5$ y $p_{tst}=0.9$.
 
 \section{Métodos Agregativos}\label{puntual:agregativos}
 
@@ -53,6 +56,11 @@ clasificador. Este aspecto se analiza en varios artículos tanto desde una
 perspectiva teórica como práctica, como lo
 hizo~\citeauthor{forman2008quantifying}, y como también ya lo hemos mencionado
 en~\ref{problema:clasificar_y_contar}.
+
+\paragraph{\it Ejemplo:\/} Para el caso de ejemplo, debemos contar la cantidad
+de predicciones positivas (rojas) en~\ref{fig:cambios}, y dividirlas por el
+tamaño de la muestra de prueba. Es decir, $\hat p^{CC}_{tst}(c=1) =
+\frac{19}{23} \approx 0.62$
 
 \subsubsection{Clasificar, Contar y Ajustar (ACC)}
 
@@ -142,6 +150,20 @@ demuestra que el comportamiento de {\it PCC\/} será similar al de {\it CC}, en
 cuanto a que ambos subestiman o sobreestiman la prevalencia verdadera cuando la
 distribución de clases cambia entre los datos de entrenamiento y de prueba.
 
+\paragraph{\it Ejemplo:\/} Aquí debemos sumar las salidas del clasificador para
+la clase positiva. Para el clasificador del ejemplo, se obtuvieron las
+siguientes salidas:
+\begin{center}
+    \begin{tabular}{lrrrrrrrrrrrrrrrrrrrrr}
+        \toprule
+        \textbf{$s(\boldsymbol{x}_i, y=1)$} & 0.76 & 0.60 & 0.24 & 0.19 & 0.53 &
+        0.53 & 0.99 & 0.66 & 0.72 & 0.60 & 0.53 \\
+        & 0.59 & 0.47 & 0.47 & 0.49 & 0.46 & 0.60 & 0.52 & 0.46 & 0.53 & 0.38 \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+es decir, que tenemos $\hat p^{PCC}_{tst}(c=1) \approx 0.54$
+
 \subsubsection{Clasificar, Contar y Ajustar Probabilístico (PACC)}
 
 Presentado como {\it Probabilistic Adjusted Classify and Count\/} o también como
@@ -166,16 +188,55 @@ de ecuaciones lineales de $\#C$ ecuaciones y $\#C$ incógnitas.
 Para el caso particular binario, y relacionando con~\ref{ecuacion:acc_binaria},
 tenemos:
 \begin{equation}
-    \hat p^{PACC}_{tst}(c=1) = \frac{\hat p^{PCC}_{tst}(c=1)-fppa}{tppa-fppa}
+    \hat p^{PACC}_{tst}(c=1) = \frac{\hat p^{PCC}_{tst}(c=1)-fp_{pa}}{tp_{pa}-fp_{pa}}
 \end{equation}
 
-En este método hay que tener en cuenta ambas consideraciones sobre las
-estimaciones de $\hat p$ dentro del rango $[0, 1]$ y sobre la calibración
+donde $tp_{pa}$ y $fp_{pa}$ ($pa$: {\it probability average\/}) son los dos
+parámetros propios del cuantificador a estimar mediante validación cruzada o con
+un conjunto de validación aparte, siendo $tp_{pa}$ el promedio de las
+probabilidades {\it a posteriori\/} para la clase positiva estimadas por el
+clasificador correspondientes a los individuos cuya etiqueta es positiva, y del
+mismo modo $fp_{pa}$ pero para individuos con etiqueta negativa. En este método
+hay que tener en cuenta ambas consideraciones sobre las estimaciones de $\hat p$
+dentro del rango $[0, 1]$ y sobre la calibración
 -ver~\ref{appendix:calibracion}-.
 
-\subsubsection{Selección de Umbrales}
-
-
+\paragraph{\it Ejemplo:\/} Del mismo modo que para el ejemplo de {\it ACC},
+aunque deberíamos usar una muestra de validación para calcular $tp_{pa}$ y
+$fp_{pa}$, aquí también a modo de simplificación usaremos la muestra de prueba
+para ello. Teniendo en cuenta entonces ahora tanto las salidas del clasificador
+como las etiquetas de la muestra, tenemos:
+\begin{center}
+    \begin{tabular}{ccc}
+        \toprule
+        $s(\boldsymbol{x}_i, y=0)$ &  $s(\boldsymbol{x}_i, y=1)$ &  $c$ \\
+        \midrule
+           0.24 &    0.76 &  1 \\
+           0.40 &    0.60 &  1 \\
+           0.76 &    0.24 &  1 \\
+           0.81 &    0.19 &  1 \\
+           0.47 &    0.53 &  1 \\
+           0.47 &    0.53 &  1 \\
+           0.01 &    0.99 &  1 \\
+           0.34 &    0.66 &  1 \\
+           0.28 &    0.72 &  1 \\
+           0.40 &    0.60 &  1 \\
+           0.47 &    0.53 &  1 \\
+           0.41 &    0.59 &  1 \\
+           0.53 &    0.47 &  1 \\
+           0.53 &    0.47 &  1 \\
+           0.51 &    0.49 &  1 \\
+           0.54 &    0.46 &  1 \\
+           0.40 &    0.60 &  1 \\
+           0.48 &    0.52 &  1 \\
+           0.54 &    0.46 &  1 \\
+           0.47 &    0.53 &  0 \\
+           0.62 &    0.38 &  0 \\
+        \bottomrule
+        \end{tabular}
+\end{center}
+siendo entonces $tp_{pa} \approx 0.55$ y $fp_{pa} \approx 0.46$, por lo que
+$\hat p^{PACC}_{tst}(c=1) \approx \frac{0.54-0.46}{0.55-0.46} \approx  0.9$
 
 \subsection{Con clasificadores específicos}
 
