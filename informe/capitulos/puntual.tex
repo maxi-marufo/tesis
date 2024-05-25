@@ -293,3 +293,69 @@ La prediccón para cada estrategia fue:
     \item $\hat p^{T50}_{tst}(c=1) \approx  0.56$
     \item $\hat p^{MS}_{tst}(c=1) \approx  0.56$
 \end{itemize}
+
+\subsubsection{Esperanza-Maximización (EMQ)}\label{puntual:emq}
+
+Aunque este método se propuso originalmente para mejorar las probabilidades {\it
+a posteriori\/} de modelos de clasificación bajo {\it dataset shift\/}
+(ver~\ref{problema:cambios}), el mismo también sirve para mejorar la estimación
+de prevalencias. También conocido como {\it SLD\/} por las iniciales de sus
+autores, este método fue propueesto por~\citet{saerens2002adjusting} y aplica el
+agoritmo de Esperanza-Maximización (EM)~\cite{dempster1977maximum}, un conocido
+algoritmo iterativo para encontrar estimaciones de máxima verosimilitud de
+parámetros (los valores de prevalencia de clase) para modelos que dependen en
+variables no observadas (las etiquetas de clase). Esencialmente, {\it EMQ\/}
+actualiza incrementalmente las probabilidades {\it a posteriori\/} utilizando
+los valores de prevalencia de clases calculados en el último paso de la
+iteración, y actualiza los valores de prevalencia de clases utilizando las
+probabilidades {\it a posteriori\/} calculadas en el último paso de la
+iteración, de forma mutuamente recursiva, y tomando como punto de partida un
+valor determinado para la prevalencia de clases (generalmente el valor
+correspondiente a la muestra de entrenamiento o una estimación {\it a priori\/}
+dada por algún conocimiento de la muestra de prueba, aunque puede ser cualquier
+otro valor), y repitiendo las iteraciones hasta alcanzar la convergencia.
+
+\citet[Apéndice, p.23 a p.25]{saerens2002adjusting} demuestra, mediante el
+Teorema de Bayes y el Teorema de probabilidad total, que el algoritmo de EM
+aplicado a este problema resulta en los siguientes pasos (el paso 0 se aplica
+una sola vez, luego se iteran el E y M):
+
+\begin{enumerate}[leftmargin=*, labelindent=16pt]
+
+    \item[\bf{0 -}] Inicialización de $\hat p^{(0)}_{Y}(y=c_k)$, generalmente
+    haciendo $\hat p^{(0)}_{Y}(y=c_k) = \hat p_{tr}(c=c_k)$
+
+    \item[\bf{E -}] Esperanza: \hspace*{\fill}\makebox[4.5in][l]{$\hat
+    p^{(s)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_k) = \dfrac{\dfrac{\hat
+    p^{(s)}_{Y}(y=c_k)}{\hat p_{tr}(c=c_k)}s(\boldsymbol{x}_i, y=c_k)}{\sum
+    \limits_{j=1}^{\#C} \dfrac{\hat p^{(s)}_{Y}(y=c_j)}{\hat
+    p_{tr}(c=c_j)}s(\boldsymbol{x}_i, y=c_k)}$}
+
+    \item[\bf{M -}] Maximización: \hspace*{\fill}\makebox[4.5in][l]{$\hat
+    p^{(s+1)}_{Y}(y=c_k)=\dfrac{1}{m}\sum \limits_{i=1}^{m}\hat
+    p^{(s)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_k)$}
+
+\end{enumerate}
+
+Finalmente, cuando se alcanza la convergencia, se obtiene: $\hat
+p^{\it{EMQ}}_{tst}(c=c_k) = \hat p_{Y}(y=c_k)$
+
+\paragraph{\it Ejemplo:\/} Comenzamos con la inicialización, dando en nuestro
+caso como resultado $\hat p^{(0)}_{Y}(y=1) = \hat p_{tr}(c=1) = 0.5$ y $\hat
+p^{(0)}_{Y}(y=0) = \hat p_{tr}(c=0) = 0.5$. En la primera iteración, para el
+paso E queda $\hat p^{(s=0)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_k) =
+s(\boldsymbol{x}_i, y=c_k)$ es decir, las mismas salidas del clasificador
+calibrado. Luego, para el paso M, y al igual que en {\it PCC}, debemos promediar
+cada salida individual del clasificador calibrado por cada una de las clases
+existentes, quedando en nuestro caso $\hat p^{(s=1)}_{Y}(y=1) =
+p^{\it{PCC}}_{tst}(c=1) \approx 0.46$. Ahora, en el paso E de la segunda
+iteración, se usará este último valor junto con los valores de prevalencia de la
+muestra de entrenamiento para ajustar las salidas del clasificador calibrado.
+Por ejemplo, para ajustar la salida del primer invididuo correspondiente a la
+clase positiva, sería: $\hat p^{(s=1)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=1)
+\approx
+\dfrac{\dfrac{0.46}{0.5}0.69}{\dfrac{0.46}{0.5}0.69+\dfrac{0.54}{0.5}0.31}
+\approx 0.65$. Si continuamos repitiendo los pasos E y M de forma sucesiva, y
+definiendo un criterio de corte para la convergencia (ya sea por máxima cantidad
+de iteraciones o por un umbral de diferencia entre $\hat p^{(s)}_{Y}(y=c_k)$ y
+$\hat p^{(s+1)}_{Y}(y=c_k)$), se obtuvo $p^{\it{EMQ}}_{tst}(c=1) \approx 0.14$.
