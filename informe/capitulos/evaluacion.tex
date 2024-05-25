@@ -3,10 +3,7 @@
 La evaluación de métodos de cuantificación es más compleja que en otros
 problemas. En aprendizaje supervisado, típicamente se mide el rendimiento
 estimando la probabilidad de predecir correctamente ejemplos individuales no
-observados (sin condicionar -para la exactitud o {\it accuracy\/}- o
-condicionando las probabilidades a las clases de pertenencia -para la
-exhaustividad o {\it recall\/}- o predichas -para la precisión o {\it
-precision\/}-). Sin embargo, en cuantificación, el rendimiento se evalúa para
+observados. Sin embargo, en cuantificación, el rendimiento se evalúa para
 conjuntos de datos. Esto implica que necesitamos una colección de muestras para
 evaluar el rendimiento de un modelo. Dado un modelo $\overline{h}$, una función
 de pérdida $L(\cdot, \cdot)$, y un conjunto de muestras de evaluación ${T_1,
@@ -18,21 +15,32 @@ de pérdida $L(\cdot, \cdot)$, y un conjunto de muestras de evaluación ${T_1,
     \label{ecuacion_rendimiento}
 \end{equation}
 
-Calcular la pérdida de un modelo sobre una muestra de prueba, $L(\overline{h},
-T_j)$ no requiere de promediar sobre ejemplos individuales. Por ejemplo, en la
-cuantificación binaria, sólo la prevalencia real $p$ y la prevalencia predicha
-$\hat{p}$ se comparan por cada muestra.
+Calcular la pérdida de un modelo sobre una sóla muestra de prueba,
+$L(\overline{h}, T_j)$ no implica promediar la pérdidad sobre ejemplos
+individuales. Las métricas empleadas para evaluar la cuantificación con respecto
+a los ejemplos individuales son inherentemente no lineales. Esto implica que el
+error asociado a un conjunto de elementos sin etiquetar no puede ser expresado
+como una combinación lineal de los errores individuales. Esta no linealidad
+surge debido a la interdependencia entre la clasificación de los diferentes
+elementos. Por ejemplo, para el caso binario, si en una muestra sin etiquetar
+hay una mayor incidencia de falsos positivos que de falsos negativos, la
+presencia de un falso negativo adicional puede en realidad mejorar el error de
+cuantificación general, gracias al efecto de compensación mutua entre $FP$ y
+$FN$ mencionado en~\ref{problema:clasificar_y_contar}. Por consiguiente, la
+evaluación del error en la cuantificación es de naturaleza no lineal y
+multivariada, requiriendo así la consideración conjunta de todos los elementos
+no etiquetados a la vez.
 
-En cuantificación, el problema de evaluación se relaciona con el cambio en la
-distribución de datos entre la fase de entrenamiento y la de implementación del
-modelo. Se requiere una colección de muestras de prueba variada y que represente
-diversas distribuciones para evaluar correctamente el rendimiento del modelo y
-evitar sesgos. Por esta razón, la mayoría de los experimentos reportados en la
-literatura emplean conjuntos de datos tomados de otros problemas y se crean
-conjuntos de prueba con cambios en las distribuciones creados artificialmente.
-Este enfoque tiene la ventaja de que la cantidad del {\it dataset shift\/} se
-puede controlar para estudiar el rendimiento de los modelos en diferentes
-situaciones.
+Además, el problema de evaluación en cuantificación se relaciona con el cambio
+en la distribución de datos entre la fase de entrenamiento y la de
+implementación del modelo. Se requiere una colección de muestras de prueba
+variada y que represente diversas distribuciones para evaluar correctamente el
+rendimiento del modelo y evitar sesgos. Por esta razón, la mayoría de los
+experimentos reportados en la literatura emplean conjuntos de datos tomados de
+otros problemas y se crean conjuntos de prueba con cambios en las distribuciones
+creados artificialmente. Este enfoque tiene la ventaja de que la cantidad del
+{\it dataset shift\/} se puede controlar para estudiar el rendimiento de los
+modelos en diferentes situaciones.
 
 Las funciones de pérdida $L(\cdot, \cdot)$ serán elegidas de acuerdo al tipo de
 problema y al objetivo particular de la aplicación. Como ya se mencionó, el
@@ -87,7 +95,7 @@ satisfechas por todas las métricas).
 
 \section{Métricas}\label{evaluacion:metricas}
 
-\subsection{Sesgo}
+\subsection{Sesgo}\label{evaluacion:bias}
 
 El sesgo o {\it bias\/} técnicamente no es una medida de evaluación para la
 cuantificación, ya que no se aplica a toda una distribución $p$ sino solo a una
@@ -98,7 +106,7 @@ clase específica $c \in C$, y se define como:
 \end{equation}
 
 Incluso usado en cuantificación binaria, se debe especificar a cuál de las
-clases hacer referencia (en este caso, suele hacer referencia a la clase
+clases hace referencia (en este caso, suele hacer referencia a la clase
 positiva). Si se usa como un medida de evaluación para la cuantificación, un
 problema con B es que promediar los puntajes de diferentes clases produce
 resultados poco intuitivos, ya que el sesgo positivo de una clase y el sesgo
@@ -109,7 +117,7 @@ tiene una tendencia a subestimar o sobrestimar la prevalencia de una clase
 específica (típicamente la clase minoritaria) en {\it BQ}, y no como una medida
 de evaluación general para usar.
 
-\subsection{Error Absoluto}
+\subsection{Error Absoluto}\label{evaluacion:ae}
 
 El error absoluto o {\it absolute error\/} es una de las medidas más empleadas
 ya que, al ser simplemente la diferencia entre ambas magnitudes, es simple y
@@ -129,7 +137,7 @@ IMP} y {\bf ABS} pero no cumple {\bf MAX} (ni tampoco {\bf REL}). Su rango va de
 \end{equation}
 (peor), por lo que su rango depende de la distribución de $p$ y de $\#C$.
 
-\subsection{Error Absoluto Normalizado}
+\subsection{Error Absoluto Normalizado}\label{evaluacion:nae}
 
 El error absoluto normalizado {\it normalised absolute error}, definido como:
 \begin{equation}
@@ -139,7 +147,7 @@ es una versión de AE que oscila entre 0 (mejor) y 1 (peor), por lo que cumple
 {\bf MAX}. A pesar de su nombre, NAE no disfruta de {\bf ABS} (ni tampoco {\bf
 REL}).
 
-\subsection{Error Cuadrático}
+\subsection{Error Cuadrático}\label{evaluacion:se}
 
 El error cuadrático o {\it squared error}, definido como:
 \begin{equation}
@@ -149,7 +157,7 @@ comparte los mismos pros y contras de AE, pero penalizando más cuanto mayor es
 la diferencia entre el valor real y el predicho, por lo que se usa cuando se
 quiere castigar los valores atípicos u {\it outliers}.
 
-\subsection{Error Absoluto Relativo}
+\subsection{Error Absoluto Relativo}\label{evaluacion:rae}
 
 El error absoluto relativo o {\it relative absolute error\/} es una adaptación
 del AE que impone {\bf REL} al hacer que AE sea relativo a $p$.
@@ -165,7 +173,7 @@ de su nombre). Su rango va de 0 (mejor) a:
 \end{equation}
 (peor), por lo que su rango depende de la distribución de $p$ y de $\#C$.
 
-\subsection{Error Absoluto Relativo Normalizado}
+\subsection{Error Absoluto Relativo Normalizado}\label{evaluacion:nrae}
 
 El error absoluto relativo normalizado {\it normalised relative absolute error},
 definido como:
@@ -186,7 +194,7 @@ donde $\underline p(c=c_j)$ es la versión suavizada de $p(c=c_j)$ y el
 denominador es solo un un factor de normalización (lo mismo para $\underline
 {\hat p}(c=c_j)$).
 
-\subsection{Divergencia de Kullback-Leibler}
+\subsection{Divergencia de Kullback-Leibler}\label{evaluacion:dkl}
 
 Para distribuciones de probabilidad discretas $P$ y $Q$ definidas en el mismo
 espacio muestral ${\mathcal {X}}$ su divergencia KL se define como:
@@ -207,7 +215,7 @@ no obedece a la desigualdad del triángulo y no es simétrica. Además, es menos
 interpretable que otras métricas de rendimiento y no está definido cuando
 $\hat{p}$ es 0 o 1.
 
-\subsection{Divergencia de Kullback-Leibler Normalizada}
+\subsection{Divergencia de Kullback-Leibler Normalizada}\label{evaluacion:ndkl}
 
 Para suplir los problemas de DKL, se puede utilizar la función logística,
 quedando:
