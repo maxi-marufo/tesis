@@ -229,6 +229,67 @@ de la muestra, tenemos:
         \end{tabular}
 \end{center}
 
-\subsection{Con clasificadores específicos}
+siendo entonces $tp_{pa} \approx 0.58$ y $fp_{pa} \approx 0.52$, por lo que
+$\hat p^{\it{PACC}}_{tst}(c=1) \approx \frac{0.58-0.52}{0.58-0.52} \approx
+0.59$.
 
-\section{Métodos No Agregativos}\label{puntual:no_agregativos}
+\subsubsection{Selección de Umbrales}\label{puntual:umbrales}
+
+Cuando los datos de entrenamiento presentan un desbalance significativo
+(generalmente los casos positivos son los escasos), la precisión de {\it ACC\/}
+se ve considerablemente afectada~\cite{forman2006quantifying}. En estas
+situaciones, el clasificador tiende a favorecer la predicción de la clase
+mayoritaria (negativa), lo que disminuye la cantidad de $fp$ pero a expensas de
+un bajo $tpr$. Esto se traduce en un denominador reducido en la
+ecuación~\ref{ecuacion:acc_binaria}, lo que hace que el método sea más sensible
+a las estimaciones de $tpr$ y $fpr$.
+
+Esta serie de métodos se fundamenta en la elección de un umbral que reduzca la
+varianza en las estimaciones de $tpr$ y $fpr$. La premisa es identificar un
+umbral que aumente el número de $tp$, aunque generalmente esto conlleve un
+incremento $fpr$. Siempre que $tpr \gg fpr$, el denominador
+en~\ref{ecuacion:acc_binaria} aumenta, lo que resulta en métodos más robustos
+ante pequeños errores en las estimaciones de $tpr$ y $fpr$. Siguiendo esta
+lógica,~\citet{forman2006quantifying, forman2008quantifying} propone una serie
+de métodos basados en clasificadores calibrados con distintas estrategias de
+selección de umbrales\footnote{Los métodos aquí se describen son exclusivamente
+de cuantificación binaria (las versiones multiclase no han sido abordadas en la
+literatura y no son sencillas de implementar)}:
+
+\begin{itemize}
+    \item MAX:\@ selecciona el umbral que maximiza $tpr-fpr$. Esto resulta en el
+    mayor denominador posible en la ecuación~\ref{ecuacion:acc_binaria} para el
+    clasificador entrenado, lo que suaviza las correcciones.
+    \item X:\@ busca obtener $fpr=1-tpr$ para evitar los extremos de ambas
+    curvas.
+    \item T50:\@ elige el umbral con $tpr=0.5$, asumiendo que los positivos
+    conforman la clase minoritaria. El objetivo es nuevamente evitar los
+    extremos de la curva $tpr$.
+    \item Median Sweep (MS):\@ adopta un enfoque conjunto, calculando la
+    prevalencia para todos los umbrales que modifiquen los posibles valores de
+    $fpr$ y $tpr$, y devolviendo la mediana de estas prevalencias como la
+    predicción final.
+\end{itemize}
+\paragraph{\it Ejemplo:\/} En la siguiente figura se visualiza la selección de
+umbral según los criterios MAX, X y T50. Con estos umbrales, se computa luego la
+etapa de clasificación y, utilizando los correspondientes $fpr$ y $tpr$, se
+utiliza la ecuación~\ref{ecuacion:acc_binaria}:
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{../plots_teoria/seleccion_umbrales_max_x_t50.png}
+    \caption{}\label{fig:seleccion_umbrales_max_x_t50}
+\end{figure}
+Para el criterio MS, en cambio, por cada umbral que cambie $fpr$ o $tpr$ se
+calcula una prevalencia (se descartan los casos indeterminados
+por~\ref{ecuacion:acc_binaria}), y luego la mediana de todas ellas será la
+prediccón final del método.
+\begin{figure}[H]
+    \centerline{\includegraphics[width=0.75\textwidth]{../plots_teoria/seleccion_umbrales_ms.png}}
+    \caption{}\label{fig:seleccion_umbrales_ms}
+\end{figure}
+La prediccón para cada estrategia fue:
+\begin{itemize}
+    \item $\hat p^{MAX}_{tst}(c=1) \approx  0.51$
+    \item $\hat p^{X}_{tst}(c=1) \approx  0.50$
+    \item $\hat p^{T50}_{tst}(c=1) \approx  0.56$
+    \item $\hat p^{MS}_{tst}(c=1) \approx  0.56$
+\end{itemize}
