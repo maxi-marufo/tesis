@@ -359,3 +359,61 @@ clase positiva, sería: $\hat p^{(s=1)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=1)
 definiendo un criterio de corte para la convergencia (ya sea por máxima cantidad
 de iteraciones o por un umbral de diferencia entre $\hat p^{(s)}_{Y}(y=c_k)$ y
 $\hat p^{(s+1)}_{Y}(y=c_k)$), se obtuvo $p^{\it{EMQ}}_{tst}(c=1) \approx 0.14$.
+
+\subsubsection{Usando la distancia de Hellinger en $y$ (HDy)}\label{puntual:hdy}
+
+\citet{gonzalez2013class} proponen dos métodos fundamentados en la comparación
+de distribuciones. Aunque difieren en la manera de representar estas
+distribuciones, ambos comparten un elemento esencial: emplean la distancia de
+Hellinger como medida para cuantificar la disparidad entre ellas. El primer
+método, conocido como {\it HDy}, es un método agregativo ya que emplea las
+salidas del clasificador para describir las distribuciones tanto de la muestra
+de entrenamiento como la de prueba. El método se basa en el cálculo de:
+\begin{equation}\label{ecuacion:hdy}
+    p^{\it{HDy}}_{tst}(c=1) = \argmin_{0 \leq \alpha \leq 1}{\text{HD}}(\alpha f_{tr}{(s(y|c=1))}+(1-\alpha) f_{tr}{(s(y|c=0))}, f_{tst}{(s(y))})
+\end{equation}
+donde:
+\begin{equation}\label{ecuacion:hd}
+    {\text{HD}}(P \parallel Q)= \frac{1}{\sqrt{2}}{\sqrt {\sum _{i=1}^{k}({\sqrt {p_{i}}}-{\sqrt {q_{i}}})^{2}}}
+\end{equation}
+y $f_{tr}(s)$ y $f_{tst}(s)$ son las funciones de densidad de probabilidad de
+las salidas del clasificador. Estas densidades son aproximadas empíricamente
+mediante histogramas, utilizando {\it cross-validation\/} o un conjunto de
+validación aparte para estimar la cantidad de bins a utilizar.
+
+El segundo método propuesto por~\citet{gonzalez2013class} pertenece a los
+métodos no agregativos y será desarrollado en la correspondiente
+sección~\ref{puntual:no_agregativos}.
+
+\paragraph{\it Ejemplo:\/} En las siguientes gráficas vemos cómo son las tres
+distribuciones estimadas para el ejemplo, la gráfica de la función de costo
+usada, y cómo el mínimo encontrado se usa para combinar las distribuciones de
+entrenamiento y compararlas con la de prueba.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../plots_teoria/hdy_1.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../plots_teoria/hdy_2.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../plots_teoria/hdy_3.png}
+    \end{subfigure}
+    \hfill
+\end{figure}
+
+donde se obtuvo $p^{\it{HDy}}_{tst}(c=1) \approx 0.47$.
+
+\subsection{Con clasificadores específicos}\label{puntual:especificos}
+
+Los métodos presentados anteriormente implican el uso de un clasificador, a
+menudo seguido por una fase de ajuste para contrarrestar cualquier tendencia del
+clasificador a subestimar o sobreestimar las proporciones de clases. Los
+algoritmos discutidos en esta sección están específicamente diseñados con este
+propósito en mente: durante el entrenamiento, tienen en cuenta que el modelo
+será utilizado para cuantificar.
