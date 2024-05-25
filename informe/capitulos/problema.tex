@@ -208,7 +208,7 @@ El {\it dataset shift\/} aparece cuando las distribuciones conjuntas de
 entrenamiento y de prueba son diferentes, es decir, cuando
 $\mathbb{P}_{tr}(Y,\boldsymbol{X}) \neq
 \mathbb{P}_{tst}(Y,\boldsymbol{X})$.~\citet{moreno2012unifying} distingue las
-distintas variantes del dataset shift según qué elementos mencionados
+distintas variantes del {\it dataset shift\/} según qué elementos mencionados
 anteriormente cambian:
 
 \begin{itemize}
@@ -225,18 +225,18 @@ anteriormente cambian:
     \mathbb{P}_{tst}(Y)$
 \end{itemize}
 
-Otros tipos de dataset shift surgen cuando $\mathbb{P}_{tr}(Y|\boldsymbol{X})
-\neq \mathbb{P}_{tst}(Y|\boldsymbol{X})$ y $\mathbb{P}_{tr}(\boldsymbol{X}) \neq
-\mathbb{P}_{tst}(\boldsymbol{X})$ y cuando $\mathbb{P}_{tr}(\boldsymbol{X}|Y)
-\neq \mathbb{P}_{tst}(\boldsymbol{X}|Y)$ y $\mathbb{P}_{tr}(Y) \neq
-\mathbb{P}_{tst}(Y)$. Sin embargo, estos tipos de cambios no se consideran
-generalmente en la literatura ya que aparecen mucho más raramente, o incluso
-porque son dificiles o imposibles de resolver.
+Otros tipos de {\it dataset shift\/} surgen cuando
+$\mathbb{P}_{tr}(Y|\boldsymbol{X}) \neq \mathbb{P}_{tst}(Y|\boldsymbol{X})$ y
+$\mathbb{P}_{tr}(\boldsymbol{X}) \neq \mathbb{P}_{tst}(\boldsymbol{X})$ y cuando
+$\mathbb{P}_{tr}(\boldsymbol{X}|Y) \neq \mathbb{P}_{tst}(\boldsymbol{X}|Y)$ y
+$\mathbb{P}_{tr}(Y) \neq \mathbb{P}_{tst}(Y)$. Sin embargo, estos tipos de
+cambios no se consideran generalmente en la literatura ya que aparecen mucho más
+raramente, o incluso porque son dificiles o imposibles de resolver.
 
-Está claro que el problema de cuantificación se trata de un caso donde
-$\mathbb{P}_{tst}(Y)$ es desconocido. Además, la mayoría de los métodos de
-cuantificación propuestos asumen que $\mathbb{P}_{tr}(\boldsymbol{X}|Y) =
-\mathbb{P}_{tst}(\boldsymbol{X}|Y)$, por lo que estarían dentro de los casos de
+El problema de cuantificación se trata de un caso donde $\mathbb{P}_{tst}(Y)$ es
+desconocido. Además, la mayoría de los métodos de cuantificación propuestos
+asumen que $\mathbb{P}_{tr}(\boldsymbol{X}|Y) =
+\mathbb{P}_{tst}(\boldsymbol{X}|Y)$, por lo que están dentro de los casos de
 {\it prior probability shift}.
 
 Por otro lado, en la mayoría de los casos el objetivo final de la implementación
@@ -322,7 +322,7 @@ positivos ($tpr$), su tasa de falsos positivos ($fpr$) y de la prevalencia real
 \end{figure}
 
 El mal desempeño de {\it CC\/} fue demostrado mediante el siguiente teorema
-por~\citeauthor{forman2008quantifying}:
+por~\citet{forman2008quantifying}:
 
 \begin{theorem}[Toerema de Forman]
     \citep[p.169]{forman2008quantifying}\label{teorema:forman} Para un
@@ -382,7 +382,7 @@ bien esta observación es de naturaleza empírica, también existen argumentos
 teóricos que sustentan este hecho~\cite{vapnik1999overview}.
 
 \section{Cuantificadores para la mejora de la
-Clasificación}\label{problema:mejora}
+clasificación}\label{problema:mejora}
 
 Debido a los problemas mencionados anteriormente de los clasificadores frente a
 cambios en las distribuciones de los datos y frente a datos desbalanceados, los

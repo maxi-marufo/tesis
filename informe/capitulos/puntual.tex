@@ -17,22 +17,24 @@ de cuantificación “holísticamente”, es decir, sin clasificar a los individ
 La idea de esta tésis no es la de mostrar todos los métodos propuestos hasta la
 actualidad, sino la de mencionar a continuación los métodos más populares. Como
 ejemplo de muestra se usará el mismo que en las figuras~\ref{fig:intro}
-y~\ref{fig:cambios}, en donde $p_{tr}=0.5$ y $p_{tst}=0.9$.
+y~\ref{fig:cambios}, en donde $p_{tr}=0.5$ y $p_{tst}=0.1$.
 
 \section{Métodos Agregativos}\label{puntual:agregativos}
 
-\subsection{Con clasificadores generales}
+\subsection{Con clasificadores generales}\label{puntual:generales}
 
 Dentro de los métodos agregativos, algunos de ellos requieren como entrada las
-etiquetas de clases predichas (es decir, clasificacores duros), mientras que
+etiquetas de clases predichas (es decir, clasificadores duros), mientras que
 otros requieren como entrada las probabilidades {\it a posteriori\/} de
-pertenencia a cada clase (es decir, clasificacores blandos)\footnote{Los
+pertenencia a cada clase (es decir, clasificadores blandos)\footnote{Los
 clasificadores blandos se pueden convertir en duros usando umbrales de
 clasificación}. En estos últimos, además, las probabilidades {\it a
 posteriori\/} deben estar calibradas (para mayor información sobre calibración
-consultar el Apéndice~\ref{appendix:calibracion}).
+consultar el Apéndice~\ref{appendix:calibracion}). Para estos casos, en los
+ejemplos a continuación que requieren clasificadores blandos se separó de las
+muestras de entrenamiento un 15\% de datos para el proceso de calibración.
 
-\subsubsection{Clasificar y Contar (CC)}
+\subsubsection{Clasificar y Contar (CC)}\label{puntual:cc}
 
 El método más sencillo y directo para construir un cuantificador para
 clasificación (tanto binaria como multiclase) es aplicar el enfoque {\it
@@ -45,7 +47,7 @@ muestra de prueba, contando la proporción de cada clase. Generalizando el
 estimador de {\it CC\/} para el caso multiclase, el mismo queda entonces
 definido por:
 \begin{equation}
-    \hat p^{CC}_{tst}(c) = \frac{\#\{\boldsymbol{x} \in \boldsymbol{X}_{tst}|h(\boldsymbol{x})=c\}}{\#\boldsymbol{X}_{tst}}\label{ecuacion:cc}
+    \hat p^{\it{CC}}_{tst}(c) = \frac{\#\{\boldsymbol{x} \in \boldsymbol{X}_{tst}|h(\boldsymbol{x})=c\}}{\#\boldsymbol{X}_{tst}}\label{ecuacion:cc}
 \end{equation}
 donde se uso $h$ para la función de decisión del clasificador duro.
 
@@ -53,16 +55,15 @@ Es evidente que podemos obtener un cuantificador perfecto si el clasificador es
 también perfecto. El problema es que obtener un clasificador perfecto es casi
 imposible en aplicaciones reales, y luego el cuantificador hereda el sesgo del
 clasificador. Este aspecto se analiza en varios artículos tanto desde una
-perspectiva teórica como práctica, como lo
-hizo~\citeauthor{forman2008quantifying}, y como también ya lo hemos mencionado
-en~\ref{problema:clasificar_y_contar}.
+perspectiva teórica como práctica, como lo hizo~\citet{forman2008quantifying}, y
+como también ya lo hemos mencionado en~\ref{problema:clasificar_y_contar}.
 
-\paragraph{\it Ejemplo:\/} Para el caso de ejemplo, debemos contar la cantidad
-de predicciones positivas (rojas) en~\ref{fig:cambios}, y dividirlas por el
-tamaño de la muestra de prueba. Es decir, $\hat p^{CC}_{tst}(c=1) =
-\frac{19}{23} \approx 0.62$
+\paragraph{\it Ejemplo:\/} Para el caso de ejemplo, y manteniendo el
+clasificador allí usado, debemos contar la cantidad de predicciones positivas
+(rojas) en~\ref{fig:cambios}, y dividirlas por el tamaño de la muestra de
+prueba. Es decir, $\hat p^{\it{CC}}_{tst}(c=1) = \frac{35}{59} \approx 0.59$.
 
-\subsubsection{Clasificar, Contar y Ajustar (ACC)}
+\subsubsection{Clasificar, Contar y Ajustar (ACC)}\label{puntual:acc}
 
 Conocido en inglés como {\it Adjusted Classify \& Count}, {\it Adjusted
 Count\/}~\cite{forman2008quantifying} o también como {\it Confusion Matrix
@@ -75,16 +76,16 @@ $tpr$ y $fpr$. Dichas estimaciones pueden obtenerse usando validación cruzada o
 de predicción, el modelo obtiene una primera estimación $\hat p$ de la misma
 forma que en {\it CC}, que, para el caso binario, luego es ajustado aplicando la
 siguiente fórmula\footnote{A veces, esta expresión conduce a un valor inválido
-de $\hat p^{ACC}_{tst}$ que debe recortarse en el rango $[0, 1]$ en un último
-paso.}:
+de $\hat p^{\it{ACC}}_{tst}$ que debe recortarse en el rango $[0, 1]$ en un
+último paso.}:
 \begin{equation}
-    \hat p^{ACC}_{tst}(c=1) = \frac{\hat p^{CC}_{tst}(c=1)-fpr}{tpr-fpr}\label{ecuacion:acc_binaria}
+    \hat p^{\it{ACC}}_{tst}(c=1) = \frac{\hat p^{\it{CC}}_{tst}(c=1)-fpr}{tpr-fpr}\label{ecuacion:acc_binaria}
 \end{equation}
 Esta expresión se obtiene despejando la verdadera prevalencia $p$ de la
-ecuación~\ref{ecuacion:cc}. La prevalencia ajustada $\hat p^{ACC}_{tst}(c)$
-depende entonces de la estimación $\hat p^{CC}_{tst}(c)$ dada por {\it CC\/} y
-de $tpr$ y $fpr$. Pero como $tpr$ y $fpr$ son desconocidas generalmente, se
-utilizan estimaciones.
+ecuación~\ref{ecuacion:cc}. La prevalencia ajustada $\hat p^{\it{ACC}}_{tst}(c)$
+depende entonces de la estimación $\hat p^{\it{CC}}_{tst}(c)$ dada por {\it
+CC\/} y de $tpr$ y $fpr$. Pero como $tpr$ y $fpr$ son desconocidas generalmente,
+se utilizan estimaciones.
 
 El método {\it ACC\/} es teóricamente perfecto, independientemente de la métrica
 de {\it accuracy\/} obtenida con el clasificador, cuando se cumple el supuesto
@@ -101,30 +102,29 @@ Partiendo de~\ref{ecuacion:cc} y utilizando el teorema de probabilidad total,
 podemos extender~\ref{ecuacion:acc_binaria} para el caso multiclase:
 \begin{align}
 \begin{split}
-    \hat p^{CC}_{tst}(c=c_k) &= \mathbb{\hat P}_{tst}(h(\boldsymbol{x})=c_k) \\
-    &= \sum \limits_{j=1}^{\#C}{\mathbb{\hat P}(h(\boldsymbol{x})=c_k|y=c_j) \hat p^{ACC}_{tst}(c=c_j)}\label{ecuacion:acc_multiclase}
+    \hat p^{\it{CC}}_{tst}(c=c_k) &= \mathbb{\hat P}_{tst}(h(\boldsymbol{x})=c_k) \\
+    &= \sum \limits_{j=1}^{\#C}{\mathbb{\hat P}(h(\boldsymbol{x})=c_k|y=c_j) \hat p^{\it{ACC}}_{tst}(c=c_j)}\label{ecuacion:acc_multiclase}
 \end{split}
 \end{align}
-donde $\hat p^{CC}_{tst}(c=c_k)$ es la fracción de datos de $tst$ que el
+donde $\hat p^{\it{CC}}_{tst}(c=c_k)$ es la fracción de datos de $tst$ que el
 clasificador $h$ asigna a $c_k$ (y por ende, es conocido), y
 $\mathbb{\hat{P}}(h(\boldsymbol{x})=c_k|y=c_j)$ es la estimación de probabilidad
 de que el clasificador $h$ asigne la clase $c_k$ a $\boldsymbol{x}$ cuando este
 pertenece a la clase $c_j$. Estas probabilidades, al igual que $tpr$ y $fpr$ en
 el caso binario, deben estimarse mediante validación cruzada o con un conjunto
 de validación aparte~\cite{barranquero2013study, forman2005counting,
-forman2008quantifying}. Luego, $\hat p^{ACC}_{tst}(c=c_j)$, nuestras incógnitas
-(una por cada $c_j$), pueden calcularse mediante un sistema de ecuaciones
-lineales con $\#C$ ecuaciones y $\#C$ incógnitas.
+forman2008quantifying}. Luego, $\hat p^{\it{ACC}}_{tst}(c=c_j)$, nuestras
+incógnitas (una por cada $c_j$), pueden calcularse mediante un sistema de
+ecuaciones lineales con $\#C$ ecuaciones y $\#C$ incógnitas.
 
-\paragraph{\it Ejemplo:\/} Aquí debemos estimar el $tpr$ y $fpr$. Para ello,
-deberíamos contar con una muestra de validación (distinta a la de prueba y la de
-entrenamiento) con etiquetas conocidas. Sin embargo, a modo de simplificación
-para este ejemplo, usaremos la misma muestra de prueba, siendo en este caso
-$tn=1$, $fp=1$, $fn=7$ y $tp=12$, entonces $tpr=0.5$ y $fpr \approx 0.63$, y por
-lo tanto, $\hat p^{ACC}_{tst}(c=1) \approx \frac{0.62-0.5}{0.63-0.5} \approx
-0.9$
+\paragraph{\it Ejemplo:\/} Aquí debemos estimar el $tpr$ y $fpr$. Para ello, se
+separó de la muestra de entrenamiento un 15\% de datos. Con el 85\% de la
+muestra se entrenó el clasificador y se obtuvo un $\hat p^{\it{CC}}_{tst}(c=1)
+\approx 0.56$, y con el 15\% separado se obtuvo un $tn=13$, $fp=8$, $fn=4$ y
+$tp=13$, entonces $tpr \approx 0.76$ y $fpr \approx 0.38$, y por lo tanto, $\hat
+p^{\it{ACC}}_{tst}(c=1) \approx \frac{0.56-0.38}{0.76-0.38} \approx 0.46$.
 
-\subsubsection{Clasificar y Contar Probabilístico (PCC)}
+\subsubsection{Clasificar y Contar Probabilístico (PCC)}\label{puntual:pcc}
 
 Este método, conocido en inglés como {\it Probabilistic Classify and
 Count\/}~\cite{bella2010quantification, tang2010network}, es una variante de
@@ -137,7 +137,7 @@ $\hat{p}_{tst}(c=c_j)$ mediante el valor esperado de la proporción de items que
 se predijeron como pertenecientes a cada clase $c_j$:
 \begin{align}
 \begin{split}
-    \hat p^{PCC}_{tst}(c=c_j) &= \mathbb{\hat E}[p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y=c_j)] \\
+    \hat p^{\it{PCC}}_{tst}(c=c_j) &= \mathbb{\hat E}[p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y=c_j)] \\
     &= \frac{1}{m} \sum \limits_{i=1}^{m}{\hat p_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_j)} \\
     &= \frac{1}{m} \sum \limits_{i=1}^{m}{s(\boldsymbol{x}_i, y=c_j)}
 \end{split}
@@ -145,42 +145,44 @@ se predijeron como pertenecientes a cada clase $c_j$:
 con $m=\#\boldsymbol{X}_{tst}$. La intuición detrás de {\it PCC\/} es que las
 probabilidades {\it a posteriori\/} contienen mayor información que las
 decisiones de un clasificador duro y, por lo tanto, deberían ser usadas en su
-lugar. Sin embargo,~\citet[Corolario 6, p. 157 y p.163]{tasche2014exact}
+lugar. Sin embargo,~\citet[Corolario 6, p.157 y p.163]{tasche2014exact}
 demuestra que el comportamiento de {\it PCC\/} será similar al de {\it CC}, en
 cuanto a que ambos subestiman o sobreestiman la prevalencia verdadera cuando la
 distribución de clases cambia entre los datos de entrenamiento y de prueba.
 
-\paragraph{\it Ejemplo:\/} Aquí debemos sumar las salidas del clasificador para
-la clase positiva. Para el clasificador del ejemplo, se obtuvieron las
-siguientes salidas:
+\paragraph{\it Ejemplo:\/} Como este método utiliza un clasificador blando, se
+separó primero un 15\% de los datos de entrenamiento. Con el 85\% se entrenó el
+clasificador, y luego con el 15\% se realizó la calibración. Luego, debemos
+sumar las salidas del clasificador calibrado para la clase positiva. Para el
+ejemplo, se obtuvieron las siguientes salidas:
 \begin{center}
     \begin{tabular}{lrrrrrrrrrrrrrrrrrrrrr}
         \toprule
-        \textbf{$s(\boldsymbol{x}_i, y=1)$} & 0.76 & 0.60 & 0.24 & 0.19 & 0.53 &
-        0.53 & 0.99 & 0.66 & 0.72 & 0.60 & 0.53 \\
-        & 0.59 & 0.47 & 0.47 & 0.49 & 0.46 & 0.60 & 0.52 & 0.46 & 0.53 & 0.38 \\
+        \textbf{$s(\boldsymbol{x}_i, y=1)$} & 0.69 & 0.64 & 0.49 & 0.57 & 0.58 &
+        0.53 & 0.48 & 0.40 & 0.18 & 0.87 & 0.58 & \ldots & 0.24 \\
         \bottomrule
     \end{tabular}
 \end{center}
-es decir, que tenemos $\hat p^{PCC}_{tst}(c=1) \approx 0.54$
+es decir, que tenemos $\hat p^{\it{PCC}}_{tst}(c=1) \approx 0.46$.
 
-\subsubsection{Clasificar, Contar y Ajustar Probabilístico (PACC)}
+\subsubsection{Clasificar, Contar y Ajustar Probabilístico
+(PACC)}\label{puntual:pacc}
 
 Presentado como {\it Probabilistic Adjusted Classify and Count\/} o también como
 {\it Probabilistic Adjusted Count}, este método combina las ideas de {\it ACC\/}
-y de {\it PCC}.
+y de {\it PCC}~\cite{bella2010quantification, tang2010network}.
 \begin{align}
 \begin{split}
-    \hat p^{PCC}_{tst}(c=c_k) &= \mathbb{\hat E}[\mathbb{P}_{tst}(h(\boldsymbol{x})=c_k)] \\
-    &= \mathbb{\hat E}[\sum \limits_{j=1}^{\#C}{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j) p^{PACC}_{tst}(c=c_j)}] \\
-    &= \sum \limits_{j=1}^{\#C}\mathbb{\hat E}[{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j) p^{PACC}_{tst}(c=c_j)}] \\
-    &= \sum \limits_{j=1}^{\#C}\mathbb{\hat E}[{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j)}] \hat p^{PACC}_{tst}(c=c_j) \\
-    &= \sum \limits_{j=1}^{\#C} [\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j} \mathbb{\hat P}(h(\boldsymbol{x})=c_k)] \hat p^{PACC}_{tst}(c=c_j)
+    \hat p^{\it{PCC}}_{tst}(c=c_k) &= \mathbb{\hat E}[\mathbb{P}_{tst}(h(\boldsymbol{x})=c_k)] \\
+    &= \mathbb{\hat E}[\sum \limits_{j=1}^{\#C}{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j) p^{\it{PACC}}_{tst}(c=c_j)}] \\
+    &= \sum \limits_{j=1}^{\#C}\mathbb{\hat E}[{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j) p^{\it{PACC}}_{tst}(c=c_j)}] \\
+    &= \sum \limits_{j=1}^{\#C}\mathbb{\hat E}[{\mathbb{P}(h(\boldsymbol{x})=c_k|y=c_j)}] \hat p^{\it{PACC}}_{tst}(c=c_j) \\
+    &= \sum \limits_{j=1}^{\#C} [\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j} \mathbb{\hat P}(h(\boldsymbol{x})=c_k)] \hat p^{\it{PACC}}_{tst}(c=c_j)
 \end{split}
 \end{align}
 donde $U_j=\{(\boldsymbol{x}, y) \in (\boldsymbol{X}_{tst}, Y_{tst}) | y=c_j\}$.
-Luego, $\hat p^{PCC}_{tst}(c=c_k)$ se calcula mediante {\it PCC\/} y, como en
-{\it ACC}, las $[\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j}
+Luego, $\hat p^{\it{PCC}}_{tst}(c=c_k)$ se calcula mediante {\it PCC\/} y, como
+en {\it ACC}, las $[\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in U_j}
 \mathbb{\hat{P}}(h(\boldsymbol{x})=c_k)]$ deben estimarse mediante validación
 cruzada o con un conjunto de validación aparte, quedando nuevamente un sistema
 de ecuaciones lineales de $\#C$ ecuaciones y $\#C$ incógnitas.
@@ -188,7 +190,7 @@ de ecuaciones lineales de $\#C$ ecuaciones y $\#C$ incógnitas.
 Para el caso particular binario, y relacionando con~\ref{ecuacion:acc_binaria},
 tenemos:
 \begin{equation}
-    \hat p^{PACC}_{tst}(c=1) = \frac{\hat p^{PCC}_{tst}(c=1)-fp_{pa}}{tp_{pa}-fp_{pa}}
+    \hat p^{\it{PACC}}_{tst}(c=1) = \frac{\hat p^{\it{PCC}}_{tst}(c=1)-fp_{pa}}{tp_{pa}-fp_{pa}}
 \end{equation}
 
 donde $tp_{pa}$ y $fp_{pa}$ ($pa$: {\it probability average\/}) son los dos
@@ -201,42 +203,31 @@ hay que tener en cuenta ambas consideraciones sobre las estimaciones de $\hat p$
 dentro del rango $[0, 1]$ y sobre la calibración
 -ver~\ref{appendix:calibracion}-.
 
-\paragraph{\it Ejemplo:\/} Del mismo modo que para el ejemplo de {\it ACC},
-aunque deberíamos usar una muestra de validación para calcular $tp_{pa}$ y
-$fp_{pa}$, aquí también a modo de simplificación usaremos la muestra de prueba
-para ello. Teniendo en cuenta entonces ahora tanto las salidas del clasificador
-como las etiquetas de la muestra, tenemos:
+\paragraph{\it Ejemplo:\/} Del mismo modo que para el ejemplo de {\it PCC}, se
+separó de la muestra de entrenamiento un 15\% de datos para realizar la
+calibración del clasificador blando. Pero también se separó otro 15\% para
+realizar el ajuste del propio método de cuantificación. Con el 70\% de datos se
+entrenó el clasificador que luego fue calibrado usando el primer 15\% separado,
+obteniendo un $\hat p^{\it{PCC}}_{tst}(c=1) \approx 0.56$. Luego, con el segundo
+15\% de datos, se procedió a estimar $tp_{pa}$ y $fp_{pa}$. Teniendo en cuenta
+entonces ahora tanto las salidas del clasificador calibrado como las etiquetas
+de la muestra, tenemos:
 \begin{center}
     \begin{tabular}{ccc}
         \toprule
         $s(\boldsymbol{x}_i, y=0)$ &  $s(\boldsymbol{x}_i, y=1)$ &  $c$ \\
         \midrule
-           0.24 &    0.76 &  1 \\
-           0.40 &    0.60 &  1 \\
-           0.76 &    0.24 &  1 \\
-           0.81 &    0.19 &  1 \\
-           0.47 &    0.53 &  1 \\
-           0.47 &    0.53 &  1 \\
-           0.01 &    0.99 &  1 \\
-           0.34 &    0.66 &  1 \\
-           0.28 &    0.72 &  1 \\
-           0.40 &    0.60 &  1 \\
-           0.47 &    0.53 &  1 \\
-           0.41 &    0.59 &  1 \\
-           0.53 &    0.47 &  1 \\
-           0.53 &    0.47 &  1 \\
-           0.51 &    0.49 &  1 \\
-           0.54 &    0.46 &  1 \\
-           0.40 &    0.60 &  1 \\
-           0.48 &    0.52 &  1 \\
-           0.54 &    0.46 &  1 \\
-           0.47 &    0.53 &  0 \\
-           0.62 &    0.38 &  0 \\
+        0.57 &    0.43 &  0 \\
+        0.40 &    0.60 &  1 \\
+        0.50 &    0.50 &  1 \\
+        0.39 &    0.61 &  1 \\
+        0.42 &    0.58 &  1 \\
+        \ldots              \\
+        0.50 &    0.50 &  1 \\
+     \bottomrule
         \bottomrule
         \end{tabular}
 \end{center}
-siendo entonces $tp_{pa} \approx 0.55$ y $fp_{pa} \approx 0.46$, por lo que
-$\hat p^{PACC}_{tst}(c=1) \approx \frac{0.54-0.46}{0.55-0.46} \approx  0.9$
 
 \subsection{Con clasificadores específicos}
 
