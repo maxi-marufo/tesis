@@ -64,11 +64,11 @@ $(\boldsymbol{X}_i,Y_i,S_i)$ es un vector de variables aleatorias tal que
 $\boldsymbol{X}_i \in \mathbb{R}^d$ son las características de la muestra, $Y_i
 \in C$ con $C=\{1,0\}$ indica la clase a la que pertenece y $S_i \in \{1,0\}$
 indica si fue etiquetada (y pertenece entonces al conjunto de entrenamiento) o
-no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable. El objectivo es
+no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable. El objetivo es
 estimar $\theta:= \mathbb{P}(Y=1|S=0)$, es decir, la prevalencia de etiquetas
 positivas entre muestras no etiquetadas. Esta prevalencia no se asume de ser la
 misma que en las muestras etiquetadas, $\mathbb{P}(Y=1|S=1)$. Además, el
-estimador de $\theta$ debe depender sólo de los datos disponibles, es decir, de
+estimador de $\theta$ debe depender solo de los datos disponibles, es decir, de
 las características de todas las muestras y de las etiquetas que fueron
 obtenidas. Los supuestos que se asumen~\cite{vaz2019quantification} son:
 
@@ -99,7 +99,7 @@ Aunque en principio no es necesario realizar predicciones por cada individuo,
 muchos de los métodos se basan en obtener la cuantificación de esa manera, ya
 que hacer predicciones individuales suele ser un requisito de por sí de las
 aplicaciones prácticas, o porque ya existen en ellas modelos que las generen.
-Además, cabe aclarar que si bien la aplicación más popular es con respecto a
+Además, cabe aclarar que, si bien la aplicación más popular es con respecto a
 tareas de clasificación (sobre las cuales basaremos principalmente este trabajo,
 y en particular, sobre clasificación binaria), también se puede aplicar
 cuantificación a problemas de regresión, ordinalidad, etc.
@@ -126,7 +126,7 @@ xue2009quantification}, por citar solo algunos de ellos.
 \section*{Naturaleza del aporte proyectado}
 
 El objetivo de este trabajo es describir el problema en el que se enmarca la
-cuantificación, justificando laz razones de por qué es necesario utilizar
+cuantificación, justificando las razones de por qué es necesario utilizar
 modelos optimizados para estos casos, y resumir el estado del arte en el área,
 evaluando mediante simulaciones los principales modelos propuestos.
 
