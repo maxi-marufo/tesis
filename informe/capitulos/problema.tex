@@ -407,6 +407,15 @@ pero como $p_{tst}$ es generalmente desconocido, se puede usar un método de
 cuantificación para estimarlo~\cite{saerens2002adjusting, alaiz2011class,
 zhang2010transfer, xue2009quantification}.
 
+\begin{figure}[H]
+    \centerline{\includegraphics[width=0.75\textwidth]{../plots_teoria/bayes_classifier.png}}
+    \caption{Ejemplo de como el {\it prior probability shift\/} puede alterar
+    las predicciones del clasificador óptimo de Bayes. Vemos que si usaramos
+    $\mathbb{P}_{tst}(Y)$ en vez de $\mathbb{P}_{tr}(Y)$, en este caso pasaría a
+    predecir la clase azúl en vez de roja para toda
+    $\boldsymbol{x}$.}\label{fig:bayes_classifier}
+\end{figure}
+
 Los métodos de cuantificación pueden usarse no sólo para mejorar el rendimiento
 general de un clasificador, sino también para mejorar su equidad o {\it
 fairness\/}~\cite{biswas2021ensuring}, es decir, su posibilidad de predecir
