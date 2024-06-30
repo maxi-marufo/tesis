@@ -132,7 +132,7 @@ Este método, conocido en inglés como {\it Probabilistic Classify and
 Count\/}~\cite{bella2010quantification, tang2010network}, es una variante de
 {\it CC\/} que utiliza un clasificador blando en vez de uno duro. Es decir, que
 la salida del clasificador blando ajustado con la muestra de entrenamiento,
-$s_{tr}(\boldsymbol{x}, y)$, será una estimación de la probabilidad {\it a
+$s(\boldsymbol{x}, y)$, será una estimación de la probabilidad {\it a
 posteriori\/} ${p}_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)$ por cada invididuo
 $\boldsymbol{x} \in \boldsymbol{X}_{tst}$ y cada $y \in C$. El método consiste
 en estimar las ${p}_{tst}(c=c_j)$ mediante el valor esperado de la proporción de
@@ -141,7 +141,7 @@ items que se predijeron como pertenecientes a cada clase $c_j$:
 \begin{split}
     \hat p^{\it PCC\/}_{tst}(c=c_j) &= \mathbb{\hat E}[p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y=c_j)] \\
     &= \frac{1}{m} \sum \limits_{i=1}^{m}{\hat p_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_j)} \\
-    &= \frac{1}{m} \sum \limits_{i=1}^{m}{s_{tr}(\boldsymbol{x}_i, y=c_j)}
+    &= \frac{1}{m} \sum \limits_{i=1}^{m}{s(\boldsymbol{x}_i, y=c_j)}
 \end{split}
 \end{align}
 con $m=\#\boldsymbol{X}_{tst}$. La intuición detrás de {\it PCC\/} es que las
@@ -160,8 +160,8 @@ ejemplo, se obtuvieron las siguientes salidas:
 \begin{center}
     \begin{tabular}{lrrrrrrrrrrrrrrrrrrrrr}
         \toprule
-        \textbf{$s_{tr}(\boldsymbol{x}_i, y=1)$} & 0.46 & 0.43 & 0.43 & 0.46 &
-        0.42 & 0.44 & 0.40 & 0.44 & 0.43 & 0.47 & 0.48 & 0.47 \ldots & 0.24 \\
+        \textbf{$s(\boldsymbol{x}_i, y=1)$} & 0.46 & 0.43 & 0.43 & 0.46 & 0.42 &
+        0.44 & 0.40 & 0.44 & 0.43 & 0.47 & 0.48 & 0.47 \ldots & 0.24 \\
         \bottomrule
     \end{tabular}
 \end{center}
@@ -217,8 +217,7 @@ etiquetas de la muestra, tenemos:
 \begin{center}
     \begin{tabular}{ccc}
         \toprule
-        $s_{tr}(\boldsymbol{x}_i, y=0)$ &  $s_{tr}(\boldsymbol{x}_i, y=1)$ & $c$
-        \\
+        $s(\boldsymbol{x}_i, y=0)$ &  $s(\boldsymbol{x}_i, y=1)$ & $c$ \\
         \midrule
         0.40 &    0.60 &  1 \\
         0.43 &    0.57 &  1 \\
@@ -301,7 +300,7 @@ Aunque este método se propuso originalmente para mejorar las probabilidades {\i
 a posteriori\/} de modelos de clasificación bajo {\it dataset shift\/}
 (ver~\ref{problema:cambios}), el mismo también sirve para mejorar la estimación
 de prevalencias. También conocido como {\it SLD\/} por las iniciales de sus
-autores, este método fue propueesto por~\citet{saerens2002adjusting} y aplica el
+autores, este método fue propuesto por~\citet{saerens2002adjusting} y aplica el
 agoritmo de Esperanza-Maximización (EM)~\cite{dempster1977maximum}, un conocido
 algoritmo iterativo para encontrar estimaciones de máxima verosimilitud de
 parámetros (los valores de prevalencia de clase) para modelos que dependen en
@@ -328,9 +327,9 @@ una sola vez, luego se iteran el E y M):
 
     \item[\bf{E -}] Esperanza: \hspace*{\fill}\makebox[4.5in][l]{$\hat
     p^{(s)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_k) = \dfrac{\dfrac{\hat
-    p^{(s)}_{Y}(y=c_k)}{\hat p_{tr}(c=c_k)}s_{tr}(\boldsymbol{x}_i, y=c_k)}{\sum
+    p^{(s)}_{Y}(y=c_k)}{\hat p_{tr}(c=c_k)}s(\boldsymbol{x}_i, y=c_k)}{\sum
     \limits_{j=1}^{\#C} \dfrac{\hat p^{(s)}_{Y}(y=c_j)}{\hat
-    p_{tr}(c=c_j)}s_{tr}(\boldsymbol{x}_i, y=c_k)}$}
+    p_{tr}(c=c_j)}s(\boldsymbol{x}_i, y=c_k)}$}
 
     \item[\bf{M -}] Maximización: \hspace*{\fill}\makebox[4.5in][l]{$\hat
     p^{(s+1)}_{Y}(y=c_k)=\dfrac{1}{m}\sum \limits_{i=1}^{m}\hat
@@ -345,7 +344,7 @@ Finalmente, cuando se alcanza la convergencia, se obtiene: $\hat p^{\it EMQ
 caso como resultado $\hat p^{(0)}_{Y}(y=1) = \hat p_{tr}(c=1) = 0.5$ y $\hat
 p^{(0)}_{Y}(y=0) = \hat p_{tr}(c=0) = 0.5$. En la primera iteración, para el
 paso E queda $\hat p^{(s=0)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=c_k) =
-s_{tr}(\boldsymbol{x}_i, y=c_k)$ es decir, las mismas salidas del clasificador
+s(\boldsymbol{x}_i, y=c_k)$ es decir, las mismas salidas del clasificador
 calibrado. Luego, para el paso M, y al igual que en {\it PCC}, debemos promediar
 cada salida individual del clasificador calibrado por cada una de las clases
 existentes, quedando en nuestro caso $\hat p^{(s=1)}_{Y}(y=1) = p^{\it
@@ -370,11 +369,11 @@ método, conocido como {\it HDy}, es un método agregativo ya que emplea las
 salidas del clasificador para describir las distribuciones tanto de la muestra
 de entrenamiento como la de prueba. El método se basa en el cálculo de:
 \begin{equation}\label{ecuacion:hdy}
-    p^{\it HDy \/}_{tst}(c=1) = \argmin_{0 \leq \alpha \leq 1}{\text{HD}}(\alpha f_{tr}{(s_{tr}(y|c=1))}+(1-\alpha) f_{tr}{(s_{tr}(y|c=0))}, f_{tst}{(s_{tr}(y))})
+    p^{\it HDy \/}_{tst}(c=1) = \argmin_{0 \leq \alpha \leq 1}{\text{HD}}(\alpha f_{tr}{(s(\boldsymbol{x},y=1|c=1))}+(1-\alpha) f_{tr}{(s(\boldsymbol{x},y=1|c=0))}, f_{tst}{(s(\boldsymbol{x},y=1))})
 \end{equation}
 donde:
 \begin{equation}\label{ecuacion:hd}
-    {\text{HD}}(P \parallel Q)= \frac{1}{\sqrt{2}}{\sqrt {\sum _{i=1}^{k}{({\sqrt {p_{i}}}-{\sqrt {q_{i}}})}^{2}}}
+    {\text{HD}}(P \parallel Q)= \frac{1}{\sqrt{2}}{\sqrt {\sum _{i=1}^{k}{({\sqrt {p_{i}}}-{\sqrt {q_{i}}})}^{2}}} \text{ con } P=(p_1,\dots,p_k), Q=(q_1,\dots,q_k)
 \end{equation}
 y $f_{tr}(s_{tr})$ y $f_{tst}(s_{tr})$ son las funciones de densidad de
 probabilidad de las salidas del clasificador para la muestra de entrenamiento y
