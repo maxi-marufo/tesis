@@ -381,20 +381,23 @@ donde:
 \begin{equation}\label{ecuacion:hd}
     {\text{HD}}(P \parallel Q)= \frac{1}{\sqrt{2}}{\sqrt {\sum _{i=1}^{k}{({\sqrt {p_{i}}}-{\sqrt {q_{i}}})}^{2}}} \text{ con } P=(p_1,\dots,p_k), Q=(q_1,\dots,q_k)
 \end{equation}
-y $f_{tr}(s_{tr})$ y $f_{tst}(s_{tr})$ son las funciones de densidad de
-probabilidad de las salidas del clasificador para la muestra de entrenamiento y
-de evaluación, respectivamente. Estas densidades son aproximadas empíricamente
-mediante histogramas, utilizando {\it cross-validation\/} o un conjunto de
-validación aparte para estimar la cantidad de bins a utilizar.
+y $f_{tr}(s)$ y $f_{tst}(s)$ son las funciones de densidad de probabilidad de
+las salidas del clasificador para la muestra de entrenamiento y de evaluación,
+respectivamente. Estas densidades son aproximadas empíricamente mediante
+histogramas, siendo $k$ el número de bins utilizados. Dado que el número de bins
+$k$ podría tener un impacto significativo en la estimación, normalmente se
+utiliza como estimador la mediana de la distribución de los $\alpha$ encontrados
+para un rango de $k$.
 
 El segundo método propuesto por~\citet{gonzalez2013class} pertenece a los
 métodos no agregativos y será desarrollado en la correspondiente
 sección~\ref{puntual:no_agregativos}.
 
-\paragraph{\it Ejemplo:\/} En las siguientes gráficas vemos cómo son las tres
-distribuciones estimadas para el ejemplo, la gráfica de la función de costo
-usada, y cómo el mínimo encontrado se usa para combinar las distribuciones de
-entrenamiento y compararlas con la de prueba.
+\paragraph{\it Ejemplo:\/} En las siguientes gráficas vemos cómo son las
+estimaciones de tres distribuciones estimadas para el ejemplo, la gráfica de la
+función de costo usada, y cómo el mínimo encontrado se usa para combinar las
+distribuciones de entrenamiento y compararlas con la de prueba. En este caso, se
+utilizó sólo $k=100$.
 
 \begin{figure}[h]
     \centering
@@ -413,8 +416,8 @@ entrenamiento y compararlas con la de prueba.
     \hfill
 \end{figure}
 
-Se observa que el valor mínimo de $\it HDy \/$ se da en $p^{\it HDy
-\/}_{tst}(c=1) = 0$.
+Se observa que el valor mínimo de HDy se da en $p^{\it HDy \/}_{tst}(c=1) =
+0.34$.
 
 \subsection{Con clasificadores específicos}\label{puntual:especificos}
 
@@ -454,7 +457,7 @@ multivariadas para evaluar el rendimiento de cuantificación. Siguiendo esta
 línea,~\citet{sanyal2018optimizing} introducen una serie de algoritmos que
 permiten el entrenamiento directo de redes neuronales profundas y la generación
 de clasificadores no lineales. Estos métodos están diseñados para optimizar
-funciones de pérdida de cuantificación como la divergencia KL.
+funciones de pérdida de cuantificación como la divergencia KL.\@
 
 \paragraph{\it Ejemplo:\/} A diferencia de los casos anteriores, aquí no usamos
 el mismo clasificador con el que veníamos trabajando. En cambio, se ajusta un
