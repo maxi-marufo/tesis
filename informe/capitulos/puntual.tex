@@ -471,3 +471,49 @@ anterior con {\it CC}, ya que ${\it KLD \/}^{\it CC\/}_{tst} \approx 0.55$ y
 ${\it KLD \/}^{{\it SVM \/}_{perf}, {\it KLD \/}}_{tst} \approx 0.28$.
 
 \section{Métodos No Agregativos}\label{puntual:no_agregativos}
+
+Hasta ahora, hemos utilizado métodos que agregan predicciones individuales de un
+clasificador para poder cuantificar. Sin embargo, también es posible estimar
+valores de prevalencia de clase sin generar decisiones binarias o probabilidades
+{\it a posteriori\/} para cada ítem. Esta alternativa se fundamenta en el
+principio de Vapnik, que sugiere resolver problemas directamente con la
+información disponible en lugar de abordar un problema más general. En
+cuantificación, esto significa que podemos estimar prevalencias de clase
+directamente sin clasificar cada individuo.
+
+\subsubsection{Usando la distancia de Hellinger en $\boldsymbol{x}$
+(HDx)}\label{puntual:hdx}
+
+Este método está obviamente relacionado con {\it HDy\/} (\ref{puntual:hdy}), con
+la diferencia de considerar distribuciones de probabilidad multidimensionales
+$f(\boldsymbol{x})$ en lugar de distribuciones unidimensionales $f(s(x))$.
+Debido a la multidimensionalidad de $\boldsymbol{x} \in
+\mathbb{R}^d$,~\citet{gonzalez2013class} proponen minimizar el promedio de las
+divergencias de Hellinger por cada $\boldsymbol{x}^j$:
+
+\begin{equation}\label{ecuacion:hdx}
+    p^{\it HDx \/}_{tst}(c=1) = \argmin_{0 \leq \alpha \leq 1}{\frac{1}{d}\sum \limits_{j=1}^{d} \text{HD}}(\alpha f_{tr}({\boldsymbol{x^j}|c=1})+(1-\alpha) f_{tr}({\boldsymbol{x^j}|c=0}), f_{tst}({\boldsymbol{x^j}}))
+\end{equation}
+
+\paragraph{\it Ejemplo:\/} Repetimos el tipo de gráficos mostrados para  caso de
+{\it HDy\/}, siendo en este caso $k=20$.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../plots_teoria/hdx_1.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../plots_teoria/hdx_2.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../plots_teoria/hdx_3.png}
+    \end{subfigure}
+    \hfill
+\end{figure}
+
+Se observa que el valor mínimo de HDx se da en $p^{\it HDx \/}_{tst}(c=1) =
+0.23$.
