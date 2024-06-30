@@ -338,7 +338,13 @@ una sola vez, luego se iteran el E y M):
 \end{enumerate}
 
 Finalmente, cuando se alcanza la convergencia, se obtiene: $\hat p^{\it EMQ
-\/}_{tst}(c=c_k) = \hat p_{Y}(y=c_k)$
+\/}_{tst}(c=c_k) = \hat p_{Y}(y=c_k)$.
+
+Aunque ya mencionamos que el modelo supone que las probabilidades {\it a
+posteriori\/} de modelos de clasificación ya están calibradas, se ha estudiado
+también que el método {\it EMQ\/} mejora las predicciones de cuantificación si
+el clasificador utilizado está calibrado~\cite{esuli2020critical,
+alexandari2020maximum}.
 
 \paragraph{\it Ejemplo:\/} Comenzamos con la inicialización, dando en nuestro
 caso como resultado $\hat p^{(0)}_{Y}(y=1) = \hat p_{tr}(c=1) = 0.5$ y $\hat
