@@ -5,7 +5,7 @@ problemas. En aprendizaje supervisado, típicamente se mide el rendimiento
 estimando la probabilidad de predecir correctamente ejemplos individuales no
 observados. Sin embargo, en cuantificación, el rendimiento se evalúa para
 conjuntos de datos. Esto implica que necesitamos una colección de muestras para
-evaluar el rendimiento de un modelo. Dado un modelo $\overline{h}$, una función
+evaluar el rendimiento de un método. Dado un método $\overline{h}$, una función
 de pérdida $L(\cdot, \cdot)$, y un conjunto de muestras de evaluación ${T_1,
 \dots, T_s}$, el rendimiento de $\overline{h}$ es:
 
@@ -15,8 +15,8 @@ de pérdida $L(\cdot, \cdot)$, y un conjunto de muestras de evaluación ${T_1,
     \label{ecuacion_rendimiento}
 \end{equation}
 
-Calcular la pérdida de un modelo sobre una sóla muestra de prueba,
-$L(\overline{h}, T_j)$ no implica promediar la pérdidad sobre ejemplos
+Calcular la pérdida de un método sobre una sóla muestra de prueba,
+$L(\overline{h}, T_j)$ no implica promediar la pérdida sobre ejemplos
 individuales. Las métricas empleadas para evaluar la cuantificación con respecto
 a los ejemplos individuales son inherentemente no lineales. Esto implica que el
 error asociado a un conjunto de elementos sin etiquetar no puede ser expresado
@@ -27,20 +27,20 @@ hay una mayor incidencia de falsos positivos que de falsos negativos, la
 presencia de un falso negativo adicional puede en realidad mejorar el error de
 cuantificación general, gracias al efecto de compensación mutua entre $FP$ y
 $FN$ mencionado en~\ref{problema:clasificar_y_contar}. Por consiguiente, la
-evaluación del error en la cuantificación es de naturaleza no lineal y
-multivariada, requiriendo así la consideración conjunta de todos los elementos
-no etiquetados a la vez.
+evaluación del error en la cuantificación es de naturaleza no lineal y múltiple,
+requiriendo así la consideración conjunta de todos los elementos no etiquetados
+a la vez.
 
 Además, el problema de evaluación en cuantificación se relaciona con el cambio
 en la distribución de datos entre la fase de entrenamiento y la de
-implementación del modelo. Se requiere una colección de muestras de prueba
+implementación del método. Se requiere una colección de muestras de prueba
 variada y que represente diversas distribuciones para evaluar correctamente el
-rendimiento del modelo y evitar sesgos. Por esta razón, la mayoría de los
+rendimiento del método y evitar sesgos. Por esta razón, la mayoría de los
 experimentos reportados en la literatura emplean conjuntos de datos tomados de
 otros problemas y se crean conjuntos de prueba con cambios en las distribuciones
 creados artificialmente. Este enfoque tiene la ventaja de que la cantidad del
 {\it dataset shift\/} se puede controlar para estudiar el rendimiento de los
-modelos en diferentes situaciones.
+métodos en diferentes situaciones.
 
 Las funciones de pérdida $L(\cdot, \cdot)$ serán elegidas de acuerdo al tipo de
 problema y al objetivo particular de la aplicación. Como ya se mencionó, el

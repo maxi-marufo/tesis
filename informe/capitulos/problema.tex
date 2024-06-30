@@ -42,7 +42,7 @@ predicciones que interesan no son a nivel individual sino a nivel colectivo;
 ejemplos de tales campos son la investigación de mercado, la ciencia política,
 las ciencias sociales, modelado ecológico y epidemiología.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.4\textwidth}
         \includegraphics[width=\textwidth]{../plots_teoria/intro_scatterplot.png}
@@ -104,7 +104,8 @@ mismo individuo. Así, los problemas de cuantificación se dividen de esta maner
     \item Etiquetado múltiple {\it (Multi-Label Quantification -MLQ-)\/}: cuando
     cada individuo puede pertenecer a cualquier número de clases (cero, una o
     varias) en $C=\{c_1,\dots,c_{\#C}\}$.
-    \item Cuantificación Binaria {\it (Binary Quantification -BQ-)\/}:
+    \item Cuantificación Binaria {\it (Binary Quantification -BQ-)\/}: se puede
+    definir de dos formas (equivalentes) según el tipo de etiquetado definido:
     \begin{enumerate}
         \item en {\it SLQ\/} con $\#C=2$, (en este caso $C=\{c_1,c_2\}$, y cada
         individuo pertenece a $c_1$ o $c_2$)
@@ -127,27 +128,36 @@ Si hablamos entonces de cuantificación binaria, se tiene que por cada muestra $
 \in \{1,\dots,n\}$, $(\boldsymbol{X}_i,Y_i,S_i)$ es un vector de variables
 aleatorias tal que $\boldsymbol{X}_i \in \mathbb{R}^d$ son las características
 de la muestra, $Y_i \in C$ con $C=\{1,0\}$ indica la clase a la que pertenece y
-$S_i \in \{1,0\}$ indica si fue etiquetada (y pertenece entonces al conjunto de
-entrenamiento) o no. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable.
-El objectivo es estimar $\theta:= \mathbb{P}(Y=1|S=0)$\footnote{En
-cuantificación, se lo nombra generalmente como $p$ (o $p_1,\dots,p_{\#C}$ o
-$p(c)$ para el caso multiclase) en vez de $\theta$, por lo que en este trabajo
-también se usará esta nomenclatura.}, es decir, la prevalencia de etiquetas
-positivas entre muestras no etiquetadas. Esta prevalencia no se asume de ser la
-misma que en las muestras etiquetadas, $\mathbb{P}(Y=1|S=1)$. Además, el
-estimador de $\theta$ debe depender sólo de los datos disponibles, es decir, de
-las características de todas las muestras y de las etiquetas que fueron
-obtenidas. Los supuestos que se asumen~\cite{vaz2019quantification} son:
+$S_i \in \{1,0\}$ indica si pertenece al conjunto de entrenamiento o al de
+prueba. Es decir, cuando $S_i=0$, entonces $Y_i$ no es observable. El objetivo
+es estimar $\theta:= \mathbb{P}(Y=1|S=0)$\footnote{En cuantificación, se lo
+nombra generalmente como $p$ (o $p_1,\dots,p_{\#C}$ o $p(c)$ para el caso
+multiclase) en vez de $\theta$, por lo que en este trabajo también se usará esta
+nomenclatura.}, es decir, la prevalencia de etiquetas positivas en conjuntos de
+prueba. Esta prevalencia no se asume de ser la misma que en el conjunto de
+entrenamiento, $\mathbb{P}(Y=1|S=1)$. Además, el estimador de $\theta$ debe
+depender sólo de los datos disponibles, es decir, de las características de la
+muestra (tanto del conjunto de entrenamiento como de prueba) y de las etiquetas
+del conjunto de entrenamiento. Los supuestos que se
+asumen~\cite{vaz2019quantification} son:
 
 \begin{itemize}
   \item $(\boldsymbol{X}_1,Y_1,S_1) \dots (\boldsymbol{X}_n,Y_n,S_n)$ son
-  independientes
+  independientes. Es decir, el conocimiento del valor de una variable no
+  proporciona ninguna información sobre el valor de la otra, y viceversa.
   \item Por cada $s \in \{0,1\}$,
   $(\boldsymbol{X}_1,Y_1)|S_1=s,\dots,(\boldsymbol{X}_n,Y_n)|S_n=s$ son
-  idénticamente distribuidas.
+  idénticamente distribuidas. En otras palabras, que si separamos los conjuntos
+  de entrenamiento y de prueba, en cada uno de ellos los individuos son tomados
+  de la misma distribución de probabilidad.
   \item Por cada $(y_1,\dots,y_n)\in{\{0,1\}}^n$,
   $(\boldsymbol{X}_1,\dots,\boldsymbol{X}_n)$ es independiente de
-  $(S_1,\dots,S_n)$ condicionado a $(Y_1,\dots,Y_n)=(y_1,\dots,y_n)$
+  $(S_1,\dots,S_n)$ condicionado a $(Y_1,\dots,Y_n)=(y_1,\dots,y_n)$. Este es el
+  supuesto más fuerte, ya que implica que la relación entre las características
+  de un individuo y su etiqueta no está intermediada por el conjunto
+  (entrenamiento o prueba) al que pertenece. Es decir, que una vez que conocemos
+  la etiqueta del individuo, sabemos la distribución de sus características,
+  independientemente del conjunto al que pertenece el individuo.
 \end{itemize}
 
 Usando la distribución de probabilidad conjunta, podemos factorizar usando las
@@ -237,7 +247,8 @@ El problema de cuantificación se trata de un caso donde $\mathbb{P}_{tst}(Y)$ e
 desconocido. Además, la mayoría de los métodos de cuantificación propuestos
 asumen que $\mathbb{P}_{tr}(\boldsymbol{X}|Y) =
 \mathbb{P}_{tst}(\boldsymbol{X}|Y)$, por lo que están dentro de los casos de
-{\it prior probability shift}.
+{\it prior probability shift}. Esto implica que se asumen los tres supuestos
+mencionados en~\ref{problema:marco_teorico}.
 
 Por otro lado, en la mayoría de los casos el objetivo final de la implementación
 es estimar algún parámetro de $\mathbb{P}_{tst}(Y)$. Por ejemplo, como ya
@@ -250,33 +261,33 @@ consecuencia, prácticamente todas las medidas de evaluación para la
 cuantificación son divergencias, es decir, medidas de cómo una distribución
 pronosticada difiere de la distribución real.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \begin{subfigure}[t]{0.4\textwidth}
+    \begin{subfigure}[t]{0.36\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../plots_teoria/cambios_train_scatterplot.png}
+        \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_train_scatterplot.png}
         \caption{Muestra de entrenamiento}\label{cambios:datos_tr}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[t]{0.4\textwidth}
+    \begin{subfigure}[t]{0.36\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../plots_teoria/cambios_train_barplot.png}
+        \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_train_barplot.png}
         \caption{Prevalencia de clases en muestra de
         entrenamiento}\label{cambios:prevalencia_tr}
     \end{subfigure}
     \medskip
-    \begin{subfigure}[t]{0.4\textwidth}
+    \begin{subfigure}[t]{0.36\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../plots_teoria/cambios_test_scatterplot.png}
+        \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_test_scatterplot.png}
         \caption{Muestra de prueba\footnote{con
         $\mathbb{P}_{tst}(\boldsymbol{X}|Y) =
         \mathbb{P}_{tr}(\boldsymbol{X}|Y)$} y su
         clasificación.}\label{cambios:clasificacion_tst}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[t]{0.4\textwidth}
+    \begin{subfigure}[t]{0.36\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../plots_teoria/cambios_test_barplot.png}
+        \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_test_barplot.png}
         \caption{Prevalencia de clases verdadera y cuantificación en muestra de
         prueba}\label{cambios:cuantificacion_tst}
     \end{subfigure}
@@ -300,10 +311,11 @@ como:
     F_1 = \frac{2 \cdot tp}{2 \cdot tp + fp + fn}
 \end{equation}
 donde $tp$, $fp$, $fn$ indican el número de verdaderos positivos, falsos
-positivos y falsos negativos, respectivamente. Un buen clasificador puede ser un
-mal cuantificador ya que $F_1$ considera buenos aquellos clasificadores que
-mantienen la suma $fp + fn$ al mínimo; sin embargo, el objetivo de un algoritmo
-de cuantificación debe ser mantener al mínimo $|fp-fn|$.
+positivos y falsos negativos, respectivamente. Un buen clasificador, según la
+métrica $F_1$, puede ser un mal cuantificador ya que $F_1$ considera buenos
+aquellos clasificadores que mantienen la suma $fp + fn$ al mínimo; sin embargo,
+el objetivo de un algoritmo de cuantificación debe ser mantener al mínimo
+$|fp-fn|$.
 
 El análisis teórico de esta cuestión se basa en el supuesto de {\it prior
 probability shift\/}~\ref{problema:cambios}. Bajo tal supuesto, la estimación
@@ -314,7 +326,7 @@ positivos ($tpr$), su tasa de falsos positivos ($fpr$) y de la prevalencia real
 \begin{equation}\label{ecuacion:tpr_fpr}
     \hat p(p) = p \cdot {tpr} + (1-p) \cdot {fpr}
 \end{equation}
-\begin{figure}[h]
+\begin{figure}[H]
     \includegraphics[width=\textwidth]{../plots_teoria/cc_tpr_fpr.png}
     \caption{La línea negra representa el cuantificador y clasificador perfecto,
     respectivamente. Las otras líneas muestran las estimaciones teóricas de
@@ -388,11 +400,11 @@ clasificación}\label{problema:mejora}
 
 Debido a los problemas mencionados anteriormente de los clasificadores frente a
 cambios en las distribuciones de los datos y frente a datos desbalanceados, los
-algoritmos de cuantificación están cada vez más frecuentemente también siendo
-usados en tareas que requieren predicciones individuales. Los mismos se emplean
-como suplemento de clasificadores para suplir sus defectos frente a estos
-problemas, ya que en algunos casos no sólo predicen los valores agregados, sino
-que también mejoran las predicciones a nivel individual.
+algoritmos de cuantificación están cada vez más frecuentemente siendo usados en
+tareas que requieren predicciones individuales. Los mismos se emplean como
+suplemento de clasificadores para suplir sus defectos frente a estos problemas,
+ya que en algunos casos no sólo predicen los valores agregados, sino que también
+mejoran las predicciones a nivel individual.
 
 Por ejemplo, el {\it prior probability shift\/} puede hacer que los
 clasificadores performen de manera subóptima. En el caso del clasificador óptimo
