@@ -12,6 +12,8 @@
 \usepackage{ctable}
 \usepackage{multicol}
 \usepackage{float}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
 
 \usepackage[square,numbers,sort&compress]{natbib}
 
@@ -28,6 +30,34 @@
 \newtheorem{remark}{Observaci\'on}[chapter]
 \newtheorem{definition}{Definici\'on}[chapter]
 \newtheorem{remarkex}{Observaci\'on}[chapter]
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttm,
+morekeywords={self},              % Add keywords here
+keywordstyle=\ttb\color{deepblue},
+stringstyle=\color{deepgreen},
+frame=tb,                         % Any extra options here
+showstringspaces=false,
+aboveskip=20pt,
+belowskip=20pt,
+}}
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{\pythonstyle\lstset{#1}}
+{}
 
 
 %% Bibliografia
@@ -63,8 +93,7 @@
 \renewcommand{\baselinestretch}{1.5} % interlineado
 
 \include{capitulos/problema}
-\include{capitulos/puntual}
-\include{capitulos/intervalos}
+\include{capitulos/estimacion}
 \include{capitulos/evaluacion}
 \include{capitulos/resultados}
 

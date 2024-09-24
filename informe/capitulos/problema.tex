@@ -6,7 +6,7 @@ En algunas aplicaciones vinculadas a la clasificación, el objetivo final no es
 determinar a qué clase (o clases) pertenece cada una de las instancias
 individuales de un conjunto de datos no etiquetado, sino estimar la proporción
 (tambíen llamada `prevalencia', `frecuencia relativa' o `probabilidad prior') de
-cada clase en los datos sin etiquetar. En los últimos años se ha señalado que,
+cada clase en los datos no etiquetados. En los últimos años se ha señalado que,
 en estos casos, tiene sentido optimizar directamente algoritmos de aprendizaje
 automático para este objetivo, en lugar de simplemente optimizar clasificadores
 para etiquetar instancias individuales.
@@ -15,9 +15,9 @@ La tarea de ajustar estimadores de prevalencia de clases a través del
 aprendizaje supervisado se conoce como `aprender a cuantificar' o, más
 simplemente, cuantificar o {\it quantification\/} (término acuñado
 por~\citet{forman2005counting}, quien planteó el problema por primera vez). Se
-sabe que cuantificar mediante la clasificación de cada instancia sin etiquetar a
+sabe que cuantificar mediante la clasificación de cada instancia no etiquetada a
 través de un clasificador estándar y luego contando las instancias que han sido
-asignadas a cada clase (el método {\it Classify \& Count\/}) generalmente
+asignadas a cada clase (el método {\it Classify \& Count\/ -CC-}) generalmente
 conduce a estimadores de prevalencia de clases sesgados, es decir, obtienen poca
 exactitud en la cuantificación. Como resultado, se han desarrollado métodos que
 abordan la cuantificación como una tarea en sí.
@@ -54,7 +54,9 @@ las ciencias sociales, modelado ecológico y epidemiología.
         \caption{Cuantificación}
     \end{subfigure}
     \caption{En la clasificación, la predicción es a nivel individual, mientras
-    que en la cuantificación es a nivel agregado.}\label{fig:intro}
+    que en la cuantificación es a nivel agregado (para mayor información sobre
+    los datos del gráfico consultar el
+    Capítulo~\ref{puntual:ejemplo})}\label{fig:intro}
 \end{figure}
 
 En resumen, y generalizando no sólo para clasificación sino también a otros
@@ -143,7 +145,7 @@ asumen~\cite{vaz2019quantification} son:
 
 \begin{itemize}
   \item $(\boldsymbol{X}_1,Y_1,S_1) \dots (\boldsymbol{X}_n,Y_n,S_n)$ son
-  independientes. Es decir, el conocimiento del valor de una variable no
+  independientes. Es decir, el conocimiento del valor de una muestra no
   proporciona ninguna información sobre el valor de la otra, y viceversa.
   \item Por cada $s \in \{0,1\}$,
   $(\boldsymbol{X}_1,Y_1)|S_1=s,\dots,(\boldsymbol{X}_n,Y_n)|S_n=s$ son
@@ -185,7 +187,7 @@ tener bajo rendimiento.
 
 \section{Cambios en las distribuciones de los datos}\label{problema:cambios}
 
-En lo últimos años ha habido un interés creciente en las aplicaciones que
+En los últimos años ha habido un interés creciente en las aplicaciones que
 presentan cambios en las distribuciones de datos (conocido en la blibliografía
 por su término en inglés {\it dataset shift\/}). Estos problemas comparten el
 hecho de que la distribución de los datos utilizados para entrenar es diferente
@@ -282,7 +284,7 @@ pronosticada difiere de la distribución real.
         \caption{Muestra de prueba\footnote{con
         $\mathbb{P}_{tst}(\boldsymbol{X}|Y) =
         \mathbb{P}_{tr}(\boldsymbol{X}|Y)$} y su
-        clasificación.}\label{cambios:clasificacion_tst}
+        clasificación}\label{cambios:clasificacion_tst}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.36\textwidth}
@@ -300,22 +302,24 @@ pronosticada difiere de la distribución real.
 
 En ausencia de métodos para estimar los valores de prevalencia de clase de forma
 directa, el primer método que suele pensarse para hacerlo es {\it Classify \&
-Count}, es decir, clasificar cada individuo sin etiquetar y estimar los valores
-de prevalencia de clase contando los individuos que fueron asignados a cada
-clase. Sin embargo, esta estrategia es subóptima: si bien un clasificador
-perfecto es también un cuantificador perfecto, un buen clasificador puede ser un
-mal cuantificador. Para ver esto, se puede ver la definición de $F_1$, una
-función de evaluación estándar para la clasificación binaria, que se define
-como:
+Count} o {\it CC}, es decir, clasificar cada individuo no etiquetado y estimar
+los valores de prevalencia de clase contando los individuos que fueron asignados
+a cada clase. Sin embargo, esta estrategia es subóptima: si bien un clasificador
+perfecto produce también un cuantificador perfecto, un buen clasificador puede
+producir un peor cuantificador que el que produce un mal clasificador. Para ver
+esto, se puede ver la definición de $F_1$, una función de evaluación estándar
+para la clasificación binaria, que se define como:
 \begin{equation}
     F_1 = \frac{2 \cdot tp}{2 \cdot tp + fp + fn}
 \end{equation}
 donde $tp$, $fp$, $fn$ indican el número de verdaderos positivos, falsos
 positivos y falsos negativos, respectivamente. Un buen clasificador, según la
-métrica $F_1$, puede ser un mal cuantificador ya que $F_1$ considera buenos
+métrica $F_1$, puede producir un mal cuantificador ya que $F_1$ considera buenos
 aquellos clasificadores que mantienen la suma $fp + fn$ al mínimo; sin embargo,
 el objetivo de un algoritmo de cuantificación debe ser mantener al mínimo
-$|fp-fn|$.
+$|fp-fn|$. Es decir, que un mal clasificador con $fp$ y  $fn$ altos pero
+similares podría llegar a producir un mejor cuantificador que un buen
+clasificador.
 
 El análisis teórico de esta cuestión se basa en el supuesto de {\it prior
 probability shift\/}~\ref{problema:cambios}. Bajo tal supuesto, la estimación
@@ -332,7 +336,7 @@ positivos ($tpr$), su tasa de falsos positivos ($fpr$) y de la prevalencia real
     respectivamente. Las otras líneas muestran las estimaciones teóricas de
     $\hat p$ resultantes de aplicar la ecuación~\ref{ecuacion:tpr_fpr}, y el
     {\it accuracy\/} correspondiente al clasificador, según se varían los
-    valores de $tpr$ y $fpr$}\label{fig:cc_tpr_fpr}
+    valores de $tpr$ y $fpr$.}\label{fig:cc_tpr_fpr}
 \end{figure}
 
 El mal desempeño de {\it CC\/} fue demostrado mediante el siguiente teorema
@@ -435,10 +439,10 @@ general de un clasificador, sino también para mejorar su equidad o {\it
 fairness\/}~\cite{biswas2021ensuring}, es decir, su posibilidad de predecir
 resultados independientes de un cierto conjunto de variables que consideramos
 sensibles y no relacionadas con él (e.j.:~género, etnia, orientación sexual,
-etc.). Por ejemplo, suponiendo que una variable $S$ debe considerarse sensible,
-se puede estimar $\mathbb{P}_{tr}(Y|S)$. Luego, si los datos de entrenamiento
-están sesgados, por ejemplo, con $\mathbb{P}_{tr}(Y=1|S=1) \gg
-\mathbb{P}_{tr}(Y=1|S=0)$, pero se sabe que en las muestras a inferir esto no es
+etc.). Por ejemplo, suponiendo que una variable $Z$ debe considerarse sensible,
+se puede estimar $\mathbb{P}_{tr}(Y|Z)$. Luego, si los datos de entrenamiento
+están sesgados, por ejemplo, con $\mathbb{P}_{tr}(Y=1|Z=1) \gg
+\mathbb{P}_{tr}(Y=1|Z=0)$, pero se sabe que en las muestras a inferir esto no es
 así, se puede optimizar el modelo de clasificación imponiento alguna penalidad
-basada en la estimación de $\mathbb{P}_{tst}(Y|S)$, siendo esta última obtenido
+basada en la estimación de $\mathbb{P}_{tst}(Y|Z)$, siendo esta última obtenido
 por un cuantificador.

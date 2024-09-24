@@ -18,10 +18,11 @@ modelos de forma ponderada para obtener una predicción más robusta frente los
 casos en donde cada modelo individual falla.
 
 La mayoría de los métodos de aprendizaje supervisado producen clasificadores que
-generan puntuaciones $s(x)$ que se pueden utilizar para ranquear los ejemplos en
-el conjunto de pruebas de la etiqueta más probable a la menos probable de una
-clase $c$. Es decir, para dos ejemplos $ \mathbf{x}_1$ y $ \mathbf{x}_2$, si $s( \mathbf{x}_1) < s( \mathbf{x}_2)$
-entonces $\mathbb{P}(c|x) < \mathbb{P}(c|y)$. Sin embargo, la clasificación según el rango de la
+generan puntuaciones \(s(x)\) que se pueden utilizar para ranquear los ejemplos
+en el conjunto de pruebas de la etiqueta más probable a la menos probable de una
+clase \(c\). Es decir, para dos ejemplos \( \mathbf{x}_1\) y \( \mathbf{x}_2\),
+si \(s( \mathbf{x}_1) < s( \mathbf{x}_2)\) entonces \(\mathbb{P}(c|x) <
+\mathbb{P}(c|y)\). Sin embargo, la clasificación según el rango de la
 probabilidad de pertenencia a una clase no es suficiente. Lo que se necesita es
 una estimación precisa de la probabilidad de que cada ejemplo de prueba sea un
 miembro de la clase de interés.
