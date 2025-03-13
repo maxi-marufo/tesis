@@ -1,0 +1,38 @@
+\begin{center}
+  \textbf{\Large Abstract}\label{abstract}
+\end{center}
+
+Quantification aims to provide aggregate predictions for datasets, rather than
+individual predictions for each data point. In the context of classification,
+this translates to predicting the proportion of each class within a set of
+instances, rather than the specific class of each instance individually.
+
+A practical example is predicting the proportion of positive and negative
+comments regarding a product, service, or candidate on social media. While a
+classifier could be used to predict the sentiment of each comment and
+subsequently derive class proportions, this strategy is suboptimal and often
+yields biased prevalence estimates, resulting in poor quantification accuracy.
+Consequently, dedicated methods have been developed to address quantification as
+an independent task.
+
+Quantification models are trained on data whose distribution may differ from
+that of the test data. In the context of binary quantification, for each
+instance $i \in \{1,\dots,n\}$, we consider a vector of random variables
+$(\boldsymbol{X}_i,Y_i,S_i)$, where $\boldsymbol{X}_i \in \mathbb{R}^d$
+represents the instance's features, $Y_i \in \{0, 1\}$ denotes its class label,
+and $S_i \in \{0, 1\}$ indicates whether the instance is labeled (and therefore
+belongs to the training set). When $S_i = 0$, the label $Y_i$ is unobserved. The
+objective is to estimate $\theta := \mathbb{P}(Y=1|S=0)$, i.e., the prevalence
+of positive labels among unlabeled instances. This prevalence is not assumed to
+be equal to that of the labeled instances, $\mathbb{P}(Y=1|S=1)$. Furthermore,
+the estimator of $\theta$ must depend solely on the available data: the features
+of all instances and the observed labels.
+
+This work aims to describe the quantification problem, justifying the need for
+optimized models in these cases, and to present a review of the state of the art
+in this field, evaluating the main proposed models through simulations.
+
+\bigskip
+
+\textbf{Keywords:} Quantification, class proportion estimation, distribution
+shift

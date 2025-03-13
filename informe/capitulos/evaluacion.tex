@@ -15,7 +15,7 @@ de pérdida $L(\cdot, \cdot)$, y un conjunto de muestras de evaluación ${T_1,
     \label{ecuacion_rendimiento}
 \end{equation}
 
-Calcular la pérdida de un método sobre una sóla muestra de prueba,
+Calcular la pérdida de un método sobre una sola muestra de prueba,
 $L(\overline{h}, T_j)$ no implica promediar la pérdida sobre ejemplos
 individuales. Las métricas empleadas para evaluar la cuantificación con respecto
 a los ejemplos individuales son inherentemente no lineales. Esto implica que el
@@ -52,8 +52,8 @@ métricas de evaluación para problemas de {\it Single-Label Quantification
 que es un caso espacial del anterior, y para {\it Multi-Label Quantification},
 ya que se pueden usar para cada $y \in C$. Esencialmente todas las medidas de
 evaluación que se han propuesto son divergencias, es decir, medidas de cómo una
-distribución difiere de otra. No se desarrollarán en esta tésis métricas para
-{\it Ordinal Quantification\/} ni para {\it Regression Quantification }, ya que
+distribución difiere de otra. No se desarrollarán en esta tesis métricas para
+{\it Ordinal Quantification\/} ni para {\it Regression Quantification}, ya que
 no son útiles para nuestro objeto de estudio.
 
 \section{Propiedades}\label{evaluacion:propiedades}
@@ -64,8 +64,8 @@ artículo es que ninguna medida de evaluación existente para {\it SLQ\/}
 satisface todas las propiedades identificadas como deseables; aún así, se ha
 demostrado que algunas medidas de evaluación son “menos inadecuadas” que otras.
 Aquí mencionamos brevemente las cuatro propiedades principales que habría que
-considerar en cada métrica $M$ a emplear (el resto son propiedas que suelen ser
-satisfechas por todas las métricas).
+considerar en cada métrica $M$ a emplear (el resto son propiedades que suelen
+ser satisfechas por todas las métricas).
 
 \begin{itemize}
     \item {\bf Máximo (MAX)}: si $\exists \beta >0, \beta \in \mathbb{R}$ tal
@@ -102,12 +102,12 @@ cuantificación, ya que no se aplica a toda una distribución $p$ sino solo a un
 clase específica $c \in C$, y se define como:
 
 \begin{equation}
-    {\text{B}(c)} = \hat p(c) - p(c)
+    {\text{B}(c)} = \hat p(c) - p(c)\label{evaluacion:eq_b}
 \end{equation}
 
 Incluso usado en cuantificación binaria, se debe especificar a cuál de las
 clases hace referencia (en este caso, suele hacer referencia a la clase
-positiva). Si se usa como un medida de evaluación para la cuantificación, un
+positiva). Si se usa como una medida de evaluación para la cuantificación, un
 problema con B es que promediar los puntajes de diferentes clases produce
 resultados poco intuitivos, ya que el sesgo positivo de una clase y el sesgo
 negativo de otra clase se anulan entre sí. El mismo problema ocurre cuando se
@@ -124,7 +124,7 @@ ya que, al ser simplemente la diferencia entre ambas magnitudes, es simple y
 fácilmente interpretable.
 
 \begin{equation}
-    {\text{AE}(p, \hat p)} = \frac{1}{\#C}\sum \limits_{j=1}^{\#C}{|\hat p(c=c_j) - p(c=c_j)|}
+    {\text{AE}(p, \hat p)} = \frac{1}{\#C}\sum \limits_{j=1}^{\#C}{|\hat p(c=c_j) - p(c=c_j)|}\label{evaluacion:eq_ae}
 \end{equation}
 
 Como en este caso las diferencias positivas y negativas son igualmente
@@ -133,7 +133,7 @@ problemático. Como se muestra en~\cite{sebastiani2020evaluation}, AE cumple {\b
 IMP} y {\bf ABS} pero no cumple {\bf MAX} (ni tampoco {\bf REL}). Su rango va de
 0 (mejor) a:
 \begin{equation}
-    z_{\text{AE}} = \frac{2(1-\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j))}{\#C}
+    z_{\text{AE}} = \frac{2(1-\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j))}{\#C}\label{evaluacion:eq_zae}
 \end{equation}
 (peor), por lo que su rango depende de la distribución de $p$ y de $\#C$.
 
@@ -141,7 +141,7 @@ IMP} y {\bf ABS} pero no cumple {\bf MAX} (ni tampoco {\bf REL}). Su rango va de
 
 El error absoluto normalizado {\it normalised absolute error}, definido como:
 \begin{equation}
-    {\text{NAE}(p, \hat p)} = \frac{\text{AE}(p, \hat p)}{z_{\text{AE}}} = \frac{\sum \limits_{j=1}^{\#C}{|\hat p(c=c_j) - p(c=c_j)|}}{2(1-\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j))}
+    {\text{NAE}(p, \hat p)} = \frac{\text{AE}(p, \hat p)}{z_{\text{AE}}} = \frac{\sum \limits_{j=1}^{\#C}{|\hat p(c=c_j) - p(c=c_j)|}}{2(1-\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j))}\label{evaluacion:eq_nae}
 \end{equation}
 es una versión de AE que oscila entre 0 (mejor) y 1 (peor), por lo que cumple
 {\bf MAX}. A pesar de su nombre, NAE no disfruta de {\bf ABS} (ni tampoco {\bf
@@ -151,7 +151,7 @@ REL}).
 
 El error cuadrático o {\it squared error}, definido como:
 \begin{equation}
-    {\text{SE}(p, \hat p)} = \frac{1}{\#C}\sum \limits_{j=1}^{\#C}{{(\hat p(c=c_j) - p(c=c_j))}^2}
+    {\text{SE}(p, \hat p)} = \frac{1}{\#C}\sum \limits_{j=1}^{\#C}{{(\hat p(c=c_j) - p(c=c_j))}^2}\label{evaluacion:eq_se}
 \end{equation}
 comparte los mismos pros y contras de AE, pero penalizando más cuanto mayor es
 la diferencia entre el valor real y el predicho, por lo que se usa cuando se
@@ -163,13 +163,13 @@ El error absoluto relativo o {\it relative absolute error\/} es una adaptación
 del AE que impone {\bf REL} al hacer que AE sea relativo a $p$.
 
 \begin{equation}
-    {\text{RAE}(p, \hat p)} = \frac{1}{\#C}\sum \limits_{j=1}^{\#C}{\frac{|\hat p(c=c_j) - p(c=c_j)|}{p(c=c_j)}}
+    {\text{RAE}(p, \hat p)} = \frac{1}{\#C}\sum \limits_{j=1}^{\#C}{\frac{|\hat p(c=c_j) - p(c=c_j)|}{p(c=c_j)}}\label{evaluacion:eq_rae}
 \end{equation}
 
 RAE cumple {\bf IMP} y {\bf REL} pero no cumple {\bf MAX} (ni {\bf ABS}, a pesar
 de su nombre). Su rango va de 0 (mejor) a:
 \begin{equation}
-    z_{\text{RAE}} = \frac{\#C - 1 + \frac {1 - \displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}{\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}}{\#C}
+    z_{\text{RAE}} = \frac{\#C - 1 + \frac {1 - \displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}{\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}}{\#C}\label{evaluacion:eq_zrae}
 \end{equation}
 (peor), por lo que su rango depende de la distribución de $p$ y de $\#C$.
 
@@ -178,7 +178,7 @@ de su nombre). Su rango va de 0 (mejor) a:
 El error absoluto relativo normalizado {\it normalised relative absolute error},
 definido como:
 \begin{equation}
-    {\text{NRAE}(p, \hat p)} = \frac{\text{RAE}(p, \hat p)}{z_{\text{RAE}}} = \frac{\sum \limits_{j=1}^{\#C}{\frac{|\hat p(c=c_j) - p(c=c_j)|}{p(c=c_j)}}}{\#C - 1 + \frac {1 - \displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}{\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}}
+    {\text{NRAE}(p, \hat p)} = \frac{\text{RAE}(p, \hat p)}{z_{\text{RAE}}} = \frac{\sum \limits_{j=1}^{\#C}{\frac{|\hat p(c=c_j) - p(c=c_j)|}{p(c=c_j)}}}{\#C - 1 + \frac {1 - \displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}{\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}}\label{evaluacion:eq_nrae}
 \end{equation}
 es una versión de RAE que oscila entre 0 (mejor) y 1 (peor), por lo que cumple
 {\bf MAX}. A pesar de su nombre, NRAE no disfruta de {\bf REL} (ni tampoco {\bf
@@ -188,7 +188,7 @@ Tanto RAE como NRAE no están definidas cuando sus denominadores sean nulos. Par
 resolver este problema, se puede suavizar tanto $p(c=c_j)$ como $\hat p(c=c_j)$
 mediante suavizado aditivo:
 \begin{equation}
-    \underline p(c=c_j) = \frac{\epsilon + p(c=c_j)}{\epsilon  \#C + \sum \limits_{j=1}^{\#C}{p(c=c_j)}}
+    \underline p(c=c_j) = \frac{\epsilon + p(c=c_j)}{\epsilon  \#C + \sum \limits_{j=1}^{\#C}{p(c=c_j)}}\label{evaluacion:eq_suav_rae_nrae}
 \end{equation}
 donde $\underline p(c=c_j)$ es la versión suavizada de $p(c=c_j)$ y el
 denominador es solo un un factor de normalización (lo mismo para $\underline
@@ -200,14 +200,14 @@ Para distribuciones de probabilidad discretas $P$ y $Q$ definidas en el mismo
 espacio muestral ${\mathcal {X}}$ su divergencia KL se define como:
 
 \begin{equation}
-    {\text{DKL}}(P\parallel Q)=\sum \limits_{x\in {X}}P(x)\log \left({\frac {P(x)}{Q(x)}}\right)
+    {\text{DKL}}(P\parallel Q)=\sum \limits_{x\in {X}}P(x)\log \left({\frac {P(x)}{Q(x)}}\right)\label{evaluacion:eq_dkl}
 \end{equation}
 
 En cuantificación, se quiere comparar la prevalencia real $p$ y la prevalencia
 predicha $\hat{p}$, y el espacio muestral corresponde a las posibles clases, con
 lo cuál será:
 \begin{equation}
-    {\text{DKL}}(p\parallel \hat{p}) = \sum \limits_{j=1}^{\#C}p(c=c_j)\log \left({\frac {p(c=c_j)}{\hat p(c=c_j)}}\right)
+    {\text{DKL}}(p\parallel \hat{p}) = \sum \limits_{j=1}^{\#C}p(c=c_j)\log \left({\frac {p(c=c_j)}{\hat p(c=c_j)}}\right)\label{evaluacion:eq_dkl2}
 \end{equation}
 que va de {0} (mejor) a {+$\infty$} (peor) -por lo tanto, no cumple con {\bf
 MAX}-. Si bien esta medida es una distancia, no es una métrica verdadera, ya que
@@ -215,18 +215,19 @@ no obedece a la desigualdad del triángulo y no es simétrica. Además, es menos
 interpretable que otras métricas de rendimiento y no está definido cuando
 $\hat{p}$ es 0 o 1.
 
-\subsubsection{Divergencia de Kullback-Leibler Normalizada}\label{evaluacion:ndkl}
+\subsubsection{Divergencia de Kullback-Leibler
+Normalizada}\label{evaluacion:ndkl}
 
 Para suplir los problemas de DKL, se puede utilizar la función logística,
 quedando:
 \begin{equation}
-    {\text{NDKL}}(p\parallel \hat{p}) = 2 \cdot \frac{e^{{\text{DKL}}(p\parallel \hat{p})}}{1+e^{{\text{DKL}}(p\parallel \hat{p})}}-1
+    {\text{NDKL}}(p\parallel \hat{p}) = 2 \cdot \frac{e^{{\text{DKL}}(p\parallel \hat{p})}}{1+e^{{\text{DKL}}(p\parallel \hat{p})}}-1\label{evaluacion:eq_ndkl}
 \end{equation}
 que también va de {0} (mejor) a {+$\infty$} (peor) -por lo tanto, si cumple con
 {\bf MAX}-. Sin embargo, como se muestra en~\cite{sebastiani2020evaluation}, ni
 DKL ni NDKL cumplen con {\bf IMP}, {\bf REL} y {\bf ABS}, lo que hace que su uso
 como medidas de evaluación para cuantificación sea cuestionable, además de ser
-dificiles de interpretar.
+difíciles de interpretar.
 
 \section{Elección de la Métrica}\label{evaluacion:eleccion}
 
@@ -277,7 +278,7 @@ NPP\/}) y el Protocolo de Prevalencia Artificial ({\it APP\/}).
 
 Ambos protocolos tienen diferentes pros y contras. Una ventaja de {\it APP\/} es
 que permite crear muchas puntos de prueba de la misma muestra. Además, {\it
-APP\/} permite simluar distintos {\it Prior probability shift}, mientras que con
+APP\/} permite simular distintos {\it Prior probability shift}, mientras que con
 {\it NPP\/} se estaría evaluando sólo con las distribuciones originales de los
 datos de entrenamiento y prueba. Sin embargo, una desventaja de {\it APP\/} es
 que puede no saberse cuán realistas son estas diferentes situaciones en la
@@ -285,3 +286,40 @@ aplicación real, por lo que se podría estar destinando recursos a una evaluaci
 errónea o pobre. Una solución intermedia podría ser utilizar un protocolo que
 utilice conocimientos previos sobre la distribución de prevalencias “probables”
 que se podría esperar encontrar en el dominio específico en cuestión.
+
+\section{Selección de Modelos}\label{evaluacion:seleccion}
+
+El rendimiento de muchos algoritmos de aprendizaje automático es altamente
+sensible a la configuración de sus hiperparámetros. Estos hiperparámetros, a
+diferencia de los parámetros, no se aprenden durante el entrenamiento, debiendo
+ser ajustados previamente para cada problema específico. Aunque muchos
+algoritmos ofrecen valores predeterminados, la optimización de estos
+hiperparámetros es esencial para maximizar el rendimiento en aplicaciones
+concretas. Los métodos de cuantificación no son una excepción en este
+sentido~\cite{esuli2023learning}.
+
+El proceso de selección de modelos consiste en evaluar diferentes combinaciones
+de hiperparámetros hasta quedarse con la combinación que obtenga la mejor
+métrica. Para garantizar una evaluación rigurosa, es recomendable utilizar
+validación cruzada. En el caso de la cuantificación, la optimización de
+hiperparámetros debería imitar el protocolo de evaluación al evaluar cada una de
+las configuraciones candidatas. En otras palabras, dado que el objetivo de la
+selección de modelos es encontrar la configuración de hiperparámetros que
+funcione mejor de acuerdo con un protocolo experimental dado y una medida de
+evaluación dada, resulta adecuado adoptar los mismos protocolos de evaluación
+(\ref{evaluacion:protocolos}) y métricas (\ref{evaluacion:metricas}) que se usan
+habitualmente en la evaluación de sistemas de
+cuantificación~\cite{moreo2022tweet, hassan2021pitfalls}.
+
+Algunos de los métodos de cuantificación que presentan hiperparámetros {\it
+per-se\/} y que hemos mencionado en el Capítulo~\ref{estimacion} son el {\it
+HDy\/} y {\it HDx\/} (con respecto a la cantidad de {\it bins}) y {\it ACC\/} y
+{\it PACC\/} para el caso multiclase (con respecto al método para resolver el
+sistema de ecuaciones lineales), entre otros. Adicionalmente, todos los métodos
+agregativos (\ref{estimacion:agregativos}) heredan los hiperparámetros de los
+clasificadores que emplean. En este sentido, Moreo y
+Sebastiani~\cite{moreo2021re} afirman que el método {\it CC\/} y sus variantes,
+con una adecuada optimización, pueden ofrecer un rendimiento competitivo, aunque
+siguen siendo inferiores a los métodos de cuantificación más sofisticados,
+además de requerir recursos y tiempo de cómputo para la búsqueda de
+hiperparámetros.

@@ -5,7 +5,7 @@
 En algunas aplicaciones vinculadas a la clasificación, el objetivo final no es
 determinar a qué clase (o clases) pertenece cada una de las instancias
 individuales de un conjunto de datos no etiquetado, sino estimar la proporción
-(tambíen llamada `prevalencia', `frecuencia relativa' o `probabilidad prior') de
+(también llamada `prevalencia', `frecuencia relativa' o `probabilidad prior') de
 cada clase en los datos no etiquetados. En los últimos años se ha señalado que,
 en estos casos, tiene sentido optimizar directamente algoritmos de aprendizaje
 automático para este objetivo, en lugar de simplemente optimizar clasificadores
@@ -28,11 +28,11 @@ servicio a sus clientes realiza una encuesta con varias preguntas para
 determinar el grado de satisfacción de cada persona. El objetivo de le empresa
 es determinar aquellos clientes que podrían no estar conformes con el servicio y
 ofrecerles una mejora en las condiciones para retenerlos. En el segundo ejemplo,
-una consultora analiza tweets para estimar el grado de aprobación de candidatos
-políticos. Aquí, la consultora no está interesado en predecir si un individuo
-específico está a favor o en contra, sino en cuántos encuestados, del número
-total de encuestados, aprueban al candidato, es decir, en conocer la prevalencia
-de la clase positiva.
+una consultora analiza {\it tweets\/} para estimar el grado de aprobación de
+candidatos políticos. Aquí, la consultora no está interesado en predecir si un
+individuo específico está a favor o en contra, sino en cuántos encuestados, del
+número total de encuestados, aprueban al candidato, es decir, en conocer la
+prevalencia de la clase positiva.
 
 Mientras en el primer escenario el interés es a nivel individual, en el último,
 el nivel agregado es lo que importa; en otras palabras, en el primer escenario
@@ -56,11 +56,11 @@ las ciencias sociales, modelado ecológico y epidemiología.
     \caption{En la clasificación, la predicción es a nivel individual, mientras
     que en la cuantificación es a nivel agregado (para mayor información sobre
     los datos del gráfico consultar el
-    Capítulo~\ref{puntual:ejemplo})}\label{fig:intro}
+    Capítulo~\ref{estimacion:ejemplo})}\label{fig:intro}
 \end{figure}
 
-En resumen, y generalizando no sólo para clasificación sino también a otros
-problemas (regresión, ordinalidad, etc), la tarea de cuantificación consiste en
+En resumen, y generalizando no solo para clasificación sino también a otros
+problemas (regresión, ordinalidad, etc.), la tarea de cuantificación consiste en
 proporcionar predicciones agregadas para conjuntos de datos, en vez de
 predicciones particulares sobre los datos individuales. Si bien en principio no
 es necesario realizar predicciones por cada individuo, muchos de los métodos se
@@ -138,7 +138,7 @@ multiclase) en vez de $\theta$, por lo que en este trabajo también se usará es
 nomenclatura.}, es decir, la prevalencia de etiquetas positivas en conjuntos de
 prueba. Esta prevalencia no se asume de ser la misma que en el conjunto de
 entrenamiento, $\mathbb{P}(Y=1|S=1)$. Además, el estimador de $\theta$ debe
-depender sólo de los datos disponibles, es decir, de las características de la
+depender solo de los datos disponibles, es decir, de las características de la
 muestra (tanto del conjunto de entrenamiento como de prueba) y de las etiquetas
 del conjunto de entrenamiento. Los supuestos que se
 asumen~\cite{vaz2019quantification} son:
@@ -188,7 +188,7 @@ tener bajo rendimiento.
 \section{Cambios en las distribuciones de los datos}\label{problema:cambios}
 
 En los últimos años ha habido un interés creciente en las aplicaciones que
-presentan cambios en las distribuciones de datos (conocido en la blibliografía
+presentan cambios en las distribuciones de datos (conocido en la bibliografía
 por su término en inglés {\it dataset shift\/}). Estos problemas comparten el
 hecho de que la distribución de los datos utilizados para entrenar es diferente
 a la de los datos que se usan para predecir. Al igual que para el área de la
@@ -212,7 +212,7 @@ términos de entrenamiento ({\it train\/}) y prueba ({\it test\/}), nos referimo
 a las datos disponibles para entrenar al clasificador y los datos presentes en
 el entorno en el que se implementará el clasificador, respectivamente. Podemos
 entonces también separar los datos en dos distribuciones distintas,
-condicionando a la vaiable $S$ definida en~\ref{problema:marco_teorico}, siendo
+condicionando a la variable $S$ definida en~\ref{problema:marco_teorico}, siendo
 $\mathbb{P}_{tr}(Y,\boldsymbol{X})=\mathbb{P}(Y,\boldsymbol{X}|S=1)$ y
 $\mathbb{P}_{tst}(Y,\boldsymbol{X})=\mathbb{P}(Y,\boldsymbol{X}|S=0)$.
 
@@ -243,7 +243,7 @@ $\mathbb{P}_{tr}(\boldsymbol{X}) \neq \mathbb{P}_{tst}(\boldsymbol{X})$ y cuando
 $\mathbb{P}_{tr}(\boldsymbol{X}|Y) \neq \mathbb{P}_{tst}(\boldsymbol{X}|Y)$ y
 $\mathbb{P}_{tr}(Y) \neq \mathbb{P}_{tst}(Y)$. Sin embargo, estos tipos de
 cambios no se consideran generalmente en la literatura ya que aparecen mucho más
-raramente, o incluso porque son dificiles o imposibles de resolver.
+raramente, o incluso porque son difíciles o imposibles de resolver.
 
 El problema de cuantificación se trata de un caso donde $\mathbb{P}_{tst}(Y)$ es
 desconocido. Además, la mayoría de los métodos de cuantificación propuestos
@@ -257,7 +257,7 @@ es estimar algún parámetro de $\mathbb{P}_{tst}(Y)$. Por ejemplo, como ya
 mencionamos anteriormente, en la cuantificación binaria, se desea estimar
 $\theta:= \mathbb{P}(Y=1|S=0)$, o lo que es lo mismo, $p_{tst}:=
 \mathbb{P}_{tst}(Y=1)$. Es decir, en la cuantificación la tarea indirectamente
-suele ser aprender a aproximar una distribución desconocida (observando sólo
+suele ser aprender a aproximar una distribución desconocida (observando solo
 características de una muestra) mediante una distribución conocida. En
 consecuencia, prácticamente todas las medidas de evaluación para la
 cuantificación son divergencias, es decir, medidas de cómo una distribución
@@ -323,7 +323,7 @@ clasificador.
 
 El análisis teórico de esta cuestión se basa en el supuesto de {\it prior
 probability shift\/}~\ref{problema:cambios}. Bajo tal supuesto, la estimación
-$\hat p$ obtenida por el enfoque {\it CC\/} depende sólo de las características
+$\hat p$ obtenida por el enfoque {\it CC\/} depende solo de las características
 del clasificador, definido (para el caso binario) por su tasa de verdaderos
 positivos ($tpr$), su tasa de falsos positivos ($fpr$) y de la prevalencia real
 ($p$):
@@ -344,7 +344,7 @@ por~\citet{forman2008quantifying}:
 
 \begin{theorem}[Toerema de Forman]
     \citep[p.169]{forman2008quantifying}\label{teorema:forman} Para un
-    clasificador imperfecto, el método {\it CC\/} subestimará la porporción
+    clasificador imperfecto, el método {\it CC\/} subestimará la proporción
     verdadera de ejemplos positivos $p$ en un conjunto de prueba para $p>p^*$, y
     sobreestimará para $p<p^*$, donde $p^*$ es la proporción particular en la
     cual el método {\it CC\/} estima de forma correcta. Es decir, el método {\it
@@ -366,7 +366,7 @@ del método CC en tal caso será:
 \end{split}
 \end{align}
 La predicción del método {\it CC\/} será perfecta, $\hat p(p^* + \Delta) = (p^*
-+ \Delta)$, sólo cuando el clasificador también es perfecto (${tpr} = 1$, ${fpr}
++ \Delta)$, solo cuando el clasificador también es perfecto (${tpr} = 1$, ${fpr}
 = 0$ y por tanto ${tpr} - {fpr} = 1$). Pero en el caso habitual, en el cual el
 clasificador es imperfecto ($0 \leq {tpr} - \text {fpr} < 1$), cuando la
 prevalencia aumenta ($\Delta > 0$), {\it CC\/} la subestima ($\hat p < p^* +
@@ -374,11 +374,11 @@ prevalencia aumenta ($\Delta > 0$), {\it CC\/} la subestima ($\hat p < p^* +
 sobreestima ($\hat p > p^* + \Delta $).
 
 Un buen clasificador puede estar sesgado, es decir, puede mantener sus falsos
-positivos al mínimo sólo a expensas de una cantidad sustancialmente mayor de
+positivos al mínimo solo a expensas de una cantidad sustancialmente mayor de
 falsos negativos (o viceversa); si este es el caso, el clasificador es un mal
 cuantificador. Este fenómeno no es infrecuente, especialmente en presencia de
 datos desbalanceados. En tales casos, los algoritmos que minimizan las funciones
-de pérdida de clasificacion ({\it Hamming}, {\it hinge}, etc) suelen generar
+de pérdida de clasificación ({\it Hamming}, {\it hinge}, etc.) suelen generar
 clasificadores con tendencia a elegir la clase mayoritaria, lo que implica un
 número mucho mayor de falsos positivos que de falsos negativos para la clase
 mayoritaria, lo que significa a su vez que tal algoritmo tenderá a subestimar
@@ -407,7 +407,7 @@ cambios en las distribuciones de los datos y frente a datos desbalanceados, los
 algoritmos de cuantificación están cada vez más frecuentemente siendo usados en
 tareas que requieren predicciones individuales. Los mismos se emplean como
 suplemento de clasificadores para suplir sus defectos frente a estos problemas,
-ya que en algunos casos no sólo predicen los valores agregados, sino que también
+ya que en algunos casos no solo predicen los valores agregados, sino que también
 mejoran las predicciones a nivel individual.
 
 Por ejemplo, el {\it prior probability shift\/} puede hacer que los
@@ -428,21 +428,21 @@ zhang2010transfer, xue2009quantification}.
 \begin{figure}[H]
     \centerline{\includegraphics[width=0.75\textwidth]{../plots_teoria/bayes_classifier.png}}
     \caption{Ejemplo de como el {\it prior probability shift\/} puede alterar
-    las predicciones del clasificador óptimo de Bayes. Vemos que si usaramos
+    las predicciones del clasificador óptimo de Bayes. Vemos que si usáramos
     $\mathbb{P}_{tst}(Y)$ en vez de $\mathbb{P}_{tr}(Y)$, en este caso pasaría a
-    predecir la clase azúl en vez de roja para toda
+    predecir la clase azul en vez de roja para toda
     $\boldsymbol{x}$.}\label{fig:bayes_classifier}
 \end{figure}
 
-Los métodos de cuantificación pueden usarse no sólo para mejorar el rendimiento
+Los métodos de cuantificación pueden usarse no solo para mejorar el rendimiento
 general de un clasificador, sino también para mejorar su equidad o {\it
-fairness\/}~\cite{biswas2021ensuring}, es decir, su posibilidad de predecir
-resultados independientes de un cierto conjunto de variables que consideramos
-sensibles y no relacionadas con él (e.j.:~género, etnia, orientación sexual,
-etc.). Por ejemplo, suponiendo que una variable $Z$ debe considerarse sensible,
-se puede estimar $\mathbb{P}_{tr}(Y|Z)$. Luego, si los datos de entrenamiento
-están sesgados, por ejemplo, con $\mathbb{P}_{tr}(Y=1|Z=1) \gg
-\mathbb{P}_{tr}(Y=1|Z=0)$, pero se sabe que en las muestras a inferir esto no es
-así, se puede optimizar el modelo de clasificación imponiento alguna penalidad
-basada en la estimación de $\mathbb{P}_{tst}(Y|Z)$, siendo esta última obtenido
-por un cuantificador.
+fairness\/}~\cite{biswas2021ensuring, fabris2023measuring}, es decir, su
+posibilidad de predecir resultados independientes de un cierto conjunto de
+variables que consideramos sensibles y no relacionadas con él (e.j.:~género,
+etnia, orientación sexual, etc.). Por ejemplo, suponiendo que una variable $Z$
+debe considerarse sensible, se puede estimar $\mathbb{P}_{tr}(Y|Z)$. Luego, si
+los datos de entrenamiento están sesgados, por ejemplo, con
+$\mathbb{P}_{tr}(Y=1|Z=1) \gg \mathbb{P}_{tr}(Y=1|Z=0)$, pero se sabe que en las
+muestras a inferir esto no es así, se puede optimizar el modelo de clasificación
+imponiendo alguna penalidad basada en la estimación de $\mathbb{P}_{tst}(Y|Z)$,
+siendo esta última obtenido por un cuantificador.

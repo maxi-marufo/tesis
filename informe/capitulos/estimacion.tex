@@ -13,26 +13,24 @@ se compone, en cambio, de métodos que para clasificar los individuos, se basan
 en métodos de aprendizaje diseñados con la cuantificación en mente. La segunda
 clase es la de métodos no agregativos, es decir, métodos que resuelven la tarea
 de cuantificación “holísticamente”, es decir, sin clasificar a los individuos.
-La idea de esta tésis no es la de mostrar todos los métodos propuestos hasta la
+La idea de esta tesis no es la de mostrar todos los métodos propuestos hasta la
 actualidad, sino la de mencionar los métodos más populares.
 
 \subsubsection{Caso de Ejemplo}\label{estimacion:ejemplo}
 
-Como ejemplo de muestra para comparar los distintos métodos de estimación, se usará
-el mismo set de datos artificiales que en las figuras~\ref{fig:intro}
+Como ejemplo de muestra para comparar los distintos métodos de estimación, se
+usará el mismo set de datos artificiales que en las figuras~\ref{fig:intro}
 y~\ref{fig:cambios}. Para crear el set de datos se utilizó el algoritmo
-prupuesto por~\citet{Guyon2003DesignOE} mediante la
+prepuesto por~\citet{Guyon2003DesignOE} mediante la
 función~\href{https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html}{{\it
 make\_classification}} de {\it scikit-learn}, usando los siguientes parámetros
 de entrada:
 
 \begin{python}
-population_size = 150
-X, y = make_classification(
-    n_samples=population_size, n_features=2, n_informative=2,
-    n_redundant=0, n_repeated=0, n_clusters_per_class=2, 
-    n_classes=2, weights=None, class_sep=0.1, random_state=42,
-)
+population_size = 150 X, y = make_classification( n_samples=population_size,
+n_features=2, n_informative=2, n_redundant=0, n_repeated=0,
+n_clusters_per_class=2, n_classes=2, weights=None, class_sep=0.1,
+random_state=42, )
 \end{python}
 
 Esta función, al usar \(weights=None\), crea un set de datos balanceados en
@@ -42,19 +40,13 @@ para poder evaluar los distintos métodos, lo que haremos ahora es seleccionar
 los 50 restantes de forma tal de aproximarnos a un \(p_{tst}=0.1\):
 
 \begin{python}
-train_size = 100
-prev_test = 0.1
-X_train, y_train = X[:train_size], y[:train_size]
-X_test, y_test = X[train_size:], y[train_size:]
-idx_negatives_test = np.argwhere(y_test==0).flatten()
-idx_positives_test = np.random.choice(
-    np.argwhere(y_test==1).flatten(),
-    size=round((prev_test)*len(idx_negatives_test)/(1-prev_test)),
-    replace=False
-)
-idx_test = np.concatenate([idx_positives_test, idx_negatives_test])
-X_test = X_test[idx_test]
-y_test = y_test[idx_test]
+train_size = 100 prev_test = 0.1 X_train, y_train = X[:train_size],
+y[:train_size] X_test, y_test = X[train_size:], y[train_size:]
+idx_negatives_test = np.argwhere(y_test==0).flatten() idx_positives_test =
+np.random.choice( np.argwhere(y_test==1).flatten(),
+size=round((prev_test)*len(idx_negatives_test)/(1-prev_test)), replace=False )
+idx_test = np.concatenate([idx_positives_test, idx_negatives_test]) X_test =
+X_test[idx_test] y_test = y_test[idx_test]
 \end{python}
 
 El código de arriba termina generando un set de entrenamiento de tamaño
@@ -75,16 +67,18 @@ GaussianNB}} de {\it scikit-learn}, usando sus parámetros por default.
 \subsection{Con clasificadores generales}\label{estimacion:generales}
 
 Dentro de los métodos agregativos, algunos de ellos requieren como entrada las
-etiquetas de clases predichas (es decir, clasificadores duros), mientras que
-otros requieren como entrada las probabilidades {\it a posteriori\/} de
-pertenencia a cada clase (es decir, clasificadores blandos)\footnote{Los
-clasificadores blandos se pueden convertir en duros usando umbrales de
-clasificación}. En estos últimos, además, las probabilidades {\it a
-posteriori\/} deben estar calibradas (para mayor información sobre calibración
-consultar el Apéndice~\ref{appendix:calibracion}). Para estos casos, en los
-ejemplos a continuación que requieren clasificadores blandos se separó de las
-muestras de entrenamiento un 15\% de datos para el proceso de calibración
-(y estratificando para que la proporción de etiquetas se mantenga igual).
+etiquetas de clases predichas (es decir, clasificadores duros), otros requieren
+un {\it score\/} de decisión (como podría ser la distancia al hiperplano de
+separación en el clasificador SVM), y otros que requieren como entrada las
+probabilidades {\it a posteriori\/} de pertenencia a cada clase (es decir,
+clasificadores blandos)\footnote{Los clasificadores blandos y de {\it score\/}
+se pueden convertir en duros usando umbrales de clasificación}. En estos
+últimos, además, las probabilidades {\it a posteriori\/} deben estar calibradas
+(para mayor información sobre calibración consultar el
+Apéndice~\ref{appendix:calibracion}). Para estos casos, en los ejemplos a
+continuación que requieren clasificadores blandos se separó de las muestras de
+entrenamiento un 15\% de datos para el proceso de calibración (y estratificando
+para que la proporción de etiquetas se mantenga igual).
 
 \subsubsection{Clasificar y Contar (CC)}\label{estimacion:cc}
 
@@ -126,12 +120,12 @@ estimaciones de {\it CC\/} teniendo en cuenta la tendencia del clasificador a
 cometer errores de cierto tipo. Un modelo {\it ACC\/} está compuesto por dos
 elementos: un clasificador duro (como en {\it CC\/}) y de las estimaciones de
 \(tpr\) y \(fpr\). Dichas estimaciones pueden obtenerse usando validación
-cruzada o {\it cross-validation\/} o un conjunto de validación aparte. Luego, en
-la fase de predicción, el modelo obtiene una primera estimación \(\hat p\) de la
-misma forma que en {\it CC\/} que luego, para el caso binario, es ajustado
-aplicando la siguiente fórmula\footnote{A veces, esta expresión conduce a un
-valor inválido de \(\hat p^{\it ACC\/}_{tst}\) que debe recortarse en el rango
-\([0, 1]\) en un último paso.}:
+cruzada o {\it cross-validation}, ya sea mediante la técnica de {\it k-folds\/}
+o un {\it held-out}. Luego, en la fase de predicción, el modelo obtiene una
+primera estimación \(\hat p\) de la misma forma que en {\it CC\/} que luego,
+para el caso binario, es ajustado aplicando la siguiente fórmula\footnote{A
+veces, esta expresión conduce a un valor inválido de \(\hat p^{\it
+ACC\/}_{tst}\) que debe recortarse en el rango \([0, 1]\) en un último paso.}:
 \begin{equation}
     \hat p^{\it ACC\/}_{tst}(c=1) = \frac{\hat p^{\it CC\/}_{tst}(c=1)-\hat{fpr}}{\hat{tpr} - \hat{fpr}}\label{ecuacion:acc_binaria}
 \end{equation}
@@ -165,11 +159,11 @@ el clasificador \(h\) asigna a \(c_k\) (y por ende, es conocido), y
 probabilidad de que el clasificador \(h\) asigne la clase \(c_k\) a
 \(\boldsymbol{x}\) cuando este pertenece a la clase \(c_j\). Estas
 probabilidades, al igual que \(tpr\) y \(fpr\) en el caso binario, deben
-estimarse mediante validación cruzada o con un conjunto de validación
-aparte~\cite{barranquero2013study, forman2005counting, forman2008quantifying}.
-Luego, \(\hat p^{\it ACC\/}_{tst}(c=c_j)\), nuestras incógnitas (una por cada
-\(c_j\)), pueden calcularse mediante un sistema de ecuaciones lineales con
-\(\#C\) ecuaciones y \(\#C\) incógnitas.
+estimarse mediante validación cruzada~\cite{barranquero2013study,
+forman2005counting, forman2008quantifying}. Luego, \(\hat p^{\it
+ACC\/}_{tst}(c=c_j)\), nuestras incógnitas (una por cada \(c_j\)), pueden
+calcularse mediante un sistema de ecuaciones lineales con \(\#C\) ecuaciones y
+\(\#C\) incógnitas.
 
 \paragraph{\it Ejemplo:\/} Aquí debemos estimar el \(tpr\) y \(fpr\). Para ello,
 se separó de la muestra de entrenamiento un 15\% de datos. Con el 85\% de la
@@ -185,7 +179,7 @@ Count\/}~\cite{bella2010quantification, tang2010network}, es una variante de
 {\it CC\/} que utiliza un clasificador blando en vez de uno duro. Es decir, que
 la salida del clasificador blando ajustado con la muestra de entrenamiento,
 \(s(\boldsymbol{x}, y)\), será una estimación de la probabilidad {\it a
-posteriori\/} \({p}_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)\) por cada invididuo
+posteriori\/} \({p}_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)\) por cada individuo
 \(\boldsymbol{x} \in \boldsymbol{X}_{tst}\) y cada \(y \in C\). El método
 consiste en estimar las \({p}_{tst}(c=c_j)\) mediante el valor esperado de la
 proporción de items que se predijeron como pertenecientes a cada clase \(c_j\):
@@ -238,8 +232,8 @@ donde \(U_j=\{(\boldsymbol{x}, y) \in (\boldsymbol{X}_{tst}, Y_{tst}) |
 y=c_j\}\). Luego, \(\hat p^{\it PCC\/}_{tst}(c=c_k)\) se calcula mediante {\it
 PCC\/} y, como en {\it ACC}, las \([\frac {1}{\#U_j} \sum_{\boldsymbol{x} \in
 U_j} \mathbb{\hat{P}}(h_{tr}(\boldsymbol{x})=c_k)]\) deben estimarse mediante
-validación cruzada o con un conjunto de validación aparte, quedando nuevamente
-un sistema de ecuaciones lineales de \(\#C\) ecuaciones y \(\#C\) incógnitas.
+validación cruzada, quedando nuevamente un sistema de ecuaciones lineales de
+\(\#C\) ecuaciones y \(\#C\) incógnitas.
 
 Para el caso particular binario, y relacionando con la
 ecuación~\ref{ecuacion:acc_binaria}, tenemos:
@@ -248,14 +242,13 @@ ecuación~\ref{ecuacion:acc_binaria}, tenemos:
 \end{equation}
 
 donde \(tp_{pa}\) y \(fp_{pa}\) ($pa$: {\it probability average\/}) son los dos
-parámetros propios del cuantificador a estimar mediante validación cruzada o con
-un conjunto de validación aparte, siendo \(tp_{pa}\) el promedio de las
-probabilidades {\it a posteriori\/} para la clase positiva estimadas por el
-clasificador correspondientes a los individuos cuya etiqueta es positiva, y del
-mismo modo \(fp_{pa}\) pero para individuos con etiqueta negativa. En este
-método hay que tener en cuenta ambas consideraciones sobre las estimaciones de
-\(\hat p\) dentro del rango \([0, 1]\) y sobre la calibración
--ver~\ref{appendix:calibracion}-.
+parámetros propios del cuantificador a estimar mediante validación cruzada,
+siendo \(tp_{pa}\) el promedio de las probabilidades {\it a posteriori\/} para
+la clase positiva estimadas por el clasificador correspondientes a los
+individuos cuya etiqueta es positiva, y del mismo modo \(fp_{pa}\) pero para
+individuos con etiqueta negativa. En este método hay que tener en cuenta ambas
+consideraciones sobre las estimaciones de \(\hat p\) dentro del rango \([0, 1]\)
+y sobre la calibración -ver~\ref{appendix:calibracion}-.
 
 \paragraph{\it Ejemplo:\/} Del mismo modo que para el ejemplo de {\it PCC}, se
 separó de la muestra de entrenamiento un 15\% de datos para realizar la
@@ -287,7 +280,7 @@ siendo entonces \(\hat{tp_{pa}} \approx 0.551\) y \(\hat{fp_{pa}} \approx
 0.548\), por lo que \(\hat p^{\it PACC\/}_{tst}(c=1) \approx 1.00\) (teniendo
 que haber truncado).
 
-\subsubsection{Selección de Umbrales}\label{estimacion:umbrales}
+\subsubsection{Selección de Umbrales (TH)}\label{estimacion:umbrales}
 
 Cuando los datos de entrenamiento presentan un desbalance significativo
 (generalmente los casos positivos son los escasos), la precisión de {\it ACC\/}
@@ -305,7 +298,8 @@ incremento \(fpr\). Siempre que \(tpr \gg fpr\), el denominador
 en~\ref{ecuacion:acc_binaria} aumenta, lo que resulta en métodos más robustos
 ante pequeños errores en las estimaciones de \(tpr\) y \(fpr\). Siguiendo esta
 lógica,~\citet{forman2006quantifying, forman2008quantifying} propone una serie
-de métodos basados en clasificadores calibrados con distintas estrategias de
+de métodos basados en clasificadores que entreguen {\it scores\/} (no
+necesariamente probabilísticos ni calibrados) con distintas estrategias de
 selección de umbrales\footnote{Los métodos aquí se describen son exclusivamente
 de cuantificación binaria (las versiones multiclase no han sido abordadas en la
 literatura y no son sencillas de implementar)}:
@@ -336,17 +330,17 @@ utiliza la ecuación~\ref{ecuacion:acc_binaria}:
 Para el criterio MS, en cambio, por cada umbral que cambie \(fpr\) o \(tpr\) se
 calcula una prevalencia (se descartan los casos indeterminados
 por~\ref{ecuacion:acc_binaria}), y luego la mediana de todas ellas será la
-prediccón final del método.
+predicción final del método.
 \begin{figure}[H]
     \centerline{\includegraphics[width=0.75\textwidth]{../plots_teoria/seleccion_umbrales_ms.png}}
     \caption{}\label{fig:seleccion_umbrales_ms}
 \end{figure}
 Los resultados obtenidos fueron:
 \begin{itemize}
-    \item \(\hat p^{MAX}_{tst}(c=1) \approx  0.516\)
-    \item \(\hat p^{X}_{tst}(c=1) \approx  0.446\)
-    \item \(\hat p^{T50}_{tst}(c=1) \approx  0.446\)
-    \item \(\hat p^{MS}_{tst}(c=1) \approx  0.481\)
+    \item \(\hat p^{MAX}_{tst}(c=1) \approx  0.774\)
+    \item \(\hat p^{X}_{tst}(c=1) \approx  0.282\)
+    \item \(\hat p^{T50}_{tst}(c=1) \approx  0.282\)
+    \item \(\hat p^{MS}_{tst}(c=1) \approx  0.433\)
 \end{itemize}
 
 \subsubsection{Esperanza-Maximización (EMQ)}\label{estimacion:emq}
@@ -356,7 +350,7 @@ a posteriori\/} de modelos de clasificación bajo {\it dataset shift\/}
 (ver~\ref{problema:cambios}), el mismo también sirve para mejorar la estimación
 de prevalencias. También conocido como {\it SLD\/} por las iniciales de sus
 autores, este método fue propuesto por~\citet{saerens2002adjusting} y aplica el
-agoritmo de Esperanza-Maximización (EM)~\cite{dempster1977maximum}, un conocido
+algoritmo de Esperanza-Maximización (EM)~\cite{dempster1977maximum}, un conocido
 algoritmo iterativo para encontrar estimaciones de máxima verosimilitud de
 parámetros (los valores de prevalencia de clase) para modelos que dependen de
 variables no observadas (las etiquetas de clase). Esencialmente, {\it EMQ\/}
@@ -412,7 +406,7 @@ existentes, quedando en nuestro caso \(\hat p^{(s=1)}_{Y}(y=1) = p^{\it
 PCC\/}_{tst}(c=1) \approx 0.527\). Ahora, en el paso E de la segunda iteración,
 se usará este último valor junto con los valores de prevalencia de la muestra de
 entrenamiento para ajustar las salidas del clasificador calibrado. Por ejemplo,
-para ajustar la salida del primer invididuo correspondiente a la clase positiva,
+para ajustar la salida del primer individuo correspondiente a la clase positiva,
 sería: \(\hat p^{(s=1)}_{Y|\boldsymbol{X}=\boldsymbol{x}_i}(y=1) \approx
 \dfrac{\dfrac{0.527}{0.5}0.539}{\dfrac{0.527}{0.5}0.539+\dfrac{0.473}{0.5}0.461}\).
 Si continuamos repitiendo los pasos E y M de forma sucesiva, y definiendo un
@@ -441,10 +435,10 @@ donde:
 y \(f_{tr}(s)\) y \(f_{tst}(s)\) son las funciones de densidad de probabilidad
 de las salidas del clasificador para la muestra de entrenamiento y de
 evaluación, respectivamente. Estas densidades son aproximadas empíricamente
-mediante histogramas, siendo \(k\) el número de bins utilizados. Dado que el
-número de bins \(k\) podría tener un impacto significativo en la estimación,
-normalmente se utiliza como estimador la mediana de la distribución de los
-\(\alpha\) encontrados para un rango de \(k\).
+mediante histogramas, siendo \(k\) el número de {\it bins\/} utilizados. Dado
+que el número de {\it bins\/} \(k\) podría tener un impacto significativo en la
+estimación, normalmente se utiliza como estimador la mediana de la distribución
+de los \(\alpha\) encontrados para un rango de \(k\).
 
 El segundo método propuesto por~\citet{gonzalez2013class} pertenece a los
 métodos no agregativos y será desarrollado en la correspondiente
@@ -504,7 +498,10 @@ argumentando que la cuantificación pura no considera la precisión del
 clasificador subyacente (pudiendo generar un modelo que, aunque cuantifique
 bien, clasifique mal). Para abordar esto, introducen la medida \(Q\), que
 combina una métrica de cuantificación con una métrica de clasificación,
-permitiendo un equilibrio entre ellas.
+permitiendo un equilibrio entre ellas. Más recientemente Moreo y
+Sebastiani~\cite{moreo2021re} reincorporaran la idea de utilizar \({\it SVM
+\/}_{perf}\), pero sugieren usar las métricas de error absoluto (AE) y error
+absoluto negativo (RAE) -ver~\ref{evaluacion:ae}-.
 
 Existen dos inconvenientes asociados con \({\it SVM \/}_{perf}\): podría
 resultar en un modelo menos óptimo y no escala para grandes cantidades de datos
@@ -542,12 +539,12 @@ directamente sin clasificar cada individuo.
 \subsubsection{Usando la distancia de Hellinger en \(\boldsymbol{x}\)
 (HDx)}\label{estimacion:hdx}
 
-Este método está obviamente relacionado con {\it HDy\/} (\ref{estimacion:hdy}), con
-la diferencia de considerar distribuciones de probabilidad multidimensionales
-\(f(\boldsymbol{x})\) en lugar de distribuciones unidimensionales
-\(f(s(\boldsymbol{x}))\). En vez de utilizar las salidas del clasificador, se
-estiman, con los datos de entrenamiento, las funciones densidad de las
-características de los individuos condicionadas a sus etiquetas.
+Este método está obviamente relacionado con {\it HDy\/} (\ref{estimacion:hdy}),
+con la diferencia de considerar distribuciones de probabilidad
+multidimensionales \(f(\boldsymbol{x})\) en lugar de distribuciones
+unidimensionales \(f(s(\boldsymbol{x}))\). En vez de utilizar las salidas del
+clasificador, se estiman, con los datos de entrenamiento, las funciones densidad
+de las características de los individuos condicionadas a sus etiquetas.
 
 Debido a la multidimensionalidad de \(\boldsymbol{x} \in
 \mathbb{R}^d\),~\citet{gonzalez2013class} proponen minimizar el promedio de las
@@ -600,8 +597,8 @@ obtener la distribución {\it a posteriori\/} de \(\theta\):
 \end{equation}
 
 donde analizando para el caso binario, teniendo en cuenta que se asume
-\(p_{tst}(\boldsymbol{x})=p_{tr}(\boldsymbol{x})\), y utlizando las funciones de
-densidad de probabilidad de las características condicionadas a las etiquetas
+\(p_{tst}(\boldsymbol{x})=p_{tr}(\boldsymbol{x})\), y utilizando las funciones
+de densidad de probabilidad de las características condicionadas a las etiquetas
 estimadas con los datos de entrenamiento (\(p_{tr}(\boldsymbol{x}|y)\)), podemos
 escribir:
 
@@ -639,11 +636,13 @@ constante, entonces podemos utilizar en~\ref{ecuacion:mll_bin}:
 
 Un modelo generativo que utiliza un clasificador discriminativo como
 intermediario para estimar \(p(\boldsymbol{x}|y)\) a partir de
-\(p(y|\boldsymbol{x})\) podría alinearse más con los métodos agregativos
-(mencionados en la Sección~\ref{estimacion:agregativos}). No obstante, dado que el
-marco generativo presentado por~\citet{keith2018uncertainty} solo requiere un
-modelo condicionado por las etiquetas de clase, como ocurre con las versiones
-explícitas, este enfoque se sitúa dentro de los métodos no agregativos.
+\(p(y|\boldsymbol{x})\) (es decir, el método {\it LR-Implicit\/}) pertenece en
+realidad a los métodos agregativos (mencionados en la
+Sección~\ref{estimacion:agregativos}). No obstante, dado que el marco generativo
+presentado por~\citet{keith2018uncertainty} solo requiere un modelo condicionado
+por las etiquetas de clase, como ocurre con las versiones explícitas (usando los
+modelos {\it MNB\/ y \it Loglin\/} como ejemplo), enmarcamos este método más
+general dentro de los métodos no agregativos.
 
 \paragraph{\it Ejemplo:\/} En este caso utilizaremos el método {\it LR-Implicit}
 aplicado al clasificador con el que venimos trabajando. Utilizaremos el método

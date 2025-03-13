@@ -14,7 +14,9 @@
 \usepackage{float}
 \usepackage{listings}
 \usepackage[utf8]{inputenc}
-
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{adjustbox}
 \usepackage[square,numbers,sort&compress]{natbib}
 
 \renewcommand{\baselinestretch}{1.2} % interlineado
@@ -43,15 +45,16 @@
 
 % Python style for highlighting
 \newcommand\pythonstyle{\lstset{
-language=Python,
-basicstyle=\ttm,
-morekeywords={self},              % Add keywords here
-keywordstyle=\ttb\color{deepblue},
-stringstyle=\color{deepgreen},
-frame=tb,                         % Any extra options here
-showstringspaces=false,
-aboveskip=20pt,
-belowskip=20pt,
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red}\ttfamily,
+    commentstyle=\color{green}\ttfamily,
+    showstringspaces=false,
+    frame=single,
+    breaklines=true,
+    breakatwhitespace=false,
+    backgroundcolor=\color{gray!10}
 }}
 
 % Python environment
@@ -59,8 +62,7 @@ belowskip=20pt,
 {\pythonstyle\lstset{#1}}
 {}
 
-
-%% Bibliografia
+%% Bibliografía
 \bibliographystyle{unsrtnat}
 \addto{\captionsspanish}{\renewcommand{\bibname}{Referencias}}
 
@@ -81,6 +83,11 @@ belowskip=20pt,
 
 \cleardoublepage{}
 
+\include{resumen/resumen}
+\newpage
+
+\include{resumen/abstract}           
+
 % INDICE
 \tableofcontents 
 
@@ -95,11 +102,35 @@ belowskip=20pt,
 \include{capitulos/problema}
 \include{capitulos/estimacion}
 \include{capitulos/evaluacion}
-\include{capitulos/resultados}
+\include{capitulos/experimentos}
 
 \appendix
 
 \include{apendices/calibracion}
+\include{apendices/resultados}
+
+\newpage
+
+% \begin{figure}[!b]
+%     \centering
+%     \begin{minipage}[t]{0.45\textwidth}
+%         \centering
+%         \includegraphics[width=0.6\textwidth]{FirmaMia.png}
+%         \vspace{0.5cm}
+%         Ing.~Maximiliano Marufo da Silva \\
+%         \textbf{Maestrando}
+%     \end{minipage}
+%     \hfill
+%     \begin{minipage}[t]{0.45\textwidth}
+%         \centering
+%         \includegraphics[width=0.8\textwidth]{FirmaFarall.jpeg}
+%         \vspace{0.5cm}
+%         Dr.~Andrés Farall \\
+%         \textbf{Director de tesis}
+%     \end{minipage}
+% \end{figure}
+
+\newpage
 
 \bibliography{references}
 

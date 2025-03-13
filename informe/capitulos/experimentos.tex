@@ -1,0 +1,413 @@
+\chapter{Experimentos}\label{experimentos}
+
+En esta sección se evaluarán todos los métodos mencionados en el
+Capítulo~\ref{estimacion} mediante nuevos casos de ejemplo simulados. Dicha
+evaluación se basará en las métricas elegidas en~\ref{evaluacion:eleccion} (RAE,
+AE y SE) además del sesgo. Además, la simulación se basará en el protocolo {\it
+APP\/} definido en~\ref{evaluacion:protocolos}. No se realizará el proceso de
+selección de modelos mencionado en~\ref{evaluacion:seleccion} ya que el objetivo
+de estos experimentos no es el de buscar los mejores cuantificadores para los
+casos de ejemplo, sino hacer una comparación de los mismos frente a iguales
+condiciones (hiperparámetros por defecto, mismo clasificador, etc.). Finalmente,
+se elaboran conclusiones en base a los resultados y se comparan con los
+resultados de otros trabajos~\cite{moreo2021re, moreo2022tweet, moreo2021quapy,
+tasche2016does, schumacher2021comparative}.
+
+\section{Simulación}\label{experimentos:simulacion}
+
+\subsection{Poblaciones}\label{experimentos:poblaciones}
+
+La simulación consiste, en primer lugar, en generar dos poblaciones sintéticas
+de datos. Al igual que en~\ref{estimacion:ejemplo}, para sintetizar los datos se
+utilizó el algoritmo propuesto por~\citet{Guyon2003DesignOE} mediante la
+función~\href{https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html}{{\it
+make\_classification}} de {\it scikit-learn}. En este caso, se crearon dos
+poblaciones, {\it F\/} (fácil) y {\it D\/} (difícil), cuyos argumentos de
+creación son (los parámetros no mencionados usan sus valores por defecto):
+\begin{center}
+    \begin{tabular}{l|ll|ll}
+        \cline{2-3}
+        & \multicolumn{2}{l|}{Población} & & \\ \cline{2-3} &
+        \multicolumn{1}{l|}{F}     & D     & &  \\ \cline{1-3}
+        \multicolumn{1}{|l|}{n\_samples}
+        & \multicolumn{1}{l|}{51000} & 51000 &  &  \\
+        \multicolumn{1}{|l|}{n\_features}    & \multicolumn{1}{l|}{2}     & 100
+        & &  \\
+        \multicolumn{1}{|l|}{n\_informative} & \multicolumn{1}{l|}{2}     & 5 &
+        &  \\
+        \multicolumn{1}{|l|}{n\_redundant}   & \multicolumn{1}{l|}{0}     & 15 &
+        &  \\
+        \multicolumn{1}{|l|}{n\_repeated}    & \multicolumn{1}{l|}{0}     & 15 &
+        &  \\
+        \multicolumn{1}{|l|}{flip\_y}        & \multicolumn{1}{l|}{0}     & 0 &
+        &  \\
+        \multicolumn{1}{|l|}{class\_sep}     & \multicolumn{1}{l|}{0.6}   & 0.2
+        &  &  \\ \cline{1-3}
+    \end{tabular}
+    \captionof{table}{Poblaciones}\label{experimentos:tabla_poblaciones}
+\end{center}
+
+La elección de estos valores tiene como objetivo generar una población fácil de
+clasificar y con características de baja dimensionalidad, y otra más difícil y
+con alta dimensionalidad, para probar bajo estas dos condiciones cada método.
+Además, al usar los parámetros {\it n\_classes\/} y {\it weights\/} por defecto,
+estaremos generando datasets binarios y perfectamente balanceados.
+
+\subsection{Datasets}\label{experimentos:datasets}
+
+Tenemos entonces dos poblaciones sintéticas, cada una de 51000 individuos.
+Luego, procedemos a sub-dividir ambas poblaciones de forma estratificada (es
+decir, manteniendo la proporción de clases balanceadas) para crear los datasets
+de entrenamiento y de prueba en cada población. Dichos datasets son de 50000 y
+1000 individuos respectivamente.
+
+Siguiendo el protocolo {\it APP\/} ya mencionado, la simulación consistió en
+muestrear de forma iterativa el dataset de entrenamiento de cada población con
+distintos tamaños de muestra (500 y 5000), distintas prevalencias\footnote{Para
+evitar repeticiones, cuando mencionemos prevalencia en estos casos se hará
+referencia siempre a la clase positiva.} (0.01, 0.25, 0.5, 0.75 y 0.99) y de
+forma repetida (5 veces) -es decir, un total de 50 muestras distintas-. Luego,
+por cada muestra de entrenamiento, a su vez, se muestreo de forma iterativa el
+dataset de evaluación. En este caso también se tomaron distintos tamaños de
+muestra (10 y 100), distintas prevalencias (0, 0.2, 0.5, 0.8 y 1.0 para las
+muestras de tamaño n=10, y 0.01, 0.25, 0.5, 0.75 y 0.99 para las muestras de
+tamaño n=100) y de forma repetida (5 veces) -50 muestras de prueba por cada
+muestra de entrenamiento-.
+\begin{center}
+    \begin{tabular}{l|cccc|}
+        \cline{2-5}
+        & \multicolumn{4}{c|}{Dataset} \\
+        \cline{2-5} &
+        \multicolumn{2}{c|}{Train}
+        & \multicolumn{2}{c|}{Test} \\
+        \hline
+        \multicolumn{1}{|l|}{n\_samples}  & \multicolumn{1}{c|}{500} &
+        \multicolumn{1}{c|}{5000}                    &
+        \multicolumn{1}{c|}{10}
+        & 100 \\ \hline
+        \multicolumn{1}{|l|}{prev}        &
+        \multicolumn{2}{c|}{\begin{tabular}[c]{@{}c@{}}0.01\\ 0.25\\ 0.5\\
+        0.75\\ 0.99\end{tabular}} &
+        \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}0\\ 0.2\\ 0.5\\ 0.8\\
+        1.0\end{tabular}} & \begin{tabular}[c]{@{}c@{}}0.01\\ 0.25\\ 0.5\\
+        0.75\\ 0.99\end{tabular} \\ \hline
+        \multicolumn{1}{|l|}{n\_repetitions} & \multicolumn{2}{c|}{5} &
+        \multicolumn{2}{c|}{5} \\ \hline
+    \end{tabular}
+    \captionof{table}{Datasets}\label{experimentos:tabla_datasets}
+\end{center}
+
+\subsection{Cuantificación}\label{experimentos:cuantificacion}
+
+Por cada muestra de entrenamiento, se procede a ajustar cada uno de los métodos
+a evaluar. Empezando por los métodos agregativos que utilizan clasificadores
+generales (\ref{estimacion:generales}), tenemos los que requieren como entrada
+las etiquetas de las clases predichas (es decir, que usan clasificadores duros).
+En nuestro caso, estos métodos son el {\it CC\/} y el {\it ACC}. Es decir, que
+primero debemos ajustar un modelo de clasificación. En esta simulación hemos
+utilizado dos modelos distintos, un modelo de regresión logística y el
+clasificador de XGBoost, con la idea de probar un modelo simple y uno complejo,
+con el objetivo de determinar si la complejidad del modelo mejora o no la
+cuantificación. En este caso no es necesario calibrarlos ya que usaremos
+solamente las etiquetas predichas. Para sus hiperparámetros usaremos los valores
+por defecto de las librerías {\it scikit-learn\/} y {\it xgboost\/}
+respectivamente.
+\begin{center}
+    \begin{tabular}{|lc|}
+        \hline
+        \multicolumn{2}{|c|}{Clasificación}                     \\ \hline
+        \multicolumn{1}{|c|}{Modelo}             & Complejidad  \\ \hline
+        \multicolumn{1}{|l|}{LogisticRegression} & Baja         \\
+        \multicolumn{1}{|l|}{XGBoost}            & Alta         \\ \hline
+    \end{tabular}
+\captionof{table}{Modelos de
+clasificación}\label{experimentos:tabla_clasificacion}
+\end{center}
+
+En cambio, para los métodos agregativos que utilizan clasificadores generales
+pero que requieren como entrada las probabilidades {\it a posteriori\/} de
+pertenencia a cada clase (es decir, clasificadores blandos), debemos no solo
+ajustar los modelos de clasificación, sino que también conviene calibrarlos (ya
+que es un supuesto de estos métodos). En nuestro caso, estos métodos son el {\it
+PCC}, {\it PACC}, {\it EMQ\/} y {\it HDy}. Con respecto a los algoritmos de
+calibración, utilizaremos los cuatro métodos para modelos binarios propuestos
+por~\citet{guo2017calibration} y mencionados en el
+Apéndice~\ref{appendix:calibracion}, además de probar también los clasificadores
+sin calibrar. Como los métodos de calibración requieren utilizar validación
+cruzada para ajustar sus parámetros, utilizaremos el método de {\it held-out},
+es decir que destinaremos una porción (20\%) del dataset de entrenamiento para
+ello.
+\begin{center}
+    \begin{tabular}{|lc|}
+        \hline
+        \multicolumn{2}{|c|}{Calibración}                    \\ \hline
+        \multicolumn{1}{|c|}{Método}              & Held-out \\ \hline
+        \multicolumn{1}{|l|}{No Calibration}      & 0\%      \\
+        \multicolumn{1}{|l|}{Histogram Binning}   & 20\%     \\
+        \multicolumn{1}{|l|}{Isotonic Regression} & 20\%     \\
+        \multicolumn{1}{|l|}{BBQ}                 & 20\%     \\
+        \multicolumn{1}{|l|}{Platt Scaling}       & 20\%     \\ \hline
+    \end{tabular}
+    \captionof{table}{Modelos de
+    calibración}\label{experimentos:tabla_calibracion}
+\end{center}
+
+Para los métodos agregativos que utilizan clasificadores específicos
+(\ref{estimacion:especificos}) -en nuestro caso, únicamente el método {\it
+ELM\/}-, debemos también ajustar un modelo de clasificación previo a la
+cuantificación, pero en este caso no utilizaremos los nombrados
+en~\ref{experimentos:tabla_clasificacion}, sino uno optimizado para ser
+utilizado en cuantificación. En este caso usaremos, al igual que en el
+Capítulo~\ref{evaluacion}, el clasificador \({\it SVM \/}_{perf}\), pero esta
+vez optimizado no solo para la métrica KLD, sino también AE y RAE.
+
+Para los modelos no agregativos (\ref{estimacion:no_agregativos}), no se usan
+modelos de clasificación, y por lo tanto tampoco se calibran; simplemente se
+aplica directamente el método de cuantificación. En nuestro caso, para este
+grupo usaremos solo el método {\it HDx}, ya que no usaremos modelos de
+clasificación generativos explícitos. Sin embargo, sí usaremos el método {\it
+LR-Implicit}, el cual, como bien dijimos, se debe considerar en realidad un
+método agregativo, y así lo haremos en las simulaciones.
+
+Cabe mencionar que para los métodos de cuantificación que requieren de
+validación cruzada para estimar sus parámetros internos también utilizaremos el
+método de {\it held-out}, destinando otra porción (20\%) del dataset de
+entrenamiento para ello.
+\begin{center}
+    \begin{tabular}{|lc|}
+        \hline
+        \multicolumn{2}{|c|}{Cuantificación}                              \\
+        \hline
+        \multicolumn{1}{|c|}{Método}      & \multicolumn{1}{c|}{Held-out} \\
+        \hline
+        \multicolumn{1}{|l|}{CC}          & \multicolumn{1}{c|}{0\%}      \\
+        \multicolumn{1}{|l|}{ACC}         & \multicolumn{1}{c|}{20\%}     \\
+        \multicolumn{1}{|l|}{PCC}         & \multicolumn{1}{c|}{0\%}      \\
+        \multicolumn{1}{|l|}{PACC}        & \multicolumn{1}{c|}{20\%}     \\
+        \multicolumn{1}{|l|}{TH\_MAX}     & \multicolumn{1}{c|}{20\%}     \\
+        \multicolumn{1}{|l|}{TH\_X}       & \multicolumn{1}{c|}{20\%}     \\
+        \multicolumn{1}{|l|}{TH\_T50}     & \multicolumn{1}{c|}{20\%}     \\
+        \multicolumn{1}{|l|}{TH\_MS}      & \multicolumn{1}{c|}{20\%}     \\
+        \multicolumn{1}{|l|}{EMQ}         & \multicolumn{1}{c|}{0\%}      \\
+        \multicolumn{1}{|l|}{HDy}         & \multicolumn{1}{c|}{20\%}     \\
+        \multicolumn{1}{|l|}{HDx}         & \multicolumn{1}{c|}{0\%}      \\
+        \multicolumn{1}{|l|}{ELM-SVMperfKLD}  & \multicolumn{1}{c|}{0\%} \\
+        \multicolumn{1}{|l|}{ELM-SVMperfAE}   & \multicolumn{1}{c|}{0\%} \\
+        \multicolumn{1}{|l|}{ELM-SVMperfRAE}  & \multicolumn{1}{c|}{0\%} \\
+        \multicolumn{1}{|l|}{LR-Implicit} & \multicolumn{1}{c|}{0\%}      \\
+        \hline
+    \end{tabular}
+    \captionof{table}{Modelos de
+    cuantificación}\label{experimentos:tabla_cuantificacion}
+\end{center}
+
+Finalmente, una vez ajustado el método de cuantificación para una muestra de
+entrenamiento, se procede a tomar una muestra de prueba (recordando que
+probaremos con distintos tamaños de muestra, prevalencia y repitiendo el
+muestreo) y estimar su prevalencia.
+
+Para la implementación de los métodos de cuantificación en la simulación se
+utilizó la librería \href{https://github.com/HLT-ISTI/QuaPy}{{\it
+Quapy}}~\cite{moreo2021quapy} (\url{https://github.com/HLT-ISTI/QuaPy}), excepto
+para el método \href{https://github.com/slanglab/freq-e}{{\it
+LR-Implicit}}~\cite{keith2018uncertainty}, para el cual se empleó el código
+provisto por los autores (\url{https://github.com/slanglab/freq-e}). Para la
+implementación de los modelos de calibración utilizamos la
+librería~\href{https://github.com/EFS-OpenSource/calibration-framework}{{\it
+net:cal}}~\cite{kuppers2020multivariate}
+(\url{https://github.com/EFS-OpenSource/calibration-framework}).
+
+\subsection{Evaluación}\label{experimentos:evaluación}
+
+Como ya se mencionó, se realizó la evaluación en base a las métricas elegidas
+en~\ref{evaluacion:eleccion}, es decir, se utilizaron RAE, AE y SE. La
+evaluación se hizo según distintos criterios, agrupando los resultados en base a
+estos criterios y calculando su intervalo de confianza del 95\%. Además, en los
+casos que corresponda, usaremos también la métrica de clasificación F1 y la
+métrica de calibración ECE para elaborar conclusiones.
+
+\section{Conclusiones}\label{experimentos:conclusiones}
+
+Empezamos por analizar el rendimiento de los cuantificadores en general. En la
+tabla~\ref{experimentos:by_quantifier} se muestran los resultados de las
+estimaciones de las métricas RAE, AE y SE para cada cuantificador usado en la
+simulación. Los métodos basados en selección de umbrales ({\it TH\/}), {\it
+PACC\/}, {\it LR-Implicit\/} y {\it EMQ\/} son los que en general mejor
+desempeño tienen, mientras que los basados en minimización de pérdida explícita
+({\it ELM\/}) son los peores. Estos resultados son congruentes con los
+de~\citet{schumacher2021comparative} (en donde {\it TH\_MS\/} es el método con
+mejor AE), los de~\citet{moreo2021re} (que afirma que {\it PACC\/} es el mejor
+método dentro de las variantes de {\it CC\/}), los de~\citet{moreo2021quapy}
+(donde {\it EMQ\/} resultó el método con mejor AE), los
+de~\citet{moreo2022tweet} (donde también {\it EMQ\/} y {\it PACC\/} resultaron
+los mejores métodos evaluados con AE) y los de~\citet{tasche2016does} (que
+concluye que los métodos {\it CC\/} y {\it PCC\/} son limitados frente a {\it
+ACC\/} y {\it PAC\/}).
+
+Si queremos ver si los métodos sobre o sub estiman las prevalencias, debemos
+entonces analizar el sesgo. Además, en este caso debemos mirar la distribución
+del mismo, ya que su estimación puntual podría dar baja por más que los métodos
+tengan error alto (ya que pueden cancelarse entre sí). Podemos observar en la
+figura~\ref{fig:global_bias_by_quantifier} que {\it HDy\/} tiende a subestimar,
+mientras que el resto de los métodos no presentan, en general, un sesgo marcado.
+En esta figura también se verifica que {\it TH\_MS} tiene el mejor
+comportamiento. Sin embargo, si analizamos el sesgo según la verdadera
+prevalencia en la muestra de prueba
+(figura~\ref{fig:diagonal_by_cuantificator}), todos los métodos si tienen un
+sesgo en favor de la clase minoritaria.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=0.8\textwidth]{../experiments/plots/global_bias_by_quantifier.png}}
+    \caption{Sesgo por método de
+    cuantificación}\label{fig:global_bias_by_quantifier}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=0.6\textwidth]{../experiments/plots/diagonal_by_cuantificator.png}}
+    \caption{Prevalencia estimada por método de cuantificación según prevalencia
+    de prueba}\label{fig:diagonal_by_cuantificator}
+\end{figure}
+
+Por otro lado, también verificamos algunas de los resultados que eran de
+esperarse:
+\begin{itemize}
+    \item Para los métodos de cuantificación agregativos con clasificadores
+    generales (\ref{estimacion:generales}), a mejor desempeño en la
+    clasificación (métrica F1), mejor desempeño en la cuantificación
+    (tabla~\ref{experimentos:by_classifier}).
+    \item A menor cantidad de características y mayor separación entre clases en
+    las poblaciones, mejor rendimiento de cuantificación
+    (tabla~\ref{experimentos:by_population}).
+    \item A mayor tamaño en muestra de entrenamiento, mejor rendimiento de
+    cuantificación (tabla~\ref{experimentos:by_train_sample_size}) (coincide con
+    los resultados de~\citet{schumacher2021comparative}).
+\end{itemize}
+
+Si analizamos según el tamaño de la muestra de evaluación
+(tabla~\ref{experimentos:by_test_sample_size}), teniendo que para cada tamaño
+utilizamos distintas posibles prevalencias como definimos en la
+tabla~\ref{experimentos:tabla_datasets}, y recordando que los valores de las
+métricas dependen de los mínimos valores posibles de las prevalencias de prueba
+(ecuaciones~\ref{evaluacion:eq_zae} y~\ref{evaluacion:eq_zrae}), entendemos
+entonces la diferencia de resultados en las métricas entre los distintos tamaños
+de muestra.
+
+Vemos también que cuanto más balanceada sea la muestra de entrenamiento, mejores
+resultados de cuantificación se obtienen (tabla~\ref{experimentos:by_train_prev}
+y figuras~\ref{fig:global_bias_by_train_prev}
+y~\ref{fig:diagonal_by_train_prev}). Este es un dato bastante interesante, ya
+que implicaría que podríamos aplicar en cuantificación las mismas técnicas de
+balance de clases que se usan en problemas de clasificación para tratar de
+conseguir mejores resultados que si usáramos datos desbalanceados. También vemos
+como la prevalencia de la muestra de entrenamiento influye en el sesgo del
+cuantificador, tendiendo en general a sobrestimar la clase mayoritaria. En la
+figura~\ref{fig:diagonal_by_quantifier_by_train_prev} podemos ver estos
+resultados desagregados por método de cuantificación.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=0.6\textwidth]{../experiments/plots/global_bias_by_train_prev.png}}
+    \caption{Sesgo por prevalencia de
+    entrenamiento}\label{fig:global_bias_by_train_prev}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=0.5\textwidth]{../experiments/plots/diagonal_by_train_prev.png}}
+    \caption{Prevalencia estimada por prevalencia de entrenamiento según
+    prevalencia de prueba}\label{fig:diagonal_by_train_prev}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.01.png}\quad
+    \end{subfigure}
+    \begin{subfigure}[b]{.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.25.png}\quad
+    \end{subfigure}
+    \medskip
+    \begin{subfigure}[b]{.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.50.png}
+    \end{subfigure}
+    \begin{subfigure}[b]{.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.75.png}\quad
+    \end{subfigure}
+    \begin{subfigure}[b]{.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.99.png}
+    \end{subfigure}
+    \medskip
+    \hfill
+    \caption{Prevalencia estimada por método de cuantificación según prevalencia
+    de prueba, para distintas prevalencias de
+    entrenamiento}\label{fig:diagonal_by_quantifier_by_train_prev}
+\end{figure}
+
+Con respecto al balance en la muestra de prueba
+(tabla~\ref{experimentos:by_test_prev}), debemos volver a mencionar el
+comentario en referencia a los distintos valores de prevalencia para los
+distintos posibles tamaños de muestra. De todas formas, llama la atención que
+las métricas son mejores cuando el desbalance de clases lleva a la clase
+positiva a ser la minoritaria. Esto se debe a que los métodos de cuantificación
+binaria basados en la estimación del {\it fpr\/} y {\it tpr\/} ({\it ACC}, {\it
+PACC}, y {\it TH\/}) no son simétricos en cuanto a las clases positivas y
+negativas, sino que son sensibles a si la clase mayoritaria es una u otra.
+
+Si tenemos en cuenta la diferencia absoluta entre las prevalencias de la muestra
+de entrenamiento y la de prueba (tabla~\ref{experimentos:by_abs_dataset_shift}),
+vemos que también en general (y como quizás era esperable de forma intuitiva), a
+menor diferencia, mejor rendimiento. Sin embargo, llama la atención cuan
+dinámico es este comportamiento según el método de cuantificación
+(tabla~\ref{experimentos:by_abs_dataset_shift_and_quantificator}). En general,
+los métodos que mejor funcionan cuando el {\it dataset shift\/} es bajo son los
+que peor funcionan cuando es alto. A pesar de que en~\citet{moreo2022tweet}
+y~\citet{moreo2021quapy} el método {\it EMQ\/} es el de mejor rendimiento para
+los casos de mayor {\it dataset shift}, en nuestras simulaciones fue {\it
+TH\_T50\/} el método con mejores métricas ante estos casos.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=0.5\textwidth]{../experiments/plots/global_bias_by_calibration.png}}
+    \caption{Sesgo por método de
+    calibración}\label{fig:global_bias_by_calibration}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=0.6\textwidth]{../experiments/plots/diagonal_by_calibration.png}}
+    \caption{Prevalencia estimada por método de calibración según prevalencia en
+    muestra de prueba}\label{fig:diagonal_by_calibration}
+\end{figure}
+
+Analizando ahora la influencia de la calibración en la cuantificación, la
+calibración por regresión isotónica lleva una leve ventaja en el rendimiento de
+la cuantificación en general (considerando solo métodos de cuantificación
+agregativos con clasificadores generales y blandos)
+(tabla~\ref{experimentos:by_calibration} y
+figuras~\ref{fig:global_bias_by_calibration} y
+~\ref{fig:diagonal_by_calibration}), aunque llamativamente no presenta ventajas
+en cuánto a la métrica de clasificación (F1) ni de calibración (ECE).
+
+Si tenemos en cuenta tanto el método de cuantificación como el de calibración
+(en los casos que aplique)
+(tabla~\ref{experimentos:by_quantifier_and_calibration} y
+figura~\ref{fig:global_bias_by_quantifier_and_calibration}), se observa que {\it
+LR-Implicit}, {\it EMQ} y {\it PACC} en los casos de calibración isotónica y de
+no calibración se vuelven más competitivos frente a los métodos {\it TH}.
+
+\begin{figure}[H]
+    \centering
+    \centerline{\includegraphics[width=\textwidth]{../experiments/plots/global_bias_by_quantifier_and_calibration.png}}
+    \caption{Sesgo por método de calibración y
+    cuantificación}\label{fig:global_bias_by_quantifier_and_calibration}
+\end{figure}
+
+Sin embargo, también notamos que esta mejora en la cuantificación mediante la
+calibración surge cuanto más desbalanceados estén los datos de entrenamiento, no
+habiendo mejoras significativas cuando están balanceados
+(tabla~\ref{experimentos:by_train_prev_and_calibration}).
+

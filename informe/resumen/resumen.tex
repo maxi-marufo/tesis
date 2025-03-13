@@ -1,0 +1,42 @@
+\begin{center}
+  \textbf{\Large Resumen}\label{resumen}
+\end{center}
+
+La cuantificación consiste en proporcionar predicciones agregadas para conjuntos
+de datos, en lugar de predicciones individuales para cada dato. En el contexto
+de la clasificación, esto se traduce en predecir la proporción de cada clase
+dentro de un conjunto de instancias, en lugar de la clase particular de cada
+instancia individualmente.
+
+Un ejemplo práctico es la predicción de la proporción de comentarios positivos y
+negativos sobre un producto, servicio o candidato en redes sociales. Si bien se
+podría utilizar un clasificador para predecir el sentimiento de cada comentario
+y, posteriormente, derivar las proporciones de clase, esta estrategia es
+subóptima y a menudo produce estimaciones sesgadas de la prevalencia, lo que
+resulta en una baja precisión en la cuantificación. Por consiguiente, se han
+desarrollado métodos específicos para abordar la cuantificación como una tarea
+independiente.
+
+Los modelos de cuantificación se entrenan con datos cuya distribución puede
+diferir de la de los datos de prueba. En el contexto de la cuantificación
+binaria, para cada instancia $i \in \{1,\dots,n\}$, consideramos un vector de
+variables aleatorias $(\boldsymbol{X}_i,Y_i,S_i)$, donde $\boldsymbol{X}_i \in
+\mathbb{R}^d$ representa las características de la instancia, $Y_i \in \{0, 1\}$
+denota su etiqueta de clase, y $S_i \in \{0, 1\}$ indica si la instancia está
+etiquetada (y, por lo tanto, pertenece al conjunto de entrenamiento). Cuando
+$S_i = 0$, la etiqueta $Y_i$ no es observable. El objetivo es estimar $\theta :=
+\mathbb{P}(Y=1|S=0)$, es decir, la prevalencia de etiquetas positivas entre las
+instancias no etiquetadas. No se asume que esta prevalencia sea igual a la de
+las instancias etiquetadas, $\mathbb{P}(Y=1|S=1)$. Además, el estimador de
+$\theta$ debe depender únicamente de los datos disponibles: las características
+de todas las instancias y las etiquetas observadas.
+
+El objetivo de este trabajo es describir el problema de la cuantificación,
+justificando la necesidad de utilizar modelos optimizados para estos casos, y
+presentar una revisión del estado del arte en este campo, evaluando mediante
+simulaciones los principales modelos propuestos.
+
+\bigskip
+
+\textbf{Palabras Clave:} Cuantificación, estimación de proporción de clases,
+cambio de distribución
