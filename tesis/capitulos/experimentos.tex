@@ -2,16 +2,17 @@
 
 En esta sección se evaluarán todos los métodos mencionados en el
 Capítulo~\ref{estimacion} mediante nuevos casos de ejemplo simulados. Dicha
-evaluación se basará en las métricas elegidas en~\ref{evaluacion:eleccion} (RAE,
-AE y SE) además del sesgo. Además, la simulación se basará en el protocolo {\it
-APP\/} definido en~\ref{evaluacion:protocolos}. No se realizará el proceso de
-selección de modelos mencionado en~\ref{evaluacion:seleccion} ya que el objetivo
-de estos experimentos no es el de buscar los mejores cuantificadores para los
-casos de ejemplo, sino hacer una comparación de los mismos frente a iguales
-condiciones (hiperparámetros por defecto, mismo clasificador, etc.). Finalmente,
-se elaboran conclusiones en base a los resultados y se comparan con los
-resultados de otros trabajos~\cite{moreo2021re, moreo2022tweet, moreo2021quapy,
-tasche2016does, schumacher2021comparative}.
+evaluación se basará en las medidas de evaluación elegidas
+en~\ref{evaluacion:eleccion} (RAE, AE y SE) además del error. Además, la
+simulación se basará en el protocolo {\it APP\/} definido
+en~\ref{evaluacion:protocolos}. No se realizará el proceso de selección de
+modelos mencionado en~\ref{evaluacion:seleccion} ya que el objetivo de estos
+experimentos no es el de buscar los mejores cuantificadores para los casos de
+ejemplo, sino hacer una comparación de los mismos frente a iguales condiciones
+(hiperparámetros por defecto, mismo clasificador, etc.). Finalmente, se elaboran
+conclusiones en base a los resultados y se comparan con los resultados de otros
+trabajos~\cite{moreo2021re, moreo2022tweet, moreo2021quapy, tasche2016does,
+schumacher2021comparative}.
 
 \section{Simulación}\label{experimentos:simulacion}
 
@@ -159,7 +160,7 @@ cuantificación, pero en este caso no utilizaremos los nombrados
 en~\ref{experimentos:tabla_clasificacion}, sino uno optimizado para ser
 utilizado en cuantificación. En este caso usaremos, al igual que en el
 Capítulo~\ref{evaluacion}, el clasificador \({\it SVM \/}_{perf}\), pero esta
-vez optimizado no solo para la métrica KLD, sino también AE y RAE.
+vez optimizado no solo para KLD, sino también AE y RAE.
 
 Para los modelos no agregativos (\ref{estimacion:no_agregativos}), no se usan
 modelos de clasificación, y por lo tanto tampoco se calibran; simplemente se
@@ -219,18 +220,18 @@ net:cal}}~\cite{kuppers2020multivariate}
 
 \subsection{Evaluación}\label{experimentos:evaluación}
 
-Como ya se mencionó, se realizó la evaluación en base a las métricas elegidas
+Como ya se mencionó, se realizó la evaluación en base a las medidas elegidas
 en~\ref{evaluacion:eleccion}, es decir, se utilizaron RAE, AE y SE. La
 evaluación se hizo según distintos criterios, agrupando los resultados en base a
 estos criterios y calculando su intervalo de confianza del 95\%. Además, en los
-casos que corresponda, usaremos también la métrica de clasificación F1 y la
-métrica de calibración ECE para elaborar conclusiones.
+casos que corresponda, usaremos también la medida de clasificación F1 y la
+medida de calibración ECE para elaborar conclusiones.
 
 \section{Conclusiones}\label{experimentos:conclusiones}
 
 Empezamos por analizar el rendimiento de los cuantificadores en general. En la
 tabla~\ref{experimentos:by_quantifier} se muestran los resultados de las
-estimaciones de las métricas RAE, AE y SE para cada cuantificador usado en la
+estimaciones de las medidas RAE, AE y SE para cada cuantificador usado en la
 simulación. Los métodos basados en selección de umbrales ({\it TH\/}), {\it
 PACC\/}, {\it LR-Implicit\/} y {\it EMQ\/} son los que en general mejor
 desempeño tienen, mientras que los basados en minimización de pérdida explícita
@@ -245,24 +246,22 @@ concluye que los métodos {\it CC\/} y {\it PCC\/} son limitados frente a {\it
 ACC\/} y {\it PAC\/}).
 
 Si queremos ver si los métodos sobre o sub estiman las prevalencias, debemos
-entonces analizar el sesgo. Además, en este caso debemos mirar la distribución
-del mismo, ya que su estimación puntual podría dar baja por más que los métodos
-tengan error alto (ya que pueden cancelarse entre sí). Podemos observar en la
-figura~\ref{fig:global_bias_by_quantifier} que {\it HDy\/} tiende a subestimar,
-mientras que el resto de los métodos no presentan, en general, un sesgo marcado.
-En esta figura también se verifica que {\it TH\_MS} tiene el mejor
-comportamiento. Sin embargo, si analizamos el sesgo según la verdadera
-prevalencia en la muestra de prueba
+entonces analizar los errores (y principalmente, el sesgo o {\it bias\/}).
+Podemos observar en la figura~\ref{fig:global_bias_by_quantifier} que {\it
+HDy\/} está levemente sesgado a subestimar, mientras que el resto de los métodos
+no presentan, en general, un sesgo marcado. Sin embargo, si analizamos el sesgo
+en función de la verdadera prevalencia en la muestra de prueba
 (figura~\ref{fig:diagonal_by_cuantificator}), todos los métodos si tienen un
-sesgo en favor de la clase minoritaria.
+sesgo en favor de la clase minoritaria (excepto justamente para algunos valores
+de {\it HDy\/}).
 
-\begin{figure}[H]
+\begin{figure}[!tph]
     \centering
-    \centerline{\includegraphics[width=0.8\textwidth]{../experiments/plots/global_bias_by_quantifier.png}}
-    \caption{Sesgo por método de
+    \centerline{\includegraphics[width=0.9\textwidth]{../experiments/plots/global_bias_by_quantifier.png}}
+    \caption{Error por método de
     cuantificación}\label{fig:global_bias_by_quantifier}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[!tph]
     \centering
     \centerline{\includegraphics[width=0.6\textwidth]{../experiments/plots/diagonal_by_cuantificator.png}}
     \caption{Prevalencia estimada por método de cuantificación según prevalencia
@@ -271,11 +270,11 @@ sesgo en favor de la clase minoritaria.
 
 Por otro lado, también verificamos algunas de los resultados que eran de
 esperarse:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item Para los métodos de cuantificación agregativos con clasificadores
     generales (\ref{estimacion:generales}), a mejor desempeño en la
-    clasificación (métrica F1), mejor desempeño en la cuantificación
-    (tabla~\ref{experimentos:by_classifier}).
+    clasificación (evaluado con la medida F1), mejor desempeño en la
+    cuantificación (tabla~\ref{experimentos:by_classifier}).
     \item A menor cantidad de características y mayor separación entre clases en
     las poblaciones, mejor rendimiento de cuantificación
     (tabla~\ref{experimentos:by_population}).
@@ -288,10 +287,10 @@ Si analizamos según el tamaño de la muestra de evaluación
 (tabla~\ref{experimentos:by_test_sample_size}), teniendo que para cada tamaño
 utilizamos distintas posibles prevalencias como definimos en la
 tabla~\ref{experimentos:tabla_datasets}, y recordando que los valores de las
-métricas dependen de los mínimos valores posibles de las prevalencias de prueba
-(ecuaciones~\ref{evaluacion:eq_zae} y~\ref{evaluacion:eq_zrae}), entendemos
-entonces la diferencia de resultados en las métricas entre los distintos tamaños
-de muestra.
+medidas de evaluación dependen de los mínimos valores posibles de las
+prevalencias de prueba (ecuaciones~\ref{evaluacion:eq_zae}
+y~\ref{evaluacion:eq_zrae}), entendemos entonces la diferencia de resultados en
+las medidas entre los distintos tamaños de muestra.
 
 Vemos también que cuanto más balanceada sea la muestra de entrenamiento, mejores
 resultados de cuantificación se obtienen (tabla~\ref{experimentos:by_train_prev}
@@ -305,13 +304,13 @@ cuantificador, tendiendo en general a sobrestimar la clase mayoritaria. En la
 figura~\ref{fig:diagonal_by_quantifier_by_train_prev} podemos ver estos
 resultados desagregados por método de cuantificación.
 
-\begin{figure}[H]
+\begin{figure}[!tph]
     \centering
     \centerline{\includegraphics[width=0.6\textwidth]{../experiments/plots/global_bias_by_train_prev.png}}
-    \caption{Sesgo por prevalencia de
+    \caption{Error por prevalencia de
     entrenamiento}\label{fig:global_bias_by_train_prev}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[!tph]
     \centering
     \centerline{\includegraphics[width=0.5\textwidth]{../experiments/plots/diagonal_by_train_prev.png}}
     \caption{Prevalencia estimada por prevalencia de entrenamiento según
@@ -320,24 +319,24 @@ resultados desagregados por método de cuantificación.
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.475\textwidth}
         \centering
         \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.01.png}\quad
     \end{subfigure}
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.475\textwidth}
         \centering
         \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.25.png}\quad
     \end{subfigure}
     \medskip
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.475\textwidth}
         \centering
         \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.50.png}
     \end{subfigure}
-    \begin{subfigure}[b]{.4\textwidth}
+    \begin{subfigure}[b]{.475\textwidth}
         \centering
         \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.75.png}\quad
     \end{subfigure}
-    \begin{subfigure}[b]{.5\textwidth}
+    \begin{subfigure}[b]{.65\textwidth}
         \centering
         \includegraphics[width=\linewidth]{../experiments/plots/diagonal_by_cuantificator_0.99.png}
     \end{subfigure}
@@ -352,11 +351,12 @@ Con respecto al balance en la muestra de prueba
 (tabla~\ref{experimentos:by_test_prev}), debemos volver a mencionar el
 comentario en referencia a los distintos valores de prevalencia para los
 distintos posibles tamaños de muestra. De todas formas, llama la atención que
-las métricas son mejores cuando el desbalance de clases lleva a la clase
-positiva a ser la minoritaria. Esto se debe a que los métodos de cuantificación
-binaria basados en la estimación del {\it fpr\/} y {\it tpr\/} ({\it ACC}, {\it
-PACC}, y {\it TH\/}) no son simétricos en cuanto a las clases positivas y
-negativas, sino que son sensibles a si la clase mayoritaria es una u otra.
+las medidas de evaluación son mejores cuando el desbalance de clases lleva a la
+clase positiva a ser la minoritaria. Esto se debe a que los métodos de
+cuantificación binaria basados en la estimación del {\it fpr\/} y {\it tpr\/}
+({\it ACC}, {\it PACC}, y {\it TH\/}) no son simétricos en cuanto a las clases
+positivas y negativas, sino que son sensibles a si la clase mayoritaria es una u
+otra.
 
 Si tenemos en cuenta la diferencia absoluta entre las prevalencias de la muestra
 de entrenamiento y la de prueba (tabla~\ref{experimentos:by_abs_dataset_shift}),
@@ -368,17 +368,17 @@ los métodos que mejor funcionan cuando el {\it dataset shift\/} es bajo son los
 que peor funcionan cuando es alto. A pesar de que en~\citet{moreo2022tweet}
 y~\citet{moreo2021quapy} el método {\it EMQ\/} es el de mejor rendimiento para
 los casos de mayor {\it dataset shift}, en nuestras simulaciones fue {\it
-TH\_T50\/} el método con mejores métricas ante estos casos.
+TH\_T50\/} el método con mejor evaluación ante estos casos.
 
-\begin{figure}[H]
+\begin{figure}[!tph]
     \centering
-    \centerline{\includegraphics[width=0.5\textwidth]{../experiments/plots/global_bias_by_calibration.png}}
-    \caption{Sesgo por método de
+    \centerline{\includegraphics[width=0.9\textwidth]{../experiments/plots/global_bias_by_calibration.png}}
+    \caption{Error por método de
     calibración}\label{fig:global_bias_by_calibration}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[!tph]
     \centering
-    \centerline{\includegraphics[width=0.6\textwidth]{../experiments/plots/diagonal_by_calibration.png}}
+    \centerline{\includegraphics[width=0.7\textwidth]{../experiments/plots/diagonal_by_calibration.png}}
     \caption{Prevalencia estimada por método de calibración según prevalencia en
     muestra de prueba}\label{fig:diagonal_by_calibration}
 \end{figure}
@@ -390,7 +390,7 @@ agregativos con clasificadores generales y blandos)
 (tabla~\ref{experimentos:by_calibration} y
 figuras~\ref{fig:global_bias_by_calibration} y
 ~\ref{fig:diagonal_by_calibration}), aunque llamativamente no presenta ventajas
-en cuánto a la métrica de clasificación (F1) ni de calibración (ECE).
+en cuánto a la medidas de clasificación (F1) ni de calibración (ECE).
 
 Si tenemos en cuenta tanto el método de cuantificación como el de calibración
 (en los casos que aplique)
@@ -399,10 +399,10 @@ figura~\ref{fig:global_bias_by_quantifier_and_calibration}), se observa que {\it
 LR-Implicit}, {\it EMQ} y {\it PACC} en los casos de calibración isotónica y de
 no calibración se vuelven más competitivos frente a los métodos {\it TH}.
 
-\begin{figure}[H]
+\begin{figure}[!tph]
     \centering
     \centerline{\includegraphics[width=\textwidth]{../experiments/plots/global_bias_by_quantifier_and_calibration.png}}
-    \caption{Sesgo por método de calibración y
+    \caption{Error por método de calibración y
     cuantificación}\label{fig:global_bias_by_quantifier_and_calibration}
 \end{figure}
 

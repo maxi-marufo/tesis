@@ -30,14 +30,14 @@ interés la etiqueta generada por el clasificador, la calibración no aporta
 valor.
 
 Si bien la calibración parece una propiedad sencilla y quizás trivial, los
-modelos mal calibrados son bastante comunes. Por ejemplo, algunos modelos
-complejos están mal calibrados desde su origen, como Naive Bayes, Random Forest
-y algunas redes neuronales modernas. Incluso, hay modelos que no devuelven
-probabilidades {\it a posteriori}, sino genéricas puntuaciones de confianza,
-como es el caso de SVM. En estos dos últimos casos es posible mapear las salidas
-de los clasificadores a probabilidades {\it a posteriori\/} calibradas a través
-de algunos método de calibración~\cite{platt1999probabilistic,
-zadrozny2002transforming, niculescu2005predicting, guo2017calibration}.
+modelos mal calibrados son bastante comunes. Por ejemplo, algunos modelos están
+mal calibrados desde su origen, como Naive Bayes, Random Forest y algunas redes
+neuronales modernas. Incluso, hay modelos que no devuelven probabilidades {\it a
+posteriori}, sino genéricas puntuaciones de confianza, como es el caso de SVM.
+En estos dos últimos casos es posible mapear las salidas de los clasificadores a
+probabilidades {\it a posteriori\/} calibradas a través de algunos método de
+calibración~\cite{platt1999probabilistic, zadrozny2002transforming,
+niculescu2005predicting, guo2017calibration}.
 
 Dentro de los distintos modelos de clasificación, la regresión logística es un
 caso especial ya que está bien calibrado por diseño, dado que su función
@@ -46,18 +46,18 @@ log-loss\/}~\cite{morrison2013tutorial}. Sin  embargo, si no se cuenta con un
 conjunto de entrenamiento lo suficientemente grande, es posible que el modelo no
 tenga suficiente información para calibrar las probabilidades y sufrir la
 maldición de la dimensionalidad. Las cosas se complican aún más cuando se
-incorpora la regularización o {\it boosting\/}. Dadas todas las posibles causas
-de una mala calibración, no se debe asumir que el modelo ajustado estará
-calibrado.
+incorporan técnicas como regularización o {\it boosting\/}. Dadas todas las
+posibles causas de una mala calibración, no se debe asumir que el modelo
+ajustado estará calibrado.
 
 Por último, una buena calibración no implica que el modelo sea bueno
 clasificando. Por ejemplo, podemos tener un conjunto de datos balanceado (50\%
 clase positiva, 50\% clase negativa) con el cual ajustamos un modelo que termina
 clasificando aleatoriamente las observaciones en cada grupo con un 50\% de
 probabilidad. Este modelo tendrá solo un 50\% de {\it accuracy\/} pero estará
-calibrado de forma perfecta. Lo mismo puede ocurrir al contrario, un modelo con
-muy buena capacidad de clasificación pero que siempre sobrestime las
-probabilidades predichas.
+calibrado de forma perfecta. Lo mismo puede ocurrir al contrario, por ejemplo,
+un modelo con muy buena capacidad de clasificación pero que siempre sobrestime
+las probabilidades predichas.
 
 \section{Definición}
 
@@ -74,12 +74,14 @@ necesidad de aproximaciones empíricas.
 \section{Métodos de Calibración}
 
 Se pueden clasificar en binarios o multiclase, y en no paramétricos y
-paramétricos. Para los métodos no paramétricos, debemos tener acceso a las
-probabilidades $\hat p_{i}(x_i)$ estimadas por el modelo, y a las $y_{i}$ clases
-reales del set de calibración. Para los métodos paramétricos, debemos tener
-acceso a las salidas no probabilísticas del modelo $\ z_{i}(x_i) = logit(\hat
-p_{i}(x_i))$ o bien calcularlas de a través de las $\hat p_{i}(x_i)$, y a las
-$y_{i}$ clases reales del set de calibración.
+paramétricos. Para cualquier caso, se deben conocer las $y_{i}$ clases reales
+del set de calibración. Luego, para los métodos no paramétricos, debemos tener
+acceso a las probabilidades $\hat p_{i}(x_i)$ estimadas por el modelo. Y para
+los métodos paramétricos, debemos tener acceso a las salidas no probabilísticas
+del modelo $\ z_{i}(x_i)$ o bien calcularlas haciendo $\ z_{i}(x_i) = logit(\hat
+p_{i}(x_i))$ (siendo $\sigma$ la función sigmoide o logística -inversa de
+$logit$-, y $\sigma_{SM}$ la función softmax, su generalización para un vector
+$\boldsymbol{x}_i$).
 
 \subsection{Modelos Binarios}
 
@@ -213,16 +215,16 @@ si las sobreestima.
     \caption{Ejemplo de curvas de calibración}\label{fig:curvas_de_calibracion}
 \end{figure}
 
-\subsection{Métricas}
+\subsection{Medidas de Evaluación}
 
 Aunque las curvas de calibración aportan información detallada, es interesante
 disponer de un único valor que permita cuantificar la calidad de calibración del
-modelo. Vamos a definir primero dos métricas que también se basan en {\it
-bins\/}, y luego otras que no.
+modelo. Vamos a definir primero dos medidas de evaluación que también se basan
+en {\it bins\/}, y luego otras que no.
 
 \subsubsection{Expected Calibration Error (ECE)}\label{calibracion:ECE}
 
-Una posible métrica para medir la descalibración podría basarse en tomar ambos
+Una posible medida para evaluar la descalibración podría basarse en tomar ambos
 términos~\ref{ecuacion:perfect_calibration}, restarlos, y calcular el valor
 esperado de la diferencia:
 
@@ -254,17 +256,17 @@ calibración.
 \subsubsection{Cross-Entropy}\label{calibracion:Cross-Entropy}
 
 Teniendo en cuenta que la descalibración puede deberse a un sobreajuste de la
-Cross-Entropy, podemos medir dicha métrica en el set destinado a calibración.
+Cross-Entropy, podemos evaluar dicha medida en el set destinado a calibración.
 
 $$ CE = - \frac{1}{N}\sum _{i=1}^{N} \sum _{j=1}^{M} \log \hat p_{ij}(x_i) $$
 Donde $N$ es la cantidad de muestras y $M$ la cantidad de clases. Si este valor
 es relativamente menor (o mayor) al del entrenamiento, es un síntoma de una
-posible des-calibración. Un problema de esta métrica es que da infinito si
+posible des-calibración. Un problema de esta medida es que da infinito si
 alguna $\hat p_{ij} = 0$.
 
 \subsubsection{Brier score}\label{calibracion:Brier score}
 
-Otra posible métrica para medir la bondad de ajuste de las probabilidades es el
+Otra posible medida para evaluar la bondad de ajuste de las probabilidades es el
 Brier score, el cual se calcula como:
 
 $$ BS = \frac{1}{N}\sum _{i=1}^{N} \sum _{j=1}^{M} (\hat p_{ij}(x_i) - y_{ij})^2

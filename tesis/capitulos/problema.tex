@@ -42,21 +42,21 @@ predicciones que interesan no son a nivel individual sino a nivel colectivo;
 ejemplos de tales campos son la investigación de mercado, la ciencia política,
 las ciencias sociales, modelado ecológico y epidemiología.
 
-\begin{figure}[H]
+\begin{figure}[!h]
     \centering
-    \begin{subfigure}[t]{0.4\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
         \includegraphics[width=\textwidth]{../plots_teoria/intro_scatterplot.png}
         \caption{Clasificación}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[t]{0.4\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
         \includegraphics[width=\textwidth]{../plots_teoria/intro_barplot.png}
         \caption{Cuantificación}
     \end{subfigure}
     \caption{En la clasificación, la predicción es a nivel individual, mientras
     que en la cuantificación es a nivel agregado (para mayor información sobre
     los datos del gráfico consultar el
-    Capítulo~\ref{estimacion:ejemplo})}\label{fig:intro}
+    Capítulo~\ref{estimacion:ejemplo}).}\label{fig:intro}
 \end{figure}
 
 En resumen, y generalizando no solo para clasificación sino también a otros
@@ -165,12 +165,12 @@ asumen~\cite{vaz2019quantification} son:
 Usando la distribución de probabilidad conjunta, podemos factorizar usando las
 distribuciones condicionales:
 \begin{equation}
-    \mathbb{P}(\boldsymbol{X},Y,S)=\mathbb{P}(\boldsymbol{X}|Y,S)\mathbb{P}(Y|S)\mathbb{P}(S)
+    \mathbb{P}(\boldsymbol{X}=\boldsymbol{x},Y=y,S=s)=\mathbb{P}(\boldsymbol{X}=\boldsymbol{x}|Y=y,S=s)\mathbb{P}(Y=y|S=s)\mathbb{P}(S=s)
 \end{equation}
 Luego, usando el tercer supuesto mencionado, podemos
 hacer~\cite{moreno2012unifying}:
 \begin{equation}
-    \mathbb{P}(\boldsymbol{X},Y,S)=\mathbb{P}(\boldsymbol{X}|Y)\mathbb{P}(Y|S)\mathbb{P}(S)
+    \mathbb{P}(\boldsymbol{X}=\boldsymbol{x},Y=y,S=s)=\mathbb{P}(\boldsymbol{X}=\boldsymbol{x}|Y=y)\mathbb{P}(Y=y|S=s)\mathbb{P}(S=s)
 \end{equation}
 Si bien existen varios métodos propuestos para el aprendizaje de
 cuantificación~\cite{esuli2023learning, gonzalez2017review}, el mismo es todavía
@@ -183,7 +183,6 @@ distribuciones de los datos de entrenamiento y de prueba pueden ser distintas.
 Por ejemplo, si la diferencia entre $\mathbb{P}(Y=1|S=0)$ y
 $\mathbb{P}(Y=1|S=1)$ es grande, los métodos simples como {\it CC\/} suelen
 tener bajo rendimiento.
-
 
 \section{Cambios en las distribuciones de los datos}\label{problema:cambios}
 
@@ -205,55 +204,69 @@ Teniendo en cuenta que en los problemas de clasificación tenemos:
     $\mathbb{P}(Y=y,\boldsymbol{X=x})$.
 \end{itemize}
 
-La probabilidad conjunta $\mathbb{P}(Y,\boldsymbol{X})$ luego se puede escribir
-como $\mathbb{P}(Y|\boldsymbol{X})\mathbb{P}(\boldsymbol{X})$ o como
-$\mathbb{P}(\boldsymbol{X}|Y)\mathbb{P}(Y)$. Por otro lado, cuando usamos los
-términos de entrenamiento ({\it train\/}) y prueba ({\it test\/}), nos referimos
-a las datos disponibles para entrenar al clasificador y los datos presentes en
-el entorno en el que se implementará el clasificador, respectivamente. Podemos
-entonces también separar los datos en dos distribuciones distintas,
-condicionando a la variable $S$ definida en~\ref{problema:marco_teorico}, siendo
-$\mathbb{P}_{tr}(Y,\boldsymbol{X})=\mathbb{P}(Y,\boldsymbol{X}|S=1)$ y
-$\mathbb{P}_{tst}(Y,\boldsymbol{X})=\mathbb{P}(Y,\boldsymbol{X}|S=0)$.
+La probabilidad conjunta $\mathbb{P}(Y=y,\boldsymbol{X}=\boldsymbol{x})$ luego
+se puede escribir como
+$\mathbb{P}(Y=y|\boldsymbol{X}=\boldsymbol{x})\mathbb{P}(\boldsymbol{X}=\boldsymbol{x})$
+o como $\mathbb{P}(\boldsymbol{X}=\boldsymbol{x}|Y=y)\mathbb{P}(Y=y)$. Por otro
+lado, cuando usamos los términos de entrenamiento ({\it train\/}) y prueba ({\it
+test\/}), nos referimos a las datos disponibles para entrenar al clasificador y
+los datos presentes en el entorno en el que se implementará el clasificador,
+respectivamente. Podemos entonces también separar los datos en dos
+distribuciones distintas, condicionando a la variable $S$ definida
+en~\ref{problema:marco_teorico}, siendo
+$\mathbb{P}_{tr}(Y=y,\boldsymbol{X}=\boldsymbol{x})=\mathbb{P}(Y=y,\boldsymbol{X}=\boldsymbol{x}|S=1)$
+y
+$\mathbb{P}_{tst}(Y=y,\boldsymbol{X}=\boldsymbol{x})=\mathbb{P}(Y=y,\boldsymbol{X}=\boldsymbol{x}|S=0)$.
 
 El {\it dataset shift\/} aparece cuando las distribuciones conjuntas de
 entrenamiento y de prueba son diferentes, es decir, cuando
-$\mathbb{P}_{tr}(Y,\boldsymbol{X}) \neq
-\mathbb{P}_{tst}(Y,\boldsymbol{X})$.~\citet{moreno2012unifying} distingue las
-distintas variantes del {\it dataset shift\/} según qué elementos mencionados
-anteriormente cambian:
+$\mathbb{P}_{tr}(Y=y,\boldsymbol{X}=\boldsymbol{x}) \neq
+\mathbb{P}_{tst}(Y=y,\boldsymbol{X}=\boldsymbol{x})$.~\citet{moreno2012unifying}
+distingue las distintas variantes del {\it dataset shift\/} según qué elementos
+mencionados anteriormente cambian:
 
-\begin{itemize}
-    \item {\it Covariate shift}, cuando $\mathbb{P}_{tr}(Y|\boldsymbol{X}) =
-    \mathbb{P}_{tst}(Y|\boldsymbol{X})$ y $\mathbb{P}_{tr}(\boldsymbol{X}) \neq
-    \mathbb{P}_{tst}(\boldsymbol{X})$
+\begin{itemize}[noitemsep]
+    \item {\it Covariate shift}, cuando
+    $\mathbb{P}_{tr}(Y=y|\boldsymbol{X}=\boldsymbol{x}) =
+    \mathbb{P}_{tst}(Y=y|\boldsymbol{X}=\boldsymbol{x})$ y
+    $\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}) \neq
+    \mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x})$
     \item {\it Prior probability shift}, cuando
-    $\mathbb{P}_{tr}(\boldsymbol{X}|Y) = \mathbb{P}_{tst}(\boldsymbol{X}|Y)$ y
-    $\mathbb{P}_{tr}(Y) \neq \mathbb{P}_{tst}(Y)$
-    \item {\it Concept shift}, cuando $\mathbb{P}_{tr}(Y|\boldsymbol{X}) \neq
-    \mathbb{P}_{tst}(Y|\boldsymbol{X})$ y $\mathbb{P}_{tr}(\boldsymbol{X}) =
-    \mathbb{P}_{tst}(\boldsymbol{X})$ o $\mathbb{P}_{tr}(\boldsymbol{X}|Y) \neq
-    \mathbb{P}_{tst}(\boldsymbol{X}|Y)$ y $\mathbb{P}_{tr}(Y) =
-    \mathbb{P}_{tst}(Y)$
+    $\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}|Y=y) =
+    \mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x}|Y=y)$ y $\mathbb{P}_{tr}(Y=y)
+    \neq \mathbb{P}_{tst}(Y=y)$
+    \item {\it Concept shift}, cuando
+    $\mathbb{P}_{tr}(Y=y|\boldsymbol{X}=\boldsymbol{x}) \neq
+    \mathbb{P}_{tst}(Y=y|\boldsymbol{X}=\boldsymbol{x})$ y
+    $\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}) =
+    \mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x})$ o
+    $\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}|Y=y) \neq
+    \mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x}|Y=y)$ y $\mathbb{P}_{tr}(Y=y)
+    = \mathbb{P}_{tst}(Y=y)$
 \end{itemize}
 
-Otros tipos de {\it dataset shift\/} surgen cuando
-$\mathbb{P}_{tr}(Y|\boldsymbol{X}) \neq \mathbb{P}_{tst}(Y|\boldsymbol{X})$ y
-$\mathbb{P}_{tr}(\boldsymbol{X}) \neq \mathbb{P}_{tst}(\boldsymbol{X})$ y cuando
-$\mathbb{P}_{tr}(\boldsymbol{X}|Y) \neq \mathbb{P}_{tst}(\boldsymbol{X}|Y)$ y
-$\mathbb{P}_{tr}(Y) \neq \mathbb{P}_{tst}(Y)$. Sin embargo, estos tipos de
-cambios no se consideran generalmente en la literatura ya que aparecen mucho más
-raramente, o incluso porque son difíciles o imposibles de resolver.
+\vspace{\baselineskip}
 
-El problema de cuantificación se trata de un caso donde $\mathbb{P}_{tst}(Y)$ es
-desconocido. Además, la mayoría de los métodos de cuantificación propuestos
-asumen que $\mathbb{P}_{tr}(\boldsymbol{X}|Y) =
-\mathbb{P}_{tst}(\boldsymbol{X}|Y)$, por lo que están dentro de los casos de
-{\it prior probability shift}. Esto implica que se asumen los tres supuestos
-mencionados en~\ref{problema:marco_teorico}.
+Otros tipos de {\it dataset shift\/} surgen cuando
+$\mathbb{P}_{tr}(Y=y|\boldsymbol{X}=\boldsymbol{x}) \neq
+\mathbb{P}_{tst}(Y=y|\boldsymbol{X}=\boldsymbol{x})$ y
+$\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}) \neq
+\mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x})$ y cuando
+$\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}|Y=y) \neq
+\mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x}|Y=y)$ y $\mathbb{P}_{tr}(Y=y)
+\neq \mathbb{P}_{tst}(Y=y)$. Sin embargo, estos tipos de cambios no se
+consideran generalmente en la literatura ya que aparecen mucho más raramente, o
+incluso porque son difíciles o imposibles de resolver.
+
+El problema de cuantificación se trata de un caso donde $\mathbb{P}_{tst}(Y=y)$
+es desconocido. Además, la mayoría de los métodos de cuantificación propuestos
+asumen que $\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}|Y=y) =
+\mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x}|Y=y)$, por lo que están dentro de
+los casos de {\it prior probability shift}. Esto implica que se asumen los tres
+supuestos mencionados en~\ref{problema:marco_teorico}.
 
 Por otro lado, en la mayoría de los casos el objetivo final de la implementación
-es estimar algún parámetro de $\mathbb{P}_{tst}(Y)$. Por ejemplo, como ya
+es estimar algún parámetro de $\mathbb{P}_{tst}(Y=y)$. Por ejemplo, como ya
 mencionamos anteriormente, en la cuantificación binaria, se desea estimar
 $\theta:= \mathbb{P}(Y=1|S=0)$, o lo que es lo mismo, $p_{tst}:=
 \mathbb{P}_{tst}(Y=1)$. Es decir, en la cuantificación la tarea indirectamente
@@ -263,34 +276,35 @@ consecuencia, prácticamente todas las medidas de evaluación para la
 cuantificación son divergencias, es decir, medidas de cómo una distribución
 pronosticada difiere de la distribución real.
 
-\begin{figure}[H]
+\begin{figure}[!h]
     \centering
-    \begin{subfigure}[t]{0.36\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_train_scatterplot.png}
         \caption{Muestra de entrenamiento}\label{cambios:datos_tr}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[t]{0.36\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_train_barplot.png}
         \caption{Prevalencia de clases en muestra de
         entrenamiento}\label{cambios:prevalencia_tr}
     \end{subfigure}
     \medskip
-    \begin{subfigure}[t]{0.36\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_test_scatterplot.png}
         \caption{Muestra de prueba\footnote{con
-        $\mathbb{P}_{tst}(\boldsymbol{X}|Y) =
-        \mathbb{P}_{tr}(\boldsymbol{X}|Y)$} y su
+        $\mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x}|Y=y) =
+        \mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}|Y=y)$} y su
         clasificación}\label{cambios:clasificacion_tst}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[t]{0.36\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
         \centering
         \includegraphics[width=0.95\textwidth]{../plots_teoria/cambios_test_barplot.png}
-        \caption{Prevalencia de clases verdadera y cuantificación en muestra de
+        \caption{Prevalencia de clases verdadera y estimada (por el método {\it
+        CC\/} usando un clasificador Naive Bayes) en muestra de
         prueba}\label{cambios:cuantificacion_tst}
     \end{subfigure}
     \caption{El {\it prior probability shift\/} propio de los problemas de
@@ -305,16 +319,16 @@ directa, el primer método que suele pensarse para hacerlo es {\it Classify \&
 Count} o {\it CC}, es decir, clasificar cada individuo no etiquetado y estimar
 los valores de prevalencia de clase contando los individuos que fueron asignados
 a cada clase. Sin embargo, esta estrategia es subóptima: si bien un clasificador
-perfecto produce también un cuantificador perfecto, un buen clasificador puede
-producir un peor cuantificador que el que produce un mal clasificador. Para ver
-esto, se puede ver la definición de $F_1$, una función de evaluación estándar
-para la clasificación binaria, que se define como:
+perfecto produce también un cuantificador perfecto, un buen clasificador no
+necesariamente produce un mejor cuantificador que el que puede producir un mal
+clasificador. Para ver esto, se puede ver la definición de $F_1$, una función de
+evaluación estándar para la clasificación binaria, que se define como:
 \begin{equation}
     F_1 = \frac{2 \cdot tp}{2 \cdot tp + fp + fn}
 \end{equation}
 donde $tp$, $fp$, $fn$ indican el número de verdaderos positivos, falsos
 positivos y falsos negativos, respectivamente. Un buen clasificador, según la
-métrica $F_1$, puede producir un mal cuantificador ya que $F_1$ considera buenos
+medida $F_1$, puede producir un mal cuantificador ya que $F_1$ considera buenos
 aquellos clasificadores que mantienen la suma $fp + fn$ al mínimo; sin embargo,
 el objetivo de un algoritmo de cuantificación debe ser mantener al mínimo
 $|fp-fn|$. Es decir, que un mal clasificador con $fp$ y  $fn$ altos pero
@@ -330,7 +344,7 @@ positivos ($tpr$), su tasa de falsos positivos ($fpr$) y de la prevalencia real
 \begin{equation}\label{ecuacion:tpr_fpr}
     \hat p(p) = p \cdot {tpr} + (1-p) \cdot {fpr}
 \end{equation}
-\begin{figure}[H]
+\begin{figure}[!h]
     \includegraphics[width=\textwidth]{../plots_teoria/cc_tpr_fpr.png}
     \caption{La línea negra representa el cuantificador y clasificador perfecto,
     respectivamente. Las otras líneas muestran las estimaciones teóricas de
@@ -411,27 +425,33 @@ ya que en algunos casos no solo predicen los valores agregados, sino que tambié
 mejoran las predicciones a nivel individual.
 
 Por ejemplo, el {\it prior probability shift\/} puede hacer que los
-clasificadores performen de manera subóptima. En el caso del clasificador óptimo
-de Bayes, dado por:
-\begin{equation}\label{ecuacion:bayes}
-    h(\boldsymbol{x}) = \argmax_{y} p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y) = \argmax_{y} \frac{p_{\boldsymbol{X}|Y=y}(\boldsymbol{x})p_Y(y)}{p_{\boldsymbol{X}}(\boldsymbol{x})}
+clasificadores performen de manera subóptima. Considerando como generalización
+el clasificador óptimo de Bayes, dado por:
+\begin{equation}\label{ecuacion:bayes_optimo}
+    h(\boldsymbol{x}) = \argmax_{y} p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)
 \end{equation}
-la decisión del clasificador depende de $p_Y(y)$, que es estimado con el dataset
-de entrenamiento, siendo $\hat p_Y(y=1) = p_{tr}$. Es decir, que en caso de
-$\mathbb{P}_{tr}(Y) \neq \mathbb{P}_{tst}(Y)$, la decisión final del
-clasificador puede verse afectada negativamente. Para mejorar el rendimiento del
-clasificador frente a estos casos, se debería usar $\hat p_Y(y=1) = p_{tst}$,
-pero como $p_{tst}$ es generalmente desconocido, se puede usar un método de
-cuantificación para estimarlo~\cite{saerens2002adjusting, alaiz2011class,
-zhang2010transfer, xue2009quantification}.
+y si tomamos específicamente el modelo del clasificador Naive Bayes como
+ejemplo:
+\begin{equation}\label{ecuacion:bayes_naive}
+    h(\boldsymbol{x}) = \argmax_{y} \frac{p_{\boldsymbol{X}|Y=y}(\boldsymbol{x})p_Y(y)}{p_{\boldsymbol{X}}(\boldsymbol{x})}
+\end{equation}
+la decisión del clasificador depende de $p_Y(y)$, que es estimado generalmente
+con la muestra de entrenamiento, usando entonces $\hat p_Y(y=1) = p_{tr}$. Es
+decir, que en caso de $\mathbb{P}_{tr}(Y=y) \neq \mathbb{P}_{tst}(Y=y)$, la
+decisión final del clasificador puede verse afectada negativamente. Para mejorar
+el rendimiento del clasificador frente a estos casos, se debería usar $\hat
+p_Y(y=1) = p_{tst}$, pero como $p_{tst}$ es generalmente desconocido, se puede
+usar un método de cuantificación para estimarlo~\cite{saerens2002adjusting,
+alaiz2011class, zhang2010transfer, xue2009quantification}.
 
-\begin{figure}[H]
-    \centerline{\includegraphics[width=0.75\textwidth]{../plots_teoria/bayes_classifier.png}}
-    \caption{Ejemplo de como el {\it prior probability shift\/} puede alterar
-    las predicciones del clasificador óptimo de Bayes. Vemos que si usáramos
-    $\mathbb{P}_{tst}(Y)$ en vez de $\mathbb{P}_{tr}(Y)$, en este caso pasaría a
-    predecir la clase azul en vez de roja para toda
-    $\boldsymbol{x}$.}\label{fig:bayes_classifier}
+\begin{figure}[!h]
+    \centerline{\includegraphics[width=1.00\textwidth]{../plots_teoria/bayes_classifier.png}}
+    \caption{Ejemplo de {\it prior probability shift\/} con $d=1$ (es decir,
+    $\boldsymbol{X}_i \in \mathbb{R}$) e implementando el clasificador óptimo de
+    Bayes para un modelo Naive Bayes. Se puede observar como cambia la clase
+    predicha para el punto $\boldsymbol{x}$ marcado con línea punteada vertical,
+    si se usa  $\hat p_Y(y=y) = \mathbb{P}_{tst}(Y=y)$ en vez de  $\hat p_Y(y=1)
+    = \mathbb{P}_{tr}(Y=y)$.}\label{fig:bayes_classifier}
 \end{figure}
 
 Los métodos de cuantificación pueden usarse no solo para mejorar el rendimiento
@@ -440,9 +460,9 @@ fairness\/}~\cite{biswas2021ensuring, fabris2023measuring}, es decir, su
 posibilidad de predecir resultados independientes de un cierto conjunto de
 variables que consideramos sensibles y no relacionadas con él (e.j.:~género,
 etnia, orientación sexual, etc.). Por ejemplo, suponiendo que una variable $Z$
-debe considerarse sensible, se puede estimar $\mathbb{P}_{tr}(Y|Z)$. Luego, si
-los datos de entrenamiento están sesgados, por ejemplo, con
+debe considerarse sensible, se puede estimar $\mathbb{P}_{tr}(Y=y|Z=z)$. Luego,
+si los datos de entrenamiento están sesgados, por ejemplo, con
 $\mathbb{P}_{tr}(Y=1|Z=1) \gg \mathbb{P}_{tr}(Y=1|Z=0)$, pero se sabe que en las
 muestras a inferir esto no es así, se puede optimizar el modelo de clasificación
-imponiendo alguna penalidad basada en la estimación de $\mathbb{P}_{tst}(Y|Z)$,
-siendo esta última obtenido por un cuantificador.
+imponiendo alguna penalidad basada en la estimación de
+$\mathbb{P}_{tst}(Y=y|Z=z)$, siendo esta última obtenido por un cuantificador.

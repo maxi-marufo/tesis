@@ -67,14 +67,15 @@ GaussianNB}} de {\it scikit-learn}, usando sus parámetros por default.
 \subsection{Con clasificadores generales}\label{estimacion:generales}
 
 Dentro de los métodos agregativos, algunos de ellos requieren como entrada las
-etiquetas de clases predichas (es decir, clasificadores duros), otros requieren
-un {\it score\/} de decisión (como podría ser la distancia al hiperplano de
-separación en el clasificador SVM), y otros que requieren como entrada las
-probabilidades {\it a posteriori\/} de pertenencia a cada clase (es decir,
-clasificadores blandos)\footnote{Los clasificadores blandos y de {\it score\/}
-se pueden convertir en duros usando umbrales de clasificación}. En estos
-últimos, además, las probabilidades {\it a posteriori\/} deben estar calibradas
-(para mayor información sobre calibración consultar el
+etiquetas de clases predichas (es decir, el tipo de salida que devuelven los
+clasificadores denominados duros), otros requieren un {\it score\/} de decisión
+(como podría ser la distancia al hiperplano de separación en el clasificador
+SVM), y otros que requieren como entrada las probabilidades {\it a posteriori\/}
+de pertenencia a cada clase (es decir, el tipo de salida que devuelven los
+clasificadores denominados blandos)\footnote{Los clasificadores blandos y de
+{\it score\/} se pueden convertir en duros usando umbrales de clasificación}. En
+estos últimos, además, las probabilidades {\it a posteriori\/} deben estar
+calibradas (para mayor información sobre calibración consultar el
 Apéndice~\ref{appendix:calibracion}). Para estos casos, en los ejemplos a
 continuación que requieren clasificadores blandos se separó de las muestras de
 entrenamiento un 15\% de datos para el proceso de calibración (y estratificando
@@ -133,11 +134,11 @@ Esta expresión se obtiene despejando la verdadera prevalencia \(p\) de la
 ecuación~\ref{ecuacion:tpr_fpr} y reemplazando \(fpr\) y \(tpr\) por sus
 estimadores.
 
-El método {\it ACC\/} es teóricamente perfecto, independientemente de la métrica
-de {\it accuracy\/} obtenida con el clasificador, cuando se cumple el supuesto
-de {\it prior probability shift\/}~\ref{problema:cambios} y cuando las
-estimaciones de \(tpr\) y \(fpr\) son perfectas. Desafortunadamente, es raro que
-se cumplan ambas condiciones en aplicaciones del mundo real:
+El método {\it ACC\/} es teóricamente perfecto, independientemente del valor de
+{\it accuracy\/} obtenido con el clasificador, cuando se cumple el supuesto de
+{\it prior probability shift\/}~\ref{problema:cambios} y cuando las estimaciones
+de \(tpr\) y \(fpr\) son perfectas. Desafortunadamente, es raro que se cumplan
+ambas condiciones en aplicaciones del mundo real:
 \(\mathbb{P}(\boldsymbol{X}|Y)\) puede tener variaciones entre los datos de
 entrenamiento y los de predicción, y es difícil obtener estimaciones perfectas
 para \(tpr\) y \(fpr\) en algunos dominios ya que suelen haber pequeñas muestras
@@ -497,17 +498,17 @@ también emplean \({\it SVM \/}_{perf}\) pero con una pérdida diferente,
 argumentando que la cuantificación pura no considera la precisión del
 clasificador subyacente (pudiendo generar un modelo que, aunque cuantifique
 bien, clasifique mal). Para abordar esto, introducen la medida \(Q\), que
-combina una métrica de cuantificación con una métrica de clasificación,
+combina una evaluación de cuantificación con una evaluación de clasificación,
 permitiendo un equilibrio entre ellas. Más recientemente Moreo y
 Sebastiani~\cite{moreo2021re} reincorporaran la idea de utilizar \({\it SVM
-\/}_{perf}\), pero sugieren usar las métricas de error absoluto (AE) y error
-absoluto negativo (RAE) -ver~\ref{evaluacion:ae}-.
+\/}_{perf}\), pero sugieren usar las medidas de evaluación de error absoluto
+(AE) y error absoluto negativo (RAE) -ver~\ref{evaluacion:ae}-.
 
 Existen dos inconvenientes asociados con \({\it SVM \/}_{perf}\): podría
 resultar en un modelo menos óptimo y no escala para grandes cantidades de datos
 de entrenamiento. Para abordar estas limitaciones,~\citet{kar2016online}
 proponen algoritmos de optimización estocástica. Además, plantean distintas
-métricas multivariadas para evaluar el rendimiento de cuantificación. Siguiendo
+medidas multivariadas para evaluar el rendimiento de cuantificación. Siguiendo
 esta línea,~\citet{sanyal2018optimizing} introducen una serie de algoritmos que
 permiten el entrenamiento directo de redes neuronales profundas y la generación
 de clasificadores no lineales. Estos métodos están diseñados para optimizar
