@@ -65,26 +65,26 @@ satisfechas por todas las medidas).
     \item {\bf Máximo (MAX)}: si $\exists \beta >0, \beta \in \mathbb{R}$ tal
     que por cada $c \in C$ y por cada $p$, (i) existe $\hat p$ tal que $M(p,
     \hat p) = \beta$, y (ii) para ninguna $\hat p$ se cumple que $M(p, \hat p) >
-    \beta$. Si se cumple {\bf MAX}, la imagen de $M$ es independiente del
-    problema, y esto permite juzgar si un valor dado significa un error de
-    cuantificación alto o bajo. Si $M$ no cumple cumple {\bf MAX}, cada muestra
-    de evaluación tendrá un peso distinto en el resultado final.
+    \beta$. Si se cumple MAX, la imagen de $M$ es independiente del problema, y
+    esto permite juzgar si un valor dado significa un error de cuantificación
+    alto o bajo. Si $M$ no cumple cumple MAX, cada muestra de evaluación tendrá
+    un peso distinto en el resultado final.
     \item {\bf Imparcial (IMP)}: si $M$ penaliza igualmente la subestimación de
     $p$ por una cantidad $a$ (es decir, con $\hat p = p - a$) o su
     sobreestimación por la misma cantidad $a$ (es decir, con $\hat p = p + a$).
-    Si se cumple {\bf IMP}, la subestimación y la sobreestimación se consideran
+    Si se cumple IMP, la subestimación y la sobreestimación se consideran
     igualmente indeseables. Esto es generalmente lo deseable, a menos que exista
     una razón específica para no hacerlo.
     \item {\bf Relativo (REL)}: si $M$ penaliza más gravemente un error de
     magnitud absoluta $a$ (es decir, cuando $\hat p = p \pm a)$ si $p$ es menor.
-    Por ejemplo, predecir $\hat p = 0.0101$ cuando $p = 0.0001$ es un error
-    mucho más serio que predecir $\hat p = 0.1100$ cuando $p = 0.1000$.
+    Por ejemplo, predecir $\hat p = 0.011$ cuando $p = 0.001$ es un error mucho
+    más serio que predecir $\hat p = 0.11$ cuando $p = 0.1$.
     \item {\bf Absoluto (ABS)}: si $M$ penaliza un error de magnitud
     independientemente del valor de $p$. Mientras algunas aplicaciones requieren
-    {\bf REL}, otras requieren {\bf ABS}. Si bien {\bf REL} y {\bf ABS} son
-    mutuamente excluyentes, ninguna cubre el caso cuando $M$ considera un error
-    de magnitud absoluta $a$ menos grave cuando $p$ es menor (como en el caso de
-    la {\it distancia coseno\/}).
+    REL, otras requieren ABS. Si bien REL y ABS son mutuamente excluyentes, no
+    son redundantes ya que no abarcan todos los posibles casos (ninguna cubre el
+    caso cuando $M$ considera un error de magnitud absoluta $a$ menos grave
+    cuando $p$ es menor).
 \end{itemize}
 
 \section{Medidas de Evaluación}\label{evaluacion:medidas}
@@ -140,8 +140,7 @@ fácilmente interpretable.
 Como en este caso las diferencias positivas y negativas son igualmente
 indeseables, promediar el AE entre varias clases, o varias muestras, no es
 problemático. Como se muestra en~\cite{sebastiani2020evaluation}, AE cumple {\bf
-IMP} y {\bf ABS} pero no cumple {\bf MAX} (ni tampoco {\bf REL}). Su rango va de
-0 (mejor) a:
+IMP} y ABS pero no cumple MAX ni REL. Su rango va de 0 (mejor) a:
 \begin{equation}
     z_{\text{AE}} = \frac{2(1-\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j))}{\#C}\label{evaluacion:eq_zae}
 \end{equation}
@@ -154,8 +153,7 @@ El error absoluto normalizado {\it normalised absolute error}, definido como:
     {\text{NAE}(p, \hat p)} = \frac{\text{AE}(p, \hat p)}{z_{\text{AE}}} = \frac{\sum \limits_{j=1}^{\#C}{|\hat p(c=c_j) - p(c=c_j)|}}{2(1-\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j))}\label{evaluacion:eq_nae}
 \end{equation}
 es una versión de AE que oscila entre 0 (mejor) y 1 (peor), por lo que cumple
-{\bf MAX}. A pesar de su nombre, NAE no disfruta de {\bf ABS} (ni tampoco {\bf
-REL}).
+MAX. NAE no cumple ABS (a pesar de su nombre) ni tampoco REL, pero sí IMP.
 
 \subsubsection{Error Cuadrático}\label{evaluacion:se}
 
@@ -165,18 +163,18 @@ El error cuadrático o {\it squared error}, definido como:
 \end{equation}
 comparte los mismos pros y contras de AE, pero penalizando más cuanto mayor es
 la diferencia entre el valor real y el predicho, por lo que se usa cuando se
-quiere castigar los valores atípicos u {\it outliers}.
+quiere castigar los valores atípicos u {\it outliers}. SE cumple IMP y ABS pero
+no cumple MAX ni REL.
 
 \subsubsection{Error Absoluto Relativo}\label{evaluacion:rae}
 
 El error absoluto relativo o {\it relative absolute error\/} es una adaptación
-del AE que impone {\bf REL} al hacer que AE sea relativo a $p$.
+del AE que impone REL al hacer que AE sea relativo a $p$.
 \begin{equation}
     {\text{RAE}(p, \hat p)} = \frac{1}{\#C}\sum \limits_{j=1}^{\#C}{\frac{|\hat p(c=c_j) - p(c=c_j)|}{p(c=c_j)}}\label{evaluacion:eq_rae}
 \end{equation}
 
-RAE cumple {\bf IMP} y {\bf REL} pero no cumple {\bf MAX} (ni {\bf ABS}, a pesar
-de su nombre). Su rango va de 0 (mejor) a:
+RAE cumple IMP y REL pero no cumple MAX ni ABS. Su rango va de 0 (mejor) a:
 \begin{equation}
     z_{\text{RAE}} = \frac{\#C - 1 + \frac {1 - \displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}{\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}}{\#C}\label{evaluacion:eq_zrae}
 \end{equation}
@@ -190,8 +188,7 @@ definido como:
     {\text{NRAE}(p, \hat p)} = \frac{\text{RAE}(p, \hat p)}{z_{\text{RAE}}} = \frac{\sum \limits_{j=1}^{\#C}{\frac{|\hat p(c=c_j) - p(c=c_j)|}{p(c=c_j)}}}{\#C - 1 + \frac {1 - \displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}{\displaystyle \min_{j\in\{1,\dots,\#C\}}p(c=c_j)}}\label{evaluacion:eq_nrae}
 \end{equation}
 es una versión de RAE que oscila entre 0 (mejor) y 1 (peor), por lo que cumple
-{\bf MAX}. A pesar de su nombre, NRAE no disfruta de {\bf REL} (ni tampoco {\bf
-ABS}).
+MAX. NRAE no cumple REL ni ABS, pero sí IMP.
 
 Tanto RAE como NRAE no están definidas cuando sus denominadores sean nulos. Para
 resolver este problema, se puede suavizar tanto $p(c=c_j)$ como $\hat p(c=c_j)$
@@ -217,8 +214,8 @@ lo cuál será:
 \begin{equation}
     {\text{DKL}}(p\parallel \hat{p}) = \sum \limits_{j=1}^{\#C}p(c=c_j)\log \left({\frac {p(c=c_j)}{\hat p(c=c_j)}}\right)\label{evaluacion:eq_dkl2}
 \end{equation}
-que va de {0} (mejor) a {+$\infty$} (peor) -por lo tanto, no cumple con {\bf
-MAX}-. Esta medida no es simétrica, es menos interpretable que otras medidas de
+que va de {0} (mejor) a {+$\infty$} (peor) -por lo tanto, no cumple con MAX.
+Esta medida no es simétrica, es menos interpretable que otras medidas de
 rendimiento, y no está definido cuando $\hat{p}$ es 0 o 1.
 
 \subsubsection{Divergencia de Kullback-Leibler
@@ -229,29 +226,29 @@ quedando:
 \begin{equation}
     {\text{NDKL}}(p\parallel \hat{p}) = 2 \cdot \frac{e^{{\text{DKL}}(p\parallel \hat{p})}}{1+e^{{\text{DKL}}(p\parallel \hat{p})}}-1\label{evaluacion:eq_ndkl}
 \end{equation}
-que va de {0} (mejor) a {1} (peor) -por lo tanto, si cumple con {\bf MAX}-. Sin
+que va de {0} (mejor) a {1} (peor) -por lo tanto, si cumple con MAX-. Sin
 embargo, como se muestra en~\cite{sebastiani2020evaluation}, ni DKL ni NDKL
-cumplen con {\bf IMP}, {\bf REL} y {\bf ABS}, lo que hace que su uso como
-medidas de evaluación para cuantificación sea cuestionable, además de ser
-difíciles de interpretar.
+cumplen con IMP, REL y ABS, lo que hace que su uso como medidas de evaluación
+para cuantificación sea cuestionable, además de ser difíciles de interpretar.
 
 \section{Elección de la Medida de Evaluación}\label{evaluacion:eleccion}
 
 Es evidente que ninguna de las medidas propuestas hasta ahora es completamente
 satisfactoria. DKL y NDKL son los menos satisfactorios y parecen fuera de
-discusión. Respecto a los demás, el problema es que {\bf MAX} parece ser
-incompatible con {\bf REL}/{\bf ABS}, y viceversa.
+discusión. Respecto a los demás, el problema es que MAX parece ser incompatible
+con REL/ABS, y viceversa.
 
-~\citet{sebastiani2020evaluation} sostiene que cumplir con {\bf REL} o {\bf ABS}
-parece más importante que cumplir con {\bf MAX}, ya que reflejan las necesidades
-de la aplicación; si no se satisfacen estas propiedades, se puede argumentar que
-el error de cuantificación que se está midiendo está vagamente relacionado a lo
-que el usuario realmente quiere. Si {\bf MAX} no está satisfecho, los resultados
-obtenidos en muestras caracterizadas por diferentes distribuciones no serán
-comparables. A pesar de esto, los resultados obtenidos por diferentes sistemas
-en el mismo conjunto de muestras siguen siendo comparables.
+~\citet{sebastiani2020evaluation} sostiene que cumplir con REL o ABS parece más
+importante que cumplir con MAX. La elección de REL o ABS es importante para que
+en la evaluación se refleje si un error de cuantificación de una magnitud
+absoluta dada es más grave cuando la verdadera prevalencia de la clase afectada
+es menor o no. En cambio, si no se satisface MAX, algunas muestras tendrán mayor
+peso que otras en el resultado final; si bien esto no es deseable, no afecta la
+comparación experimental entre diferentes sistemas de cuantificación, ya que
+cada uno de ellos se ve afectado por esta disparidad de la misma manera.
 
-Esto sugiere que AE, RAE y SE son las mejores medidas a elegir. Se debe preferir
+Por lo tanto, si aceptamos la idea de “sacrificar” MAX para conservar REL o ABS,
+esto sugiere que AE, RAE y SE son las mejores medidas a elegir. Se debe preferir
 AE cuando un error de estimación de una magnitud absoluta dada debe considerarse
 más grave cuando la verdadera prevalencia de la clase afectada es menor. RAE
 debe ser elegido cuando un error de estimación de una magnitud absoluta dada

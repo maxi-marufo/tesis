@@ -582,30 +582,37 @@ Se observa que el valor mínimo de HDx se da en \(p^{\it HDx \/}_{tst}(c=1) =
 
 \citet{keith2018uncertainty} presentan un enfoque con modelos generativos para
 estimar la prevalencia. Este método realiza una inferencia directa de la
-prevalencia desconocida y aborda además el cálculo de intervalos de confianza
-(IC)\footnote{Este enfoque es pionero en la cuantificación, ya que introduce un
-modelo directo para el cálculo de los IC, los cuales eran estimados mediante
-{\it bootstraping\/} en trabajos anteriores}.
+prevalencia desconocida y aborda además el cálculo de intervalos de
+confianza\footnote{Este enfoque es pionero en la cuantificación, ya que
+introduce un modelo directo para el cálculo de los intervalos de confianza, los
+cuales eran estimados mediante {\it bootstraping\/} en trabajos anteriores}.
 
 Su propuesta, inspirada también en~\citet{saerens2002adjusting}, se basa en
 modelar la distribución conjunta de las características de los individuos y sus
-etiquetas, tanto en las datos de entrenamientos como en los de evaluación. En
-base a esto se computa la verosimilitud marginal sobre \(\theta=p_{tst}\) para
-obtener la distribución {\it a posteriori\/} de \(\theta\):
+etiquetas. En base a esto se computa la verosimilitud marginal sobre \(\theta\)
+para obtener la distribución {\it a posteriori\/} de \(\theta\):
 
-\begin{equation}\label{ecuacion:mll}
-    {\it MLL\/}_{tst}(\theta) = \sum {\log \sum_{c \in C}{p_{tst}(\boldsymbol{x}_i, y_i=c | \theta)}}
+\begin{equation}\label{ecuacion:mll_1}
+    {\it MLL\/}(\theta) = \sum \limits_{i=1}^{m} {\log \sum_{c \in C}{p_{\boldsymbol{X}, Y | \theta}(\boldsymbol{x}_i, c)}}
 \end{equation}
-
-donde analizando para el caso binario, teniendo en cuenta que se asume
-\(p_{tst}(\boldsymbol{x})=p_{tr}(\boldsymbol{x})\), y utilizando las funciones
-de densidad de probabilidad de las características condicionadas a las etiquetas
-estimadas con los datos de entrenamiento (\(p_{tr}(\boldsymbol{x}|y)\)), podemos
-escribir:
-
-\begin{equation}\label{ecuacion:mll_bin}
-    {\it MLL\/}_{tst}(\theta) = \sum {\log \sum_{c \in C}{\theta p_{tr}(\boldsymbol{x}_i | y_i=1) + (1- \theta) p_{tr}(\boldsymbol{x}_i | y_i=0)}}
+siendo para el caso binario:
+\begin{equation}\label{ecuacion:mll_2}
+    {\it MLL\/}(\theta) = \sum \limits_{i=1}^{m} {\log (p_{\boldsymbol{X}, Y | \theta}(\boldsymbol{x}_i, 1) + p_{\boldsymbol{X}, Y | \theta}(\boldsymbol{x}_i, 0))}
 \end{equation}
+y usando la Ley de Probabilidad Condicionada con \(p_{Y | \theta}(1)= \theta\) y
+\(p_{Y | \theta}(0)= 1 - \theta\):
+\begin{equation}\label{ecuacion:mll_3}
+    {\it MLL\/}(\theta) = \sum \limits_{i=1}^{m} {\log ({{\theta} p_{\boldsymbol{X} | {Y=1,\theta}}(\boldsymbol{x}_i) + (1- \theta) p_{\boldsymbol{X} | {Y=0,\theta}}(\boldsymbol{x}_i)})}
+\end{equation}
+y como se asume $X_i \perp \!\!\! \perp \theta \mid Y_i$, entonces:
+\begin{equation}\label{ecuacion:mll_fin}
+    {\it MLL\/}(\theta) = \sum \limits_{i=1}^{m} {\log ({{\theta} p_{\boldsymbol{X} | {Y=1}}(\boldsymbol{x}_i) + (1- \theta) p_{\boldsymbol{X} | {Y=0}}(\boldsymbol{x}_i)})}
+\end{equation}
+donde se aplica el supuesto de {\it prior probability shift}, es decir,
+$\mathbb{P}_{tr}(\boldsymbol{X}=\boldsymbol{x}|Y=y) =
+\mathbb{P}_{tst}(\boldsymbol{X}=\boldsymbol{x}|Y=y)$, utilizando las
+distribuciones modeladas con los datos de entrenamiento para aplicarlas a los
+datos de prueba.
 
 Luego, para obtener la predicción se obtiene el máximo de la distribución. Es
 decir, que al igual que el método {\it EMQ}, se busca maximizar la
@@ -619,35 +626,42 @@ valores.
 enfocados en problemas de procesamiento de lenguaje ({\it MNB\/ y \it
 Loglin\/}), al que llaman explícitos. Pero aún más interesante es el tercer
 método que proponen, al que llaman {\it LR-Implicit}, el cual se basa en estimar
-de forma implícita las \(p(\boldsymbol{x}|y)\) que obtendríamos con modelos
-generativos mediante las \(p(y|\boldsymbol{x})\) que se obtienen con modelos
+de forma implícita las \(p_{\boldsymbol{X}|Y=y}(\boldsymbol{x})\) que
+obtendríamos con modelos generativos mediante las
+\(p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)\) que se obtienen con modelos
 discriminativos, utilizando el Teorema de Bayes:
 
 \begin{equation}\label{ecuacion:disc_gen}
-    p_{disc}(y|\boldsymbol{x}) = \frac{p_{imp}(\boldsymbol{x}|y)p_{tr}(y)}{p(\boldsymbol{x})}
+    {p_{disc}}_{Y|\boldsymbol{X}=\boldsymbol{x}}(y) = \frac{{p_{imp}}_{\boldsymbol{X}|Y=y}(\boldsymbol{x}){p_{tr}}_Y(y)}{p_{\boldsymbol{X}}(\boldsymbol{x})}
 \end{equation}
 
-Siendo \(p_{disc}(y|\boldsymbol{x})=h_{tr}(\boldsymbol{x})\), y sabiendo que al
-querer maximizar~\ref{ecuacion:mll_bin} el valor de \(p(\boldsymbol{x})\) es
-constante, entonces podemos utilizar en~\ref{ecuacion:mll_bin}:
+Siendo
+\({p_{disc}}_{Y|\boldsymbol{X}=\boldsymbol{x}}(1)=h_{tr}(\boldsymbol{x})\),
+entonces podemos utilizar en~\ref{ecuacion:mll_fin}:
 
-\begin{equation}\label{ecuacion:disc_gen_2}
-    p_{tr}(\boldsymbol{x}|y) \equiv h_{tr}(\boldsymbol{x}) / {\hat p_{tr}(y)}
-\end{equation}
+\begin{align}\label{ecuacion:disc_gen_2}
+\begin{split}
+    {\it MLL\/}(\theta) &= \sum \limits_{i=1}^{m} {\log \left( {{\theta} \frac{h_{tr}(\boldsymbol{x}) p_{\boldsymbol{X}}(\boldsymbol{x}_i)}{{p_{tr}}_Y(1)} + (1- \theta) \frac{(1 - h_{tr}(\boldsymbol{x})) p_{\boldsymbol{X}}(\boldsymbol{x}_i)}{{1 - p_{tr}}_Y(1)}} \right)} \\
+    &= \sum \limits_{i=1}^{m} {\log \left( p_{\boldsymbol{X}}(\boldsymbol{x}_i) \left( \theta \frac{h_{tr}(\boldsymbol{x})}{{p_{tr}}_Y(1)} + (1- \theta) \frac{(1 - h_{tr}(\boldsymbol{x}))}{({1 - p_{tr}}_Y(1))} \right) \right)} \\
+    &= \sum \limits_{i=1}^{m} {\log (p_{\boldsymbol{X}}(\boldsymbol{x}_i))} + \sum \limits_{i=1}^{m} {\log \left( \theta \frac{h_{tr}(\boldsymbol{x})}{{p_{tr}}_Y(1)} + (1- \theta) \frac{(1 - h_{tr}(\boldsymbol{x}))}{({1 - p_{tr}}_Y(1))} \right)} \\
+\end{split}
+\end{align}
+donde para obtener el \(\theta\) que maximiza la función, basta con analizar el
+segundo término de la ecuación.
 
 Un modelo generativo que utiliza un clasificador discriminativo como
-intermediario para estimar \(p(\boldsymbol{x}|y)\) a partir de
-\(p(y|\boldsymbol{x})\) (es decir, el método {\it LR-Implicit\/}) pertenece en
-realidad a los métodos agregativos (mencionados en la
-Sección~\ref{estimacion:agregativos}). No obstante, dado que el marco generativo
-presentado por~\citet{keith2018uncertainty} solo requiere un modelo condicionado
-por las etiquetas de clase, como ocurre con las versiones explícitas (usando los
-modelos {\it MNB\/ y \it Loglin\/} como ejemplo), enmarcamos este método más
-general dentro de los métodos no agregativos.
+intermediario para estimar \(p_{\boldsymbol{X}|Y=y}(\boldsymbol{x})\) a partir
+de \(p_{Y|\boldsymbol{X}=\boldsymbol{x}}(y)\) (es decir, el método {\it
+LR-Implicit\/}) pertenece en realidad a los métodos agregativos (mencionados en
+la Sección~\ref{estimacion:agregativos}). No obstante, dado que el marco
+generativo presentado por~\citet{keith2018uncertainty} solo requiere un modelo
+condicionado por las etiquetas de clase, como ocurre con las versiones
+explícitas (usando los modelos {\it MNB\/ y \it Loglin\/} como ejemplo),
+enmarcamos este método más general dentro de los métodos no agregativos.
 
 \paragraph{\it Ejemplo:\/} En este caso utilizaremos el método {\it LR-Implicit}
 aplicado al clasificador con el que venimos trabajando. Utilizaremos el método
-de grilla para buscar el máximo de la curva de \({\it MLL\/}_{tst}(\theta)\):
+de grilla para buscar el máximo de la curva de \({\it MLL\/}(\theta)\):
 \begin{figure}[H]
     \centerline{\includegraphics[width=0.5\textwidth]{../plots_teoria/lr_implicit.png}}
     \caption{}\label{fig:lr_implicit}
